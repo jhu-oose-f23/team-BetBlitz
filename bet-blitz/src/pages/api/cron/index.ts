@@ -1,6 +1,3 @@
-//write an API endpoint that hits https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=aa362b26e5e964f7edad135db76031aa
-// and then stores the data in a database using prisma
-
 import { PrismaClient } from '@prisma/client';
 
 //create prisma client
