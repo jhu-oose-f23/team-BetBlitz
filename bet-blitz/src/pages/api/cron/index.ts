@@ -33,6 +33,10 @@ export default async function handler(req: any, res: any) {
   //iterate over the data
   // Iterate over the data
   events.forEach((event: any) => {
+    //if length of bookmakers is 0, then skip this event
+    if (event.bookmakers.length === 0) {
+      return;
+    }
     const bookmaker = event.bookmakers[0];
     const market = bookmaker.markets[0];
     const outcome1 = market.outcomes[0];
