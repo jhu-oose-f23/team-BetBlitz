@@ -62,13 +62,12 @@ export default async function handler(req: any, res: any) {
 
   //try and post all the data to the database
   try {
-    //iterate over the data
-    allOddData.forEach(async (oddData) => {
-      const newOdd = await prisma.event.create({
-        data: oddData
-      })
+
+    const newOdds = await prisma.event.createMany({
+      data: allOddData
     })
-    res.status(200).json({ message: 'success' })
+
+    res.status(200).json(allOddData)
   } catch (error) {
     res.status(400).json({ message: 'error' })
   }
