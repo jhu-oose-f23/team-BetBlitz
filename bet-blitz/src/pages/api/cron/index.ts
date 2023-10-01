@@ -1,6 +1,3 @@
-//write an API endpoint that hits https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=aa362b26e5e964f7edad135db76031aa
-// and then stores the data in a database using prisma
-
 import { PrismaClient } from '@prisma/client';
 
 //create prisma client
@@ -36,6 +33,10 @@ export default async function handler(req: any, res: any) {
   //iterate over the data
   // Iterate over the data
   events.forEach((event: any) => {
+    //if length of bookmakers is 0, then skip this event
+    if (event.bookmakers.length === 0) {
+      return;
+    }
     const bookmaker = event.bookmakers[0];
     const market = bookmaker.markets[0];
     const outcome1 = market.outcomes[0];
@@ -62,13 +63,12 @@ export default async function handler(req: any, res: any) {
 
   //try and post all the data to the database
   try {
-    //iterate over the data
-    allOddData.forEach(async (oddData) => {
-      const newOdd = await prisma.event.create({
-        data: oddData
-      })
+
+    const newOdds = await prisma.event.createMany({
+      data: allOddData
     })
-    res.status(200).json({ message: 'success' })
+
+    res.status(200).json(allOddData)
   } catch (error) {
     res.status(400).json({ message: 'error' })
   }
