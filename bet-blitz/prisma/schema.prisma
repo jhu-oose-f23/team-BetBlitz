@@ -18,3 +18,17 @@ model Example {
 
     @@index([name])
 }
+
+model Event {
+    id           Int       @id @default(autoincrement())
+    sportKey     String?
+    commenceTime DateTime?
+    homeTeam     String?
+    awayTeam     String?
+    teamOneName  String?
+    teamTwoName  String?
+    teamOneOdd   Int?
+    teamTwoOdd   Int?
+    createdAt    DateTime? @default(now())
+    updatedAt    DateTime? @updatedAt
+}
