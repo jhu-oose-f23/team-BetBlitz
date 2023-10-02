@@ -201,7 +201,7 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma migrate dev --name <<prompt message>>
   ```
 
-### DB Seed Generatiom
+### DB Seed Generation
 
   ```sh
   npx prisma db seed
