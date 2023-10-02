@@ -152,13 +152,13 @@ _Below is an example of how you can instruct your audience on installing and set
 
 
 <!-- Running Procedure -->
-## Npm Setup
+### Npm Setup
 
   ```sh
   npm install npm@latest -g
   ```
 
-## Supabase Setup
+### Supabase Setup
 
   Enter bet-blitz folder, then run the following commands
   
@@ -172,7 +172,7 @@ _Below is an example of how you can instruct your audience on installing and set
   npx supabase start
   ```
 
-## Prisma Setup
+### Prisma Setup
 
   ```sh
   npm i prisma --save-dev
@@ -181,7 +181,7 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma init
   ```
 
-## Database Migration
+### Database Migration
 
   ```sh
   npx prisma db push
@@ -190,7 +190,7 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma migrate dev --name database_init
   ```
 
-## Database Updating
+### Database Updating
 
   ```sh
  npx prisma migrate deploy
@@ -199,19 +199,19 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma migrate dev --name <<prompt message>>
   ```
 
-## DB Seed Generatiom
+### DB Seed Generatiom
 
   ```sh
   npx prisma db seed
   ```
 
-## App Running
+### App Running
 
  ```sh
  npx ts-node src/<<file_name>>.ts
  ```
 
-## Supabase Stop
+### Supabase Stop
 
   ```sh
   npx supabase stop --backup
