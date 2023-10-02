@@ -20,62 +20,36 @@ List the (functional) requirements that software needs to have in order to solve
 
 ## Must have
 
-- **Role: As a user** 
-- **Goal: To be able to place fake bets on real games (moneyline) and see wins/losses** 
-- **Benefit: To be able to simulate the sports betting experience, test out betting strategies, and accumulate more fake money**
+- **As a user I want to be able to place fake bets on real games (moneyline) and see wins/losses, to be able to simulate the sports betting experience, test out betting strategies, and accumulate more fake money** 
 
-- **Role: As a user**
-- **Goal:  to compare your wins and losses to other users**
-- **Benefit: To see where I place among other players and see which players seem to have the best strategies**
+- **As a user I want to compare your wins and losses to other users to see where I place among other players and see which players seem to have the best strategies**
 
-- **Role: As a user**
-- **Goal: To create my own league and invite other users to join**
-- **Benefit: To create an environment where I can have fun with close associates and create stakes that aren’t real money by having a competition element.**
+- **As a user I want to create my own league and invite other users to join to create an environment where I can have fun with close associates and create stakes that aren’t real money by having a competition element.**
 
-- **Role: As a user**
-- **Goal: I want to be able to view the odds of upcoming and live games**
-- **Benefit: To see which games would be most profitable and which ones I want to bet on**
+- **As a user I want to be able to view the odds of upcoming and live games to see which games would be most profitable and which ones I want to bet on.**
 
-- **Role: As a user**
-- **Goal: I would like the odds to be updated every 3 hours**
-- **Benefit: So that I can view the most up to date information on games**
+- **As a user I would like the odds to be updated every 3 hours so that I can view the most up to date information on games**
 
 ## Nice to have
 
 
-- **Role: As a user**
-- **Goal: To be able to place additional type of bets (prop bets, parlays, live bets, etc)**
-- **Benefit: To have more creative ways to make profit and be able to bet on specific events in a game, not just the winner.**
+- **Role: As a user I want to be able to place additional type of bets (prop bets, parlays, live bets, etc) to have more creative ways to make profit and be able to bet on specific events in a game, not just the winner.**
 
-- **Role: As a league manager**
-- **Goal: I want To be able to select different league modes (weekly, last-man standing, etc)**
-- **Benefit: To have different ways to interact with my league to keep it exciting for the league participants**
+- **As a league manager I want to be able to select different league modes (weekly, last-man standing, etc) to have different ways to interact with my league to keep it exciting for the league participants**
 
-- **Role: As a user**
-- **Goal: To be able to see my betting statistics on different categories (NFL bet success, etc)**
-- **Benefit: To see where I succeed and where I fail as a bettor so I can plan my bets better in the future.**
+- **As a user I want to be able to see my betting statistics on different categories (NFL bet success, etc) to see where I succeed and where I fail as a bettor so I can plan my bets better in the future.**
 
-- **Role: As a user**
-- **Goal: To be able to see other users’ bets after the betting window has closed**
-- **Benefit: To see other betting strategies and how others bet and potentially cheer against the bets made by my league opponent.**
+- **As a user I want to be able to see other users’ bets after the betting window has closed to see other betting strategies and how others bet and potentially cheer against the bets made by my league opponent.**
 
 ## Non-functional Requirements:
 
-- **Role: As a User without a ton of tech experience**
-- **Goal: I want an exciting and easy to navigate UI with live scores**
-- **Benefit: To create the best experience possible and allow me to keep up with games that I have bet on**
+- **As a User without a ton of tech experience I want an exciting and easy to navigate UI with live scores to create the best experience possible and allow me to keep up with games that I have bet on**
 
-- **Role: As a User**
-- **Goal: I want the app to be secure with user’s data**
-- **Benefit: To not worry about who can access my information and cause potential harm to myself**
+- **As a User I want the app to be secure with user’s data to not worry about who can access my information and cause potential harm**
 
-- **Role: As a User**
-- **Goal: I want the web app to run without failure under predefined conditions**
-- **Benefit: to consistently be able to use the app with minimal downtime**
+- **As a User I want the web app to run without failure under predefined conditions to to consistently be able to use the app with minimal downtime**
 
-- **Role: As a user who has seen or experienced the harmful effects of gambling addictions**
-- **Goal: I want the webapp to have warnings, information, and support resources about gambling**
-- **Benefit: To help steer people away from real gambling sites and potentially falling into the hole that could cause severe harm to themselves.**
+- **As a user who has seen or experienced the harmful effects of gambling addictions I want the webapp to have warnings, information, and support resources about gambling to help steer people away from real gambling sites and potentially falling into the hole that could cause severe harm to themselves.**
 
 ## Software Architecture & Technology Stack: 
 Will this be a Web/desktop/mobile (all, or some other kind of) application? Would it conform to specific software architecture? What programming languages, frameworks, databases, …, will be used to develop and deploy the software?
