@@ -151,6 +151,74 @@ _Below is an example of how you can instruct your audience on installing and set
 
 
 
+<!-- Running Procedure -->
+## Npm Setup
+
+  ```sh
+  npm install npm@latest -g
+  ```
+
+## Supabase Setup
+
+  Enter bet-blitz folder, then run the following commands
+  
+  ```sh
+  npm install supabase --save-dev
+  ```
+  ```sh
+  npx supabase init
+  ```
+  ```sh
+  npx supabase start
+  ```
+
+## Prisma Setup
+
+  ```sh
+  npm i prisma --save-dev
+  ```
+  ```sh
+  npx prisma init
+  ```
+
+## Database Migration
+
+  ```sh
+  npx prisma db push
+  ```
+  ```sh
+  npx prisma migrate dev --name database_init
+  ```
+
+## Database Updating
+
+  ```sh
+ npx prisma migrate deploy
+  ```
+  ```sh
+  npx prisma migrate dev --name <<prompt message>>
+  ```
+
+## DB Seed Generatiom
+
+  ```sh
+  npx prisma db seed
+  ```
+
+## App Running
+
+ ```sh
+ npx ts-node src/<<file_name>>.ts
+ ```
+
+## Supabase Stop
+
+  ```sh
+  npx supabase stop --backup
+  ```
+
+
+
 <!-- USAGE EXAMPLES -->
 ## Usage
 
