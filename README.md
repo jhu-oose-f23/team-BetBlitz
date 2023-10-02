@@ -152,6 +152,8 @@ _Below is an example of how you can instruct your audience on installing and set
 
 
 <!-- Running Procedure -->
+## App Running Procedure
+
 ### Npm Setup
 
   ```sh
