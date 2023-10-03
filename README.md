@@ -107,8 +107,8 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![Vercel][Vercel.com]][Vercel-url]
 * [![Prisma][Prisma.io]][Prisma-url]
 * [![Supabase][Supabase.com]][Supabase-url]
-* [![TailwindCSS][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+* [![TailwindCSS][Tailwindcss.com]][Tailwind-url]
+* [![ShadCN][ShadCN.com]][ShadCN-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
