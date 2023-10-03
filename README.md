@@ -183,24 +183,6 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma init
   ```
 
-### Database Migration
-
-  ```sh
-  npx prisma db push
-  ```
-  ```sh
-  npx prisma migrate dev --name database_init
-  ```
-
-### Database Updating
-
-  ```sh
- npx prisma migrate deploy
-  ```
-  ```sh
-  npx prisma migrate dev --name <<prompt message>>
-  ```
-
 ### DB Seed Generation
 
   ```sh
