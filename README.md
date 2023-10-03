@@ -219,8 +219,6 @@ _Below is an example of how you can instruct your audience on installing and set
   npx supabase stop --backup
   ```
 
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
