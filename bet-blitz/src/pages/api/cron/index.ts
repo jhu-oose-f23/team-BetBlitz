@@ -1,18 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { Event, PrismaClient, Result } from '@prisma/client';
 
 //create prisma client
 const prisma = new PrismaClient();
 
+const updateOdds = async (res: any) => {
+  let allOddsData: Event[] = [];
 
-export default async function handler(req: any, res: any) {
-  if (req.query.key !== 'sharedKey') {
-    res.status(404).end();
-    return;
-  }
-
-  let allOddData: { sportKey: any; commenceTime: any; homeTeam: any; awayTeam: any; teamOneName: any; teamTwoName: any; teamOneOdd: any; teamTwoOdd: any; }[] = [];
-
-  //get the data from the odds api
+  // get the data from the odds api
   const API_URL = `https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}`;
   const response = await fetch(API_URL);
   const data = await response.json();
@@ -30,7 +24,6 @@ export default async function handler(req: any, res: any) {
   //   res.status(response.status).json({ error: 'API request failed' });
   // }
 
-  //iterate over the data
   // Iterate over the data
   events.forEach((event: any) => {
     //if length of bookmakers is 0, then skip this event
@@ -41,38 +34,50 @@ export default async function handler(req: any, res: any) {
     const market = bookmaker.markets[0];
     const outcome1 = market.outcomes[0];
     const outcome2 = market.outcomes[1];
-    const oddData = {
+
+    const oddsData: Event = {
       sportKey: event.sport_key,
       commenceTime: event.commence_time,
       homeTeam: event.home_team,
       awayTeam: event.away_team,
       teamOneName: outcome1.name,
       teamTwoName: outcome2.name,
-      teamOneOdd: outcome1.price,
-      teamTwoOdd: outcome2.price
-    }
-    allOddData.push(oddData);
+      teamOneOdds: outcome1.price,
+      teamTwoOdds: outcome2.price,
+      result: Result.IN_PROGESS
+    } as Event;
+
+    allOddsData.push(oddsData);
   });
 
   //try and clear the events table
   try {
-    const deleteEvents = await prisma.event.deleteMany({})
+    await prisma.event.deleteMany({});
   } catch (error) {
     res.status(400).json({ message: 'error' })
   }
 
   //try and post all the data to the database
   try {
-
-    const newOdds = await prisma.event.createMany({
-      data: allOddData
-    })
-
-    res.status(200).json(allOddData)
+    await prisma.event.createMany({
+      data: allOddsData
+    });
+    res.status(200).json(allOddsData);
   } catch (error) {
-    res.status(400).json({ message: 'error' })
+    res.status(400).json({ message: 'error' });
+  }
+}
+
+const updateResults = () => {
+
+}
+
+export default async function handler(req: any, res: any) {
+  if (req.query.key !== 'sharedKey') {
+    res.status(404).end();
+    return;
   }
 
-
+  updateOdds(res);
 }
 

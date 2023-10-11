@@ -54,7 +54,7 @@ export default function Home() {
             Bet Blitz
           </h1>
           <div className="flex flex-wrap justify-center">
-            {events.map((event: Event, index: number) => {
+            {events && events.map((event: Event, index: number) => {
               return (
                 <Card key={`event${index}`} className="bg-white w-80 m-8 shadow-xl relative">
                   <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
@@ -64,10 +64,10 @@ export default function Home() {
                     <div className="flex flex-row items-center">
                       <CardTitle className="text-md flex-grow">{event.teamOneName}</CardTitle>
                       {
-                        event.teamOneOdd &&
+                        event.teamOneOdds &&
                         <Button className="ml-4">
-                          {event.teamOneOdd > 0 ? "+" : ""}
-                          {event.teamOneOdd}
+                          {event.teamOneOdds > 0 ? "+" : ""}
+                          {event.teamOneOdds}
                         </Button>
                       }
                     </div>
@@ -81,10 +81,10 @@ export default function Home() {
                     <div className="flex flex-row items-center">
                       <CardTitle className="text-md flex-grow">{event.teamTwoName}</CardTitle>
                       {
-                        event.teamTwoOdd &&
+                        event.teamTwoOdds &&
                         <Button className="ml-4">
-                          {event.teamTwoOdd > 0 ? "+" : ""}
-                          {event.teamTwoOdd}
+                          {event.teamTwoOdds > 0 ? "+" : ""}
+                          {event.teamTwoOdds}
                         </Button>
                       }
                     </div>

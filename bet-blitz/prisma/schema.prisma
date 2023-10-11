@@ -20,15 +20,23 @@ model Example {
 }
 
 model Event {
-    id           Int       @id @default(autoincrement())
+    id           String    @id
     sportKey     String?
     commenceTime DateTime?
     homeTeam     String?
     awayTeam     String?
     teamOneName  String?
     teamTwoName  String?
-    teamOneOdd   Int?
-    teamTwoOdd   Int?
+    teamOneOdds  Int?
+    teamTwoOdds  Int?
+    result       Result
     createdAt    DateTime? @default(now())
     updatedAt    DateTime? @updatedAt
+}
+
+enum Result {
+    IN_PROGESS
+    HOME_TEAM
+    AWAY_TEAM
+    DRAW
 }
