@@ -7,15 +7,6 @@ import fs from 'fs/promises';
 //create prisma client
 const prisma = new PrismaClient();
 
-type SportData = {
-	key: string,
-	group: string,
-	title: string,
-	description: string,
-	active: boolean,
-	has_outrights: boolean
-}
-
 type ScoreData = {
 	id: string,
 	sport_key: string,

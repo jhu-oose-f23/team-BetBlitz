@@ -49,7 +49,7 @@ const updateOdds = async (sportKeys: string[]) => {
     // get the data from the odds api
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
     const response = await fetch(API_URL);
-    const odds: OddsData[] = await response.json();
+    const odds: OddsData[] = Array.from(await response.json());
 
     // Iterate over the data
     odds.forEach((curOdds: OddsData) => {
@@ -102,10 +102,10 @@ const getAllSports = async () => {
   return sportsKeys;
 }
 
-const updateResults = async () => {
-  const sportKeys = await getAllSports();
+const updateResults = async (sportKeys: string[]) => {
   sportKeys.forEach(async (sportKey: string) => {
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}`;
+    console.log(API_URL);
     const response = await fetch(API_URL);
     const scoresData: ScoreData[] = Array.from(await response.json());
 
@@ -137,9 +137,9 @@ const updateResults = async () => {
 }
 
 export default async function seedDatabase() {
-  getAllSports()
-    .then((sportKeys) => updateOdds(sportKeys))
-    .then(() => updateResults())
+  const sportKeys = await getAllSports();
+  updateOdds(sportKeys)
+    .then(() => updateResults(sportKeys))
     .then(() => console.log("Success"))
     .catch((e) => console.error("Error"));
 }

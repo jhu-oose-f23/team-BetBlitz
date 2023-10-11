@@ -12,7 +12,7 @@
     "update-types": "npx supabase gen types typescript --local --schema public > src/types/supabaseTypes.ts"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts",
     "seed-live": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts"
   },
   "dependencies": {
