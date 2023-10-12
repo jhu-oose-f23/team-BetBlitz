@@ -1,75 +1,107 @@
-import { Event, PrismaClient, Result } from '@prisma/client';
+import { PrismaClient, Result, Event } from '@prisma/client';
 
-//create prisma client
+// create prisma client
 const prisma = new PrismaClient();
 
-const updateOdds = async (res: any) => {
-  let allOddsData: Event[] = [];
-
-  // get the data from the odds api
-  const API_URL = `https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}`;
-  const response = await fetch(API_URL);
-  const data = await response.json();
-  const events = data;
-
-  //TODO: add error handling for the fetch request if api call fails
-
-  // if (response.ok) {
-  //   // Parse the JSON response
-  //   events = await response.json();
-  //   // Return the data in the response
-
-  // } else {
-  //   // Handle non-OK response (e.g., 404, 500, etc.)
-  //   res.status(response.status).json({ error: 'API request failed' });
-  // }
-
-  // Iterate over the data
-  events.forEach((event: any) => {
-    //if length of bookmakers is 0, then skip this event
-    if (event.bookmakers.length === 0) {
-      return;
-    }
-    const bookmaker = event.bookmakers[0];
-    const market = bookmaker.markets[0];
-    const outcome1 = market.outcomes[0];
-    const outcome2 = market.outcomes[1];
-
-    const oddsData: Event = {
-      sportKey: event.sport_key,
-      commenceTime: event.commence_time,
-      homeTeam: event.home_team,
-      awayTeam: event.away_team,
-      teamOneName: outcome1.name,
-      teamTwoName: outcome2.name,
-      teamOneOdds: outcome1.price,
-      teamTwoOdds: outcome2.price,
-      result: Result.IN_PROGESS
-    } as Event;
-
-    allOddsData.push(oddsData);
-  });
-
-  //try and clear the events table
-  try {
-    await prisma.event.deleteMany({});
-  } catch (error) {
-    res.status(400).json({ message: 'error' })
-  }
-
-  //try and post all the data to the database
-  try {
-    await prisma.event.createMany({
-      data: allOddsData
-    });
-    res.status(200).json(allOddsData);
-  } catch (error) {
-    res.status(400).json({ message: 'error' });
-  }
+type ScoreData = {
+  id: string,
+  sport_key: string,
+  sport_title: string,
+  commence_time: string,
+  completed: boolean,
+  home_team: string,
+  away_team: string,
+  scores: {
+    name: string,
+    score: string
+  }[] | null,
+  last_update: string | null
 }
 
-const updateResults = () => {
+type OddsData = {
+  id: string,
+  sport_key: string,
+  sport_title: string,
+  commence_time: string,
+  home_team: string,
+  away_team: string,
+  bookmakers: {
+    key: string,
+    title: string,
+    last_update: string,
+    markets: any[]
+  }[]
+}
 
+const updateOdds = async (sportKeys: string[]) => {
+  let events: Event[] = [];
+
+  for (let sportKey of sportKeys) {
+    // get the data from the odds api
+    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
+    const response = await fetch(API_URL);
+    const odds: OddsData[] = Array.from(await response.json());
+
+    // Iterate over the data
+    odds.forEach((curOdds: OddsData) => {
+      if (curOdds.bookmakers.length > 0) { // check if FanDuel has the odds
+        const bookmaker = curOdds.bookmakers[0];
+        const market = bookmaker!.markets[0];
+        const outcome1 = market.outcomes[0];
+        const outcome2 = market.outcomes[1];
+
+        const event = {
+          id: curOdds.id,
+          sportKey: curOdds.sport_key,
+          commenceTime: new Date(curOdds.commence_time),
+          homeTeam: curOdds.home_team,
+          awayTeam: curOdds.away_team,
+          teamOneName: outcome1.name,
+          teamTwoName: outcome2.name,
+          teamOneOdds: outcome1.price,
+          teamTwoOdds: outcome2.price,
+          result: Result.IN_PROGESS
+        } as Event;
+
+        events.push(event);
+      }
+    });
+  };
+}
+
+const updateResults = async (sportKeys: string[]) => {
+  for (const sportKey of sportKeys) {
+    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}&daysFrom=1`;
+    const response = await fetch(API_URL);
+    const scoresData: ScoreData[] = Array.from(await response.json());
+
+    if (scoresData) {
+      for (const scoreData of scoresData) {
+        if (scoreData.completed === true && scoreData.scores) {
+          const homeTeamScore: number = +scoreData.scores[0]!.score;
+          const awayTeamScore: number = +scoreData.scores[1]!.score;
+
+          let result: Result = Result.DRAW;
+          if (awayTeamScore > homeTeamScore) {
+            result = Result.AWAY_TEAM
+          } else if (awayTeamScore < homeTeamScore) {
+            result = Result.HOME_TEAM
+          }
+
+          try {
+            await prisma.event.update({
+              where: {
+                id: scoreData.id
+              },
+              data: {
+                result
+              }
+            });
+          } catch (e) { }
+        }
+      };
+    }
+  }
 }
 
 export default async function handler(req: any, res: any) {
@@ -78,6 +110,18 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  updateOdds(res);
-}
+  const sportKeys = [
+    "basketball_nba",
+    "baseball_mlb",
+    "americanfootball_nfl"
+  ];
 
+  try {
+    updateOdds(sportKeys)
+      .then(() => updateResults(sportKeys))
+      .then(res.status(200).end())
+  } catch (e) {
+    res.status(400).end();
+    return;
+  }
+}

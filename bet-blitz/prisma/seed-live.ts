@@ -3,15 +3,6 @@ import { PrismaClient, Result, Event } from '@prisma/client';
 // create prisma client
 const prisma = new PrismaClient();
 
-type SportData = {
-  key: string,
-  group: string,
-  title: string,
-  description: string,
-  active: boolean,
-  has_outrights: boolean
-}
-
 type ScoreData = {
   id: string,
   sport_key: string,
@@ -45,7 +36,7 @@ type OddsData = {
 const updateOdds = async (sportKeys: string[]) => {
   let events: Event[] = [];
 
-  sportKeys.forEach(async (sportKey: string) => {
+  for (let sportKey of sportKeys) {
     // get the data from the odds api
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
     const response = await fetch(API_URL);
@@ -75,7 +66,7 @@ const updateOdds = async (sportKeys: string[]) => {
         events.push(event);
       }
     });
-  })
+  };
 
   //TODO: add error handling for the fetch request if api call fails
 
@@ -96,24 +87,23 @@ const getAllSports = async () => {
   const sports = await response.json();
 
   let sportsKeys: string[] = []
-  sports.forEach((sport: SportData) => {
+  for (const sport of sports) {
     sportsKeys.push(sport.key);
-  });
+  };
   return sportsKeys;
 }
 
 const updateResults = async (sportKeys: string[]) => {
-  sportKeys.forEach(async (sportKey: string) => {
-    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}`;
-    console.log(API_URL);
+  for (const sportKey of sportKeys) {
+    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}&daysFrom=1`;
     const response = await fetch(API_URL);
     const scoresData: ScoreData[] = Array.from(await response.json());
 
     if (scoresData) {
-      scoresData.forEach(async (scoreData: ScoreData) => {
+      for (const scoreData of scoresData) {
         if (scoreData.completed === true && scoreData.scores) {
-          const awayTeamScore: number = +scoreData.scores[0]!.score;
-          const homeTeamScore: number = +scoreData.scores[1]!.score;
+          const homeTeamScore: number = +scoreData.scores[0]!.score;
+          const awayTeamScore: number = +scoreData.scores[1]!.score;
 
           let result: Result = Result.DRAW;
           if (awayTeamScore > homeTeamScore) {
@@ -122,22 +112,30 @@ const updateResults = async (sportKeys: string[]) => {
             result = Result.HOME_TEAM
           }
 
-          prisma.event.update({
-            where: {
-              id: scoreData.id
-            },
-            data: {
-              result
-            }
-          });
+          try {
+            await prisma.event.update({
+              where: {
+                id: scoreData.id
+              },
+              data: {
+                result
+              }
+            });
+          } catch (e) {}
         }
-      });
+      };
     }
-  })
+  }
 }
 
 export default async function seedDatabase() {
-  const sportKeys = await getAllSports();
+  // const sportKeys = await getAllSports();
+  const sportKeys = [
+    "basketball_nba",
+    "baseball_mlb",
+    "americanfootball_nfl"
+  ]; // do this to reduce API calls, otherwise use getAllSports()
+
   updateOdds(sportKeys)
     .then(() => updateResults(sportKeys))
     .then(() => console.log("Success"))
