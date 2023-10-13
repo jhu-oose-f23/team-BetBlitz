@@ -38,7 +38,7 @@ const updateOdds = async (sportKeys: string[]) => {
 
   for (let sportKey of sportKeys) {
     // get the data from the odds api
-    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
+    const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odd/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
     const response = await fetch(API_URL);
     const odds: OddsData[] = Array.from(await response.json());
 
@@ -79,8 +79,6 @@ const updateOdds = async (sportKeys: string[]) => {
       update: event
     })
   });
-
-  throw new Error("Here");
 }
 const updateResults = async (sportKeys: string[]) => {
   for (const sportKey of sportKeys) {
