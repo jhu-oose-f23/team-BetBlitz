@@ -1,0 +1,42 @@
+import React, { useState, useEffect } from "react";
+import ChirpForm from "~/components/chirp/ChirpForm";
+import ChirpMessage from "~/components/chirp/ChirpMessage";
+
+// import { Configuration, OpenAIApi } from "openai";
+// const configuration = new Configuration({
+//     organization: "org-JWFdAWgKGUkAnKNGZubG57jz",
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
+// const openai = new OpenAIApi(configuration);
+// const response = await openai.listEngines();
+
+export default function Chirp() {
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // Create a function to fetch data from the OpenAI endpoint
+    const fetchDataFromOpenAI = async () => {
+        try {
+            const response = await fetch("/api/generate");
+
+            if (response.ok) {
+                const data = await response.json();
+                setMessage(data.message); // Set the data as the state
+                setLoading(false);
+            } else {
+                console.error("Failed to fetch data from OpenAI");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // Call the fetchDataFromOpenAI function when the component mounts
+
+    return (
+        <div className="grid grid-cols-2 h-screen">
+            <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} />
+            <ChirpMessage message={message} loading={loading}/>
+        </div>
+    );
+}
