@@ -125,6 +125,8 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
+  res.status(405).end();
+
   const sportKeys = [
     "basketball_nba",
     "baseball_mlb",
