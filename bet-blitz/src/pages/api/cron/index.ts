@@ -79,6 +79,8 @@ const updateOdds = async (sportKeys: string[]) => {
       update: event
     })
   });
+
+  throw new Error("Here");
 }
 const updateResults = async (sportKeys: string[]) => {
   for (const sportKey of sportKeys) {
