@@ -104,16 +104,15 @@ const updateResults = async (sportKeys: string[]) => {
 
           console.log("Score", scoreData);
 
-          try {
-            await prisma.event.update({
-              where: {
-                id: scoreData.id
-              },
-              data: {
-                result
-              }
-            });
-          } catch (e) { }
+          await prisma.event.update({
+            where: {
+              id: scoreData.id
+            },
+            data: {
+              result
+            }
+          });
+
         }
       };
     }
@@ -134,7 +133,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     updateOdds(sportKeys)
-      .then(() => updateResults(sportKeys))
+      // .then(() => updateResults(sportKeys))
       .then(res.status(200).end())
   } catch (e) {
     res.status(400).end();
