@@ -78,7 +78,7 @@ const updateOdds = async (sportKeys: string[]) => {
       create: event,
       update: event
     })
-  })
+  });
 }
 
 const getAllSports = async () => {

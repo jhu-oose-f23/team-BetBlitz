@@ -67,6 +67,16 @@ const updateOdds = async (sportKeys: string[]) => {
       }
     });
   };
+
+  events.forEach(async (event: Event) => {
+    await prisma.event.upsert({
+      where: {
+        id: event.id
+      },
+      create: event,
+      update: event
+    })
+  });
 }
 
 const updateResults = async (sportKeys: string[]) => {
