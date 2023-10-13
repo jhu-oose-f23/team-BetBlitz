@@ -31,3 +31,4 @@ CREATE TABLE "Event" (
 
 -- CreateIndex
 CREATE INDEX "Example_name_idx" ON "Example"("name");
+

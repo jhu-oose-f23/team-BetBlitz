@@ -1,42 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("NEXT_PUBLIC_SUPABASE_URL")
+  provider = "postgresql"
+  url      = env("NEXT_PUBLIC_SUPABASE_URL")
 }
 
 model Example {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([name])
+  @@index([name])
 }
 
 model Event {
-    id           String    @id
-    sportKey     String?
-    commenceTime DateTime?
-    homeTeam     String?
-    awayTeam     String?
-    teamOneName  String?
-    teamTwoName  String?
-    teamOneOdds  Int?
-    teamTwoOdds  Int?
-    result       Result
-    createdAt    DateTime? @default(now())
-    updatedAt    DateTime? @updatedAt
+  id           String    @id
+  sportKey     String?
+  commenceTime DateTime?
+  homeTeam     String?
+  awayTeam     String?
+  teamOneName  String?
+  teamTwoName  String?
+  teamOneOdds  Int?
+  teamTwoOdds  Int?
+  result       Result
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 enum Result {
-    IN_PROGESS
-    HOME_TEAM
-    AWAY_TEAM
-    DRAW
+  IN_PROGESS
+  HOME_TEAM
+  AWAY_TEAM
+  DRAW
 }
