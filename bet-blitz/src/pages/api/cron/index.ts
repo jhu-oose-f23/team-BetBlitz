@@ -35,7 +35,7 @@ type OddsData = {
 
 export const revalidate = 0;
 
-const updateOdds = async (sportKeys: string[]) => {
+const updateOdds = async (sportKeys: string[], res: any) => {
   let events: Event[] = [];
 
   for (let sportKey of sportKeys) {
@@ -43,6 +43,8 @@ const updateOdds = async (sportKeys: string[]) => {
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}&bookmakers=fanduel`;
     const response = await fetch(API_URL);
     const odds: OddsData[] = Array.from(await response.json());
+
+    res.status(405).send(odds);
 
     // Iterate over the data
     odds.forEach((curOdds: OddsData) => {
@@ -125,8 +127,6 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  res.status(405).end();
-
   const sportKeys = [
     "basketball_nba",
     "baseball_mlb",
@@ -134,7 +134,7 @@ export default async function handler(req: any, res: any) {
   ];
 
   try {
-    updateOdds(sportKeys)
+    updateOdds(sportKeys, res)
       .then(() => updateResults(sportKeys))
       .then(res.status(200).end())
   } catch (e) {
