@@ -33,6 +33,8 @@ type OddsData = {
   }[]
 }
 
+export const revalidate = 0;
+
 const updateOdds = async (sportKeys: string[]) => {
   let events: Event[] = [];
 
