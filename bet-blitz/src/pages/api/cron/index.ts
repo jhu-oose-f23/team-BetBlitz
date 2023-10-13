@@ -33,8 +33,6 @@ type OddsData = {
   }[]
 }
 
-export const revalidate = 0;
-
 const updateOdds = async (sportKeys: string[]) => {
   let events: Event[] = [];
 
@@ -70,7 +68,7 @@ const updateOdds = async (sportKeys: string[]) => {
     });
   };
 
-  console.log("Events", events);
+  //TODO: add error handling for the fetch request if api call fails
 
   events.forEach(async (event: Event) => {
     await prisma.event.upsert({
@@ -82,7 +80,6 @@ const updateOdds = async (sportKeys: string[]) => {
     })
   });
 }
-
 const updateResults = async (sportKeys: string[]) => {
   for (const sportKey of sportKeys) {
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}&daysFrom=1`;
@@ -102,22 +99,22 @@ const updateResults = async (sportKeys: string[]) => {
             result = Result.HOME_TEAM
           }
 
-          console.log("Score", scoreData);
-
-          await prisma.event.update({
-            where: {
-              id: scoreData.id
-            },
-            data: {
-              result
-            }
-          });
-
+          try {
+            await prisma.event.update({
+              where: {
+                id: scoreData.id
+              },
+              data: {
+                result
+              }
+            });
+          } catch (e) {}
         }
       };
     }
   }
 }
+
 
 export default async function handler(req: any, res: any) {
   if (req.query.key !== 'sharedKey') {
