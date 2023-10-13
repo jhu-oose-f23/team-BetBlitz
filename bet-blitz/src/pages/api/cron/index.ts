@@ -68,6 +68,8 @@ const updateOdds = async (sportKeys: string[]) => {
     });
   };
 
+  console.log("Events", events);
+
   events.forEach(async (event: Event) => {
     await prisma.event.upsert({
       where: {
@@ -97,6 +99,8 @@ const updateResults = async (sportKeys: string[]) => {
           } else if (awayTeamScore < homeTeamScore) {
             result = Result.HOME_TEAM
           }
+
+          console.log("Score", scoreData);
 
           try {
             await prisma.event.update({
