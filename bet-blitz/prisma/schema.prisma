@@ -17,7 +17,7 @@ model Example {
 }
 
 model Event {
-  id           String    @id
+  id           String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   sportKey     String?
   commenceTime DateTime?
   homeTeam     String?
@@ -29,112 +29,109 @@ model Event {
   result       Result
   createdAt    DateTime? @default(now())
   updatedAt    DateTime? @updatedAt
+  Bet          Bet[]
+  BetBoard     BetBoard?
 }
 
 model Bettor {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    name    String
-    email   String
-    bets    Bet[]
-    leagues  LeagueBettorsCurrency[]
-    matchUp1 MatchUp[] @relation(name: "Bettor1")
-    matchUp2 MatchUp[] @relation(name: "Bettor2")
-    record  LeagueRecord[]
-    privateCurrency Currency    @relation(fields: [privateCurrencyId], references: [id])
-    privateCurrencyId   String  @db.Uuid @unique
+  id                String                  @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String
+  bets              Bet[]
+  leagues           LeagueBettorsCurrency[]
+  matchUp1          MatchUp[]               @relation(name: "Bettor1")
+  matchUp2          MatchUp[]               @relation(name: "Bettor2")
+  record            LeagueRecord[]
+  privateCurrency   Currency                @relation(fields: [privateCurrencyId], references: [id])
+  privateCurrencyId String                  @unique @db.Uuid
 }
 
 model Currency {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    amount  Float?
-    user    LeagueBettorsCurrency[]
-    owner   Bettor?
+  id     String                  @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  amount Float?
+  user   LeagueBettorsCurrency[]
+  owner  Bettor?
 }
 
 model Bet {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    bettor  Bettor      @relation(fields: [bettorId], references: [id])
-    bettorId    String  @db.Uuid
-    createdAt DateTime  @default(dbgenerated("now()"))
-    game    Event       @relation(fields: [gameId], references: [id])
-    gameId  String      @db.Uuid
-    amount  Float
-    league League?       @relation(fields: [leagueId], references: [id])
-    leagueId    String?  @db.Uuid
-
+  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bettor    Bettor   @relation(fields: [bettorId], references: [id])
+  bettorId  String   @db.Uuid
+  game      Event    @relation(fields: [gameId], references: [id])
+  gameId    String   @db.Uuid
+  amount    Float
+  league    League?  @relation(fields: [leagueId], references: [id])
+  leagueId  String?  @db.Uuid
+  createdAt DateTime @default(dbgenerated("now()"))
 }
 
 model League {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    bettors LeagueBettorsCurrency[]
-    name    String
-    schedule Schedule?   @relation(fields: [scheduleId], references: [id])
-    scheduleId  String?  @db.Uuid @unique
-    bets Bet[]
-    record LeagueRecord[]
-
+  id         String                  @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bettors    LeagueBettorsCurrency[]
+  name       String
+  schedule   Schedule?               @relation(fields: [scheduleId], references: [id])
+  scheduleId String?                 @unique @db.Uuid
+  bets       Bet[]
+  record     LeagueRecord[]
 }
 
 model Schedule {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    matchUpWeek MatchUpWeek[]
-    league League?
-    currentWeek Int
+  id          String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  matchUpWeek MatchUpWeek[]
+  league      League?
+  currentWeek Int
 }
 
 model MatchUpWeek {
-    id      String      @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    schedule    Schedule    @relation(fields: [scheduleId], references: [id])
-    scheduleId  String  @db.Uuid
-    matchUps MatchUp[]
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
+  scheduleId String    @db.Uuid
+  matchUps   MatchUp[]
 }
 
 model MatchUp {
-    id      String      @id @unique @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-    matchUpWeek MatchUpWeek @relation(fields: [matchUpWeekId], references: [id])
-    matchUpWeekId   String  @db.Uuid
-    bettor1 Bettor      @relation(fields: [bettorId1], references: [id], name: "Bettor1")
-    bettorId1    String  @db.Uuid
-    bettor2 Bettor      @relation(fields: [bettorId2], references: [id], name: "Bettor2")
-    bettorId2   String  @db.Uuid
-    bettor1Score    Float?
-    bettor2Score    Float?
-
+  id            String      @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  matchUpWeek   MatchUpWeek @relation(fields: [matchUpWeekId], references: [id])
+  matchUpWeekId String      @db.Uuid
+  bettor1       Bettor      @relation(fields: [bettorId1], references: [id], name: "Bettor1")
+  bettorId1     String      @db.Uuid
+  bettor2       Bettor      @relation(fields: [bettorId2], references: [id], name: "Bettor2")
+  bettorId2     String      @db.Uuid
+  bettor1Score  Float?
+  bettor2Score  Float?
 }
 
 model BetBoard {
-    game    Event?      @relation(fields: [gameId], references: [id])
-    gameId   String     @id @unique @db.Uuid
+  game   Event? @relation(fields: [gameId], references: [id])
+  gameId String @id @unique @db.Uuid
 }
 
 model LeagueBettorsCurrency {
-    bettor      Bettor      @relation(fields: [bettorId], references: [id])
-    bettorId    String      @db.Uuid @unique
-    league      League      @relation(fields: [leagueId], references: [id])
-    leagueId    String      @db.Uuid @unique
-    currency    Currency    @relation(fields: [currencyId], references: [id])
-    currencyId  String      @db.Uuid @unique
+  bettor     Bettor   @relation(fields: [bettorId], references: [id])
+  bettorId   String   @unique @db.Uuid
+  league     League   @relation(fields: [leagueId], references: [id])
+  leagueId   String   @unique @db.Uuid
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId String   @unique @db.Uuid
 
-    @@id([bettorId, leagueId])
+  @@id([bettorId, leagueId])
 }
 
 model LeagueRecord {
-    bettor Bettor @relation(fields: [bettorId], references: [id])
-    bettorId    String  @db.Uuid
-    leauge League   @relation(fields: [leagueId], references: [id])
-    leagueId    String  @db.Uuid
-    win    Int
-    loss  Int
-    draw    Int
+  bettor   Bettor @relation(fields: [bettorId], references: [id])
+  bettorId String @db.Uuid
+  leauge   League @relation(fields: [leagueId], references: [id])
+  leagueId String @db.Uuid
+  win      Int
+  loss     Int
+  draw     Int
 
-    @@id([bettorId, leagueId])
+  @@id([bettorId, leagueId])
 }
 
 enum Result {
-    IN_PROGESS
-    HOME_TEAM
-    AWAY_TEAM
-    DRAW
+  IN_PROGESS
+  HOME_TEAM
+  AWAY_TEAM
+  DRAW
 }
-
-
