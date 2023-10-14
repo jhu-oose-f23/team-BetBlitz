@@ -8,6 +8,7 @@ import { Badge } from "~/components/ui/badge";
 
 import {supabaseClient} from "~/utils/supabaseClient";
 import {useAuth} from "@clerk/nextjs"
+import { createClient } from "@supabase/supabase-js";
 
 const dateToString = (date: Date) => {
   date = new Date(date);
@@ -35,12 +36,12 @@ export default function allOdds() {
 
   useEffect(() => {
     const fetch = async () => {
-      // const supabase = createClient(
-      //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-      //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      // );
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
       const token = await getToken({template: "supabase"});
-      const supabase = await supabaseClient(token);
+      // const supabase = await supabaseClient(token);
       const { data, error } = await supabase.from("Event").select();
       setEvents(data as Event[]);
     }
