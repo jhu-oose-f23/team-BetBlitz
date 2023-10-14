@@ -115,7 +115,6 @@ const updateResults = async (sportKeys: string[]) => {
   }
 }
 
-
 export default async function handler(req: any, res: any) {
   if (req.query.key !== 'sharedKey') {
     res.status(404).end();
