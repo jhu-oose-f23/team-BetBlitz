@@ -30,23 +30,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <!-- <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+  </a> -->
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">BetBlitz</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Fantasy Sports Betting app for everyone to have a blast!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <!-- <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
     ·
     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a> -->
   </p>
 </div>
 
@@ -78,21 +78,14 @@
   </ol>
 </details>
 
-
+## Link to Deployment
+https://team-bet-blitz-olmm5asvp-bet-blitz.vercel.app/
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
+Rather than wagering real money, BetBlitz users can use our virtual currency, "BlitzBux", to simulate sports betting. Join a league with your friends, and compete head to head to see who can win the most BlitzBux! This maintains the fun and competition while alleviating the risk associated with gambling. Moreover, because BetBlitz uses a virtual currency, it would be legal in all states. Allowing you to play with your friends who live where gambling isn't yet legal!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -100,16 +93,14 @@ Of course, no one template will serve all projects since your needs may be diffe
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Vercel][Vercel.com]][Vercel-url]
+* [![Prisma][Prisma.io]][Prisma-url]
+* [![Supabase][Supabase.com]][Supabase-url]
+* [![TailwindCSS][Tailwindcss.com]][Tailwind-url]
+* [![ShadCN][ShadCN.com]][ShadCN-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -183,24 +174,6 @@ _Below is an example of how you can instruct your audience on installing and set
   npx prisma init
   ```
 
-### Database Migration
-
-  ```sh
-  npx prisma db push
-  ```
-  ```sh
-  npx prisma migrate dev --name database_init
-  ```
-
-### Database Updating
-
-  ```sh
- npx prisma migrate deploy
-  ```
-  ```sh
-  npx prisma migrate dev --name <<prompt message>>
-  ```
-
 ### DB Seed Generation
 
   ```sh
@@ -218,8 +191,6 @@ _Below is an example of how you can instruct your audience on installing and set
   ```sh
   npx supabase stop --backup
   ```
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -314,15 +285,13 @@ Use this space to list resources you find helpful and would like to give credit 
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[Vercel.com]: https://img.shields.io/badge/Vercel-black?style=for-the-badge&logo=vercel
+[Vercel-url]: https://vercel.com/
+[Prisma.io]: https://img.shields.io/badge/Prisma-mediumpurple?style=for-the-badge&logo=prisma
+[Prisma-url]: https://www.prisma.io/
+[Supabase.com]: https://img.shields.io/badge/Supabase-grey?style=for-the-badge&logo=supabase
+[Supabase-url]: https://supabase.com/ 
+[Tailwindcss.com]: https://img.shields.io/badge/Tailwind_CSS-grey?style=for-the-badge&logo=tailwindcss
+[Tailwind-url]: https://tailwindcss.com/
+[ShadCN.com]: https://img.shields.io/badge/%40ShadCN-black?style=for-the-badge
+[ShadCN-url]: https://ui.shadcn.com/
