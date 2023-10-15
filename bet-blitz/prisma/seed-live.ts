@@ -1,37 +1,39 @@
-import { PrismaClient, Result, Event } from '@prisma/client';
+import { PrismaClient, Result, Event } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
 
 type ScoreData = {
-  id: string,
-  sport_key: string,
-  sport_title: string,
-  commence_time: string,
-  completed: boolean,
-  home_team: string,
-  away_team: string,
-  scores: {
-    name: string,
-    score: string
-  }[] | null,
-  last_update: string | null
-}
+  id: string;
+  sport_key: string;
+  sport_title: string;
+  commence_time: string;
+  completed: boolean;
+  home_team: string;
+  away_team: string;
+  scores:
+    | {
+        name: string;
+        score: string;
+      }[]
+    | null;
+  last_update: string | null;
+};
 
 type OddsData = {
-  id: string,
-  sport_key: string,
-  sport_title: string,
-  commence_time: string,
-  home_team: string,
-  away_team: string,
+  id: string;
+  sport_key: string;
+  sport_title: string;
+  commence_time: string;
+  home_team: string;
+  away_team: string;
   bookmakers: {
-    key: string,
-    title: string,
-    last_update: string,
-    markets: any[]
-  }[]
-}
+    key: string;
+    title: string;
+    last_update: string;
+    markets: any[];
+  }[];
+};
 
 const updateOdds = async (sportKeys: string[]) => {
   let events: Event[] = [];
@@ -44,7 +46,8 @@ const updateOdds = async (sportKeys: string[]) => {
 
     // Iterate over the data
     odds.forEach((curOdds: OddsData) => {
-      if (curOdds.bookmakers.length > 0) { // check if FanDuel has the odds
+      if (curOdds.bookmakers.length > 0) {
+        // check if FanDuel has the odds
         const bookmaker = curOdds.bookmakers[0];
         const market = bookmaker!.markets[0];
         const outcome1 = market.outcomes[0];
@@ -60,38 +63,38 @@ const updateOdds = async (sportKeys: string[]) => {
           teamTwoName: outcome2.name,
           teamOneOdds: outcome1.price,
           teamTwoOdds: outcome2.price,
-          result: Result.IN_PROGESS
+          result: Result.IN_PROGESS,
         } as Event;
 
         events.push(event);
       }
     });
-  };
+  }
 
   //TODO: add error handling for the fetch request if api call fails
 
   events.forEach(async (event: Event) => {
     await prisma.event.upsert({
       where: {
-        id: event.id
+        id: event.id,
       },
       create: event,
-      update: event
-    })
+      update: event,
+    });
   });
-}
+};
 
 const getAllSports = async () => {
   const API_URL = `https://api.the-odds-api.com/v4/sports/?apiKey=${process.env.ODDS_API_KEY}`;
   const response = await fetch(API_URL);
   const sports = await response.json();
 
-  let sportsKeys: string[] = []
+  let sportsKeys: string[] = [];
   for (const sport of sports) {
     sportsKeys.push(sport.key);
-  };
+  }
   return sportsKeys;
-}
+};
 
 const updateResults = async (sportKeys: string[]) => {
   for (const sportKey of sportKeys) {
@@ -107,34 +110,30 @@ const updateResults = async (sportKeys: string[]) => {
 
           let result: Result = Result.DRAW;
           if (awayTeamScore > homeTeamScore) {
-            result = Result.AWAY_TEAM
+            result = Result.AWAY_TEAM;
           } else if (awayTeamScore < homeTeamScore) {
-            result = Result.HOME_TEAM
+            result = Result.HOME_TEAM;
           }
 
           try {
             await prisma.event.update({
               where: {
-                id: scoreData.id
+                id: scoreData.id,
               },
               data: {
-                result
-              }
+                result,
+              },
             });
           } catch (e) {}
         }
-      };
+      }
     }
   }
-}
+};
 
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();
-  const sportKeys = [
-    "basketball_nba",
-    "baseball_mlb",
-    "americanfootball_nfl"
-  ]; // do this to reduce API calls, otherwise use getAllSports()
+  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
 
   updateOdds(sportKeys)
     .then(() => updateResults(sportKeys))

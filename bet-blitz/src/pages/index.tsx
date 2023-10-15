@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 
-import { useAuth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs";
 
 export default function Home() {
   const { userId, getToken } = useAuth();
@@ -13,14 +13,14 @@ export default function Home() {
       //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       // );
       const token = await getToken({ template: "supabase" });
-      console.log("token")
-    }
+      console.log("token");
+    };
     fetch();
   }, []);
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <div className="flex min-h-screen flex-col items-center justify-center py-2">
         Logged in as {userId}
       </div>
     </>

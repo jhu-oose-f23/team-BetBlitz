@@ -18,11 +18,11 @@ const config = {
     defaultLocale: "en",
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true
-  }
+    ignoreBuildErrors: true,
+  },
 };
 
 export default config;

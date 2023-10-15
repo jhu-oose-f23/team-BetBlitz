@@ -11,10 +11,10 @@ import { Navbar } from "~/components/ui/navbar";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <div>
-    <ClerkProvider {...pageProps}>
-      <Navbar />
-      <Component {...pageProps} />
-    </ClerkProvider>
+      <ClerkProvider {...pageProps}>
+        <Navbar />
+        <Component {...pageProps} />
+      </ClerkProvider>
     </div>
   );
 }
