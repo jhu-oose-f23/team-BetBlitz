@@ -1,6 +1,5 @@
 import Head from "next/head";
 
-import { createClient } from '@supabase/supabase-js'
 import { useEffect, useState } from "react";
 import { Event } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
@@ -23,6 +22,7 @@ import {
 
 import {supabaseClient} from "~/utils/supabaseClient";
 import {useAuth} from "@clerk/nextjs"
+import { createClient } from "@supabase/supabase-js";
 
 const dateToString = (date: Date) => {
   date = new Date(date);
@@ -50,16 +50,12 @@ export default function allOdds() {
 
   useEffect(() => {
     const fetch = async () => {
-      // const supabase = createClient(
-      //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-      //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      // );
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
       const token = await getToken({template: "supabase"});
-      console.log("token")
-      console.log(token);
-
-
-      const supabase = await supabaseClient(token);
+      // const supabase = await supabaseClient(token);
       const { data, error } = await supabase.from("Event").select();
       console.log(data)
       setEvents(data as Event[]);
@@ -81,7 +77,7 @@ export default function allOdds() {
             Bet Blitz
           </h1>
           <div className="flex flex-wrap justify-center">
-            {events.map((event: Event, index: number) => {
+            {events && events.map((event: Event, index: number) => {
               return (
                 <Card key={`event${index}`} className="bg-white w-80 m-8 shadow-xl relative">
                   <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
@@ -119,6 +115,10 @@ export default function allOdds() {
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
+                        <Button className="ml-4">
+                          {event.teamOneOdds > 0 ? "+" : ""}
+                          {event.teamOneOdds}
+                        </Button>
                       }
                     </div>
 
