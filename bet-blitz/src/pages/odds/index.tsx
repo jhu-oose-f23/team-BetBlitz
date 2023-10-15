@@ -6,8 +6,20 @@ import { Event } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
 import { UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "~/components/ui/dialog"
 
 import {supabaseClient} from "~/utils/supabaseClient";
 import {useAuth} from "@clerk/nextjs"
@@ -49,6 +61,7 @@ export default function allOdds() {
 
       const supabase = await supabaseClient(token);
       const { data, error } = await supabase.from("Event").select();
+      console.log(data)
       setEvents(data as Event[]);
     }
     fetch();
@@ -78,11 +91,34 @@ export default function allOdds() {
                     <div className="flex flex-row items-center">
                       <CardTitle className="text-md flex-grow">{event.teamOneName}</CardTitle>
                       {
-                        event.teamOneOdd &&
-                        <Button className="ml-4">
-                          {event.teamOneOdd > 0 ? "+" : ""}
-                          {event.teamOneOdd}
-                        </Button>
+                        event.teamOneOdds &&
+                        <Dialog>
+                          <DialogTrigger>
+                            <Button className="ml-4">
+                              {event.teamOneOdds > 0 ? "+" : ""}
+                              {event.teamOneOdds}
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Bet on {event.teamOneName}</DialogTitle>
+                              <DialogDescription>How many BlitzBux would you like to bet?</DialogDescription>
+                            </DialogHeader>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="name" className="text-right">Bet Amount</Label>
+                              <Input
+                              id="betAmount"
+                              defaultValue="100"
+                              className="col-span-3"
+                              />
+                            </div>
+                            <DialogFooter>
+                              <DialogClose>
+                                <Button type="submit">Place bet</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       }
                     </div>
 
@@ -95,11 +131,34 @@ export default function allOdds() {
                     <div className="flex flex-row items-center">
                       <CardTitle className="text-md flex-grow">{event.teamTwoName}</CardTitle>
                       {
-                        event.teamTwoOdd &&
-                        <Button className="ml-4">
-                          {event.teamTwoOdd > 0 ? "+" : ""}
-                          {event.teamTwoOdd}
-                        </Button>
+                        event.teamTwoOdds &&
+                        <Dialog>
+                          <DialogTrigger>
+                            <Button className="ml-4">
+                              {event.teamTwoOdds > 0 ? "+" : ""}
+                              {event.teamTwoOdds}
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Bet on {event.teamTwoName}</DialogTitle>
+                              <DialogDescription>How many BlitzBux would you like to bet?</DialogDescription>
+                            </DialogHeader>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Bet Amount</Label>
+                            <Input
+                              id="betAmount"
+                              defaultValue="100"
+                              className="col-span-3"
+                            />
+                            </div>
+                            <DialogFooter>
+                              <DialogClose>
+                              <Button type="submit">Place bet</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       }
                     </div>
                   </CardHeader>
