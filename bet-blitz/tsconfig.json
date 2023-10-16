@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
-, "seeding/seed.js"  ],
+    "**/*.mjs",
+    "seeding/seed.js"
+  ],
   "exclude": ["node_modules"]
 }

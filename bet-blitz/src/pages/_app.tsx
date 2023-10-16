@@ -8,12 +8,16 @@ import { Toaster } from "~/components/ui/toaster"
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { AppProps } from "next/app";
+import { Navbar } from "~/components/ui/navbar";
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ClerkProvider {...pageProps}>
-      <Component {...pageProps} />
-      <Toaster />
-    </ClerkProvider>
+    <div>
+      <ClerkProvider {...pageProps}>
+        <Navbar />
+        <Component {...pageProps} />
+      </ClerkProvider>
+    </div>
   );
 }
 

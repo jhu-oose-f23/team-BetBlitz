@@ -1,12 +1,19 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 //create prisma client
 const prisma = new PrismaClient();
 
-
 export default async function handler(req: any, res: any) {
-
-  let allOddData: { sportKey: any; commenceTime: any; homeTeam: any; awayTeam: any; teamOneName: any; teamTwoName: any; teamOneOdd: any; teamTwoOdd: any; }[] = [];
+  let allOddData: {
+    sportKey: any;
+    commenceTime: any;
+    homeTeam: any;
+    awayTeam: any;
+    teamOneName: any;
+    teamTwoName: any;
+    teamOneOdd: any;
+    teamTwoOdd: any;
+  }[] = [];
 
   //get the data from the odds api
   const API_URL = `https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=${process.env.ODDS_API_KEY}`;
@@ -41,30 +48,26 @@ export default async function handler(req: any, res: any) {
       teamOneName: outcome1.name,
       teamTwoName: outcome2.name,
       teamOneOdd: outcome1.price,
-      teamTwoOdd: outcome2.price
-    }
+      teamTwoOdd: outcome2.price,
+    };
     allOddData.push(oddData);
   });
 
   //try and clear the events table
   try {
-    const deleteEvents = await prisma.event.deleteMany({})
+    const deleteEvents = await prisma.event.deleteMany({});
   } catch (error) {
-    res.status(400).json({ message: 'error' })
+    res.status(400).json({ message: "error" });
   }
 
   //try and post all the data to the database
   try {
-
     const newOdds = await prisma.event.createMany({
-      data: allOddData
-    })
+      data: allOddData,
+    });
 
-    res.status(200).json({ message: 'success' })
+    res.status(200).json({ message: "success" });
   } catch (error) {
-    res.status(400).json({ message: 'error' })
+    res.status(400).json({ message: "error" });
   }
-
-
 }
-
