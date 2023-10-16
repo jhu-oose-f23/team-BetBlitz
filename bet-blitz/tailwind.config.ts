@@ -65,28 +65,28 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
-        "typing": {
+        typing: {
           "0%": {
             width: "0%",
-            visibility: "hidden"
+            visibility: "hidden",
           },
           "100%": {
-            width: "100%"
-          }  
+            width: "100%",
+          },
         },
-        "blink": {
+        blink: {
           "50%": {
-            borderColor: "transparent"
+            borderColor: "transparent",
           },
           "100%": {
-            borderColor: "white"
-          }  
+            borderColor: "white",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "typing": "typing 2s steps(20) alternate, blink .7s infinite",
+        typing: "typing 2s steps(20) alternate, blink .7s infinite",
       },
     },
   },

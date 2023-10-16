@@ -1,21 +1,26 @@
-import React, { useState, useRef } from 'react';
-import { Card } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { toast } from "~/components/ui/use-toast"
+import React, { useState, useRef } from "react";
+import { Card } from "~/components/ui/card";
+import { Button } from "~/components/ui/button";
+import { toast } from "~/components/ui/use-toast";
 
-const loaderSkeleton =
-  <div className="flex flex-col rounded shadow-md sm:w-80 animate-pulse h-fit">
-    <div className="flex-1 px-4 py-8 space-y-4 sm:p-8 bg-gray-400">
-      <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="flex items-center justify-center text-gray-500 font-extralight text-center w-full h-12 rounded bg-gray-300">Generating your message, please do not refresh.</div>
-      <div className="flex items-center justify-center text-gray-500 font-extralight text-center w-full h-12 rounded bg-gray-300">This may take awhile</div>
-      <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="w-3/4 h-12 rounded bg-gray-300"></div>
+const loaderSkeleton = (
+  <div className="flex h-fit animate-pulse flex-col rounded shadow-md sm:w-80">
+    <div className="flex-1 space-y-4 bg-gray-400 px-4 py-8 sm:p-8">
+      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="flex h-12 w-full items-center justify-center rounded bg-gray-300 text-center font-extralight text-gray-500">
+        Generating your message, please do not refresh.
+      </div>
+      <div className="flex h-12 w-full items-center justify-center rounded bg-gray-300 text-center font-extralight text-gray-500">
+        This may take awhile
+      </div>
+      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="h-12 w-3/4 rounded bg-gray-300"></div>
     </div>
   </div>
+);
 
 interface MyComponentProps {
   message: string;
@@ -23,7 +28,7 @@ interface MyComponentProps {
 }
 
 const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
-  const [displayText, setDisplayText] = useState('');
+  const [displayText, setDisplayText] = useState("");
   const textRef = useRef(null);
 
   //   const copyToClipboard = () => {
@@ -53,7 +58,7 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
         </pre>
       ),
     });
-  }
+  };
 
   // Start the typewriter animation when the component is mounted
   React.useEffect(() => {
@@ -62,7 +67,7 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-full'>
+      <div className="flex h-full items-center justify-center">
         {loaderSkeleton}
       </div>
     );
@@ -70,37 +75,37 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
 
   if (message === "") {
     return (
-      <div className='flex items-center justify-center h-full text-3xl font-extrabold'>
-        <div className='w-2/3 text-center'>
-          Fill out the form on the left and click submit to generate a message that lets your friend know they are bad at sports betting.
+      <div className="flex h-full items-center justify-center text-3xl font-extrabold">
+        <div className="w-2/3 text-center">
+          Fill out the form on the left and click submit to generate a message
+          that lets your friend know they are bad at sports betting.
         </div>
       </div>
     );
   }
 
   return (
-    <div className='flex items-center justify-center h-full'>
-      {
-        loading ?
-          loaderSkeleton :
-          <Card className='bg-gray-300 p-4 w-2/3'>
+    <div className="flex h-full items-center justify-center">
+      {loading ? (
+        loaderSkeleton
+      ) : (
+        <Card className="w-2/3 bg-gray-300 p-4">
+          <div className="flex flex-row-reverse">
+            <Button onClick={handleCopy}>Copy</Button>
+          </div>
 
-            <div className='flex flex-row-reverse'>
-              <Button
-                onClick={handleCopy}
-              >Copy</Button>
-            </div>
-
-            <Card className='bg-black text-white p-4 mt-2 font-light'>
-              {message}
-            </Card>
+          <Card className="mt-2 bg-black p-4 font-light text-white">
+            {message}
           </Card>
-      }
+        </Card>
+      )}
     </div>
   );
 };
 
 export default ChirpMessage;
 
-{/* <p className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</p>
-        <h1 className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</h1> */}
+{
+  /* <p className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</p>
+        <h1 className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</h1> */
+}
