@@ -1,9 +1,8 @@
 import { UserButton } from "@clerk/nextjs";
-import { Badge } from "~/components/ui/badge";
 
 export function Navbar() {
   return (
-    <nav className="absolute sticky top-0 z-40 bg-black shadow-xl">
+    <nav className="sticky top-0 z-40 bg-black shadow-xl">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex flex-shrink-0 items-center">
