@@ -1,34 +1,137 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("NEXT_PUBLIC_SUPABASE_URL")
+  provider = "postgresql"
+  url      = env("NEXT_PUBLIC_SUPABASE_URL")
 }
 
 model Example {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([name])
+  @@index([name])
 }
 
 model Event {
-    id           Int       @id @default(autoincrement())
-    sportKey     String?
-    commenceTime DateTime?
-    homeTeam     String?
-    awayTeam     String?
-    teamOneName  String?
-    teamTwoName  String?
-    teamOneOdd   Int?
-    teamTwoOdd   Int?
-    createdAt    DateTime? @default(now())
-    updatedAt    DateTime? @updatedAt
+  sportKey     String?
+  commenceTime DateTime?
+  homeTeam     String?
+  awayTeam     String?
+  teamOneName  String?
+  teamTwoName  String?
+  teamOneOdds  Int?
+  teamTwoOdds  Int?
+  result       Result
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
+  id           String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  Bet          Bet[]
+  BetBoard     BetBoard?
+}
+
+model Bettor {
+  id                String                 @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String
+  privateCurrencyId String                 @unique @db.Uuid
+  bets              Bet[]
+  privateCurrency   Currency               @relation(fields: [privateCurrencyId], references: [id])
+  leagues           LeagueBettorsCurrency?
+  record            LeagueRecord[]
+  matchUp1          MatchUp[]              @relation("Bettor1")
+  matchUp2          MatchUp[]              @relation("Bettor2")
+}
+
+model Currency {
+  id     String                 @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  amount Float?
+  owner  Bettor?
+  user   LeagueBettorsCurrency?
+}
+
+model Bet {
+  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bettorId  String   @db.Uuid
+  gameId    String   @db.Uuid
+  amount    Float
+  leagueId  String?  @db.Uuid
+  createdAt DateTime @default(now())
+  bettor    Bettor   @relation(fields: [bettorId], references: [id])
+  game      Event    @relation(fields: [gameId], references: [id])
+  league    League?  @relation(fields: [leagueId], references: [id])
+}
+
+model League {
+  id         String                 @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  scheduleId String?                @unique @db.Uuid
+  bets       Bet[]
+  schedule   Schedule?              @relation(fields: [scheduleId], references: [id])
+  bettors    LeagueBettorsCurrency?
+  record     LeagueRecord[]
+}
+
+model Schedule {
+  id          String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  currentWeek Int
+  league      League?
+  matchUpWeek MatchUpWeek[]
+}
+
+model MatchUpWeek {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scheduleId String    @db.Uuid
+  matchUps   MatchUp[]
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
+}
+
+model MatchUp {
+  id            String      @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  matchUpWeekId String      @db.Uuid
+  bettorId1     String      @db.Uuid
+  bettorId2     String      @db.Uuid
+  bettor1Score  Float?
+  bettor2Score  Float?
+  bettor1       Bettor      @relation("Bettor1", fields: [bettorId1], references: [id])
+  bettor2       Bettor      @relation("Bettor2", fields: [bettorId2], references: [id])
+  matchUpWeek   MatchUpWeek @relation(fields: [matchUpWeekId], references: [id])
+}
+
+model BetBoard {
+  gameId String @id @unique @db.Uuid
+  game   Event  @relation(fields: [gameId], references: [id])
+}
+
+model LeagueBettorsCurrency {
+  bettorId   String   @unique @db.Uuid
+  leagueId   String   @unique @db.Uuid
+  currencyId String   @unique @db.Uuid
+  bettor     Bettor   @relation(fields: [bettorId], references: [id])
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  league     League   @relation(fields: [leagueId], references: [id])
+
+  @@id([bettorId, leagueId])
+}
+
+model LeagueRecord {
+  bettorId String @db.Uuid
+  leagueId String @db.Uuid
+  win      Int
+  loss     Int
+  draw     Int
+  bettor   Bettor @relation(fields: [bettorId], references: [id])
+  leauge   League @relation(fields: [leagueId], references: [id])
+
+  @@id([bettorId, leagueId])
+}
+
+enum Result {
+  IN_PROGESS
+  HOME_TEAM
+  AWAY_TEAM
+  DRAW
 }

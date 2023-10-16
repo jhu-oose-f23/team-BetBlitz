@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Result" AS ENUM ('IN_PROGESS', 'HOME_TEAM', 'AWAY_TEAM', 'DRAW');
+
 -- CreateTable
 CREATE TABLE "Example" (
     "id" SERIAL NOT NULL,
@@ -10,15 +13,16 @@ CREATE TABLE "Example" (
 
 -- CreateTable
 CREATE TABLE "Event" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "sportKey" TEXT,
     "commenceTime" TIMESTAMP(3),
     "homeTeam" TEXT,
     "awayTeam" TEXT,
     "teamOneName" TEXT,
     "teamTwoName" TEXT,
-    "teamOneOdd" INTEGER,
-    "teamTwoOdd" INTEGER,
+    "teamOneOdds" INTEGER,
+    "teamTwoOdds" INTEGER,
+    "result" "Result" NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
 
@@ -27,3 +31,4 @@ CREATE TABLE "Event" (
 
 -- CreateIndex
 CREATE INDEX "Example_name_idx" ON "Example"("name");
+
