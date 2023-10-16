@@ -33,9 +33,8 @@
   <!-- <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
-
   <h3 align="center">BetBlitz</h3>
-
+ 
   <p align="center">
     Fantasy Sports Betting app for everyone to have a blast!
     <br />
@@ -109,8 +108,9 @@ Rather than wagering real money, BetBlitz users can use our virtual currency, "B
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To start running the database locally, run the following commands:
+supabase start
+npm run db:push
 
 ### Prerequisites
 

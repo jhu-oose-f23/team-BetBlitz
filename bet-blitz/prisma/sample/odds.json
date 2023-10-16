@@ -1,0 +1,95 @@
+[
+  {
+    "id": "b9fc1fe90e4b065a06d9dc9bceb3bbf9",
+    "sport_key": "baseball_mlb",
+    "sport_title": "MLB",
+    "commence_time": "2023-10-10T20:08:47Z",
+    "home_team": "Minnesota Twins",
+    "away_team": "Houston Astros",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2023-10-11T16:03:45Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2023-10-11T16:03:45Z",
+            "outcomes": [
+              {
+                "name": "Minnesota Twins",
+                "price": 140
+              },
+              {
+                "name": "Houston Astros",
+                "price": -125
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cd56d2812ef1d3538b47f86ddbaf229f",
+    "sport_key": "baseball_mlb",
+    "sport_title": "MLB",
+    "commence_time": "2023-10-11T21:07:00Z",
+    "home_team": "Philadelphia Phillies",
+    "away_team": "Atlanta Braves",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2023-10-11T16:03:45Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2023-10-11T16:03:45Z",
+            "outcomes": [
+              {
+                "name": "Atlanta Braves",
+                "price": 102
+              },
+              {
+                "name": "Philadelphia Phillies",
+                "price": -120
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1a8f39a1a2ffdfd540613c01a3598e6e",
+    "sport_key": "icehockey_nhl",
+    "sport_title": "NHL",
+    "commence_time": "2023-10-11T23:00:00Z",
+    "home_team": "Carolina Hurricanes",
+    "away_team": "Ottawa Senators",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2023-10-11T16:03:02Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2023-10-11T16:03:02Z",
+            "outcomes": [
+              {
+                "name": "Carolina Hurricanes",
+                "price": -192
+              },
+              {
+                "name": "Ottawa Senators",
+                "price": 158
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

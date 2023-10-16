@@ -1,8 +1,8 @@
 {
-    "crons" : [
-        {
-            "path" : "/api/cron?key=sharedKey",
-            "schedule" : "0 14 * * *"
-        }
-    ]
+  "crons": [
+    {
+      "path": "/api/cron?key=sharedKey",
+      "schedule": "0 15 * * *"
+    }
+  ]
 }
