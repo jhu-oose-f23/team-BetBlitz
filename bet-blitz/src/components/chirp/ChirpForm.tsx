@@ -18,7 +18,7 @@ import { toast } from "~/components/ui/use-toast"
 import { Input } from "~/components/ui/input"
 
 interface MyComponentProps {
-  getMessage: () => Promise<void>;
+  getMessage: (name1:string, name2:string, extraInfo:string) => Promise<void>;
   setLoading: (loading: boolean) => void;
 }
 
@@ -51,7 +51,7 @@ const ChirpForm : React.FC<MyComponentProps> = ({ getMessage, setLoading }) => {
     //     </pre>
     //   ),
     // });
-    getMessage();
+    getMessage(data.name1, data.name2, data.extraInfo? data.extraInfo : "");
   }
 
   return (

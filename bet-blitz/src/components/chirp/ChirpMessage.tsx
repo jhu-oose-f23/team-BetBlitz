@@ -9,8 +9,8 @@ const loaderSkeleton =
       <div className="w-full h-12 rounded bg-gray-300"></div>
       <div className="w-full h-12 rounded bg-gray-300"></div>
       <div className="w-full h-12 rounded bg-gray-300"></div>
-      <div className="flex items-center justify-center text-gray-500 font-extralight w-full h-12 rounded bg-gray-300">Generating your message</div>
-      <div className="w-full h-12 rounded bg-gray-300"></div>
+      <div className="flex items-center justify-center text-gray-500 font-extralight text-center w-full h-12 rounded bg-gray-300">Generating your message, please do not refresh.</div>
+      <div className="flex items-center justify-center text-gray-500 font-extralight text-center w-full h-12 rounded bg-gray-300">This may take awhile</div>
       <div className="w-full h-12 rounded bg-gray-300"></div>
       <div className="w-full h-12 rounded bg-gray-300"></div>
       <div className="w-3/4 h-12 rounded bg-gray-300"></div>
@@ -23,9 +23,6 @@ interface MyComponentProps {
 }
 
 const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
-  console.log("ChirpMessage.tsx: ");
-  console.log(message);
-  console.log(loading);
   const [displayText, setDisplayText] = useState('');
   const textRef = useRef(null);
 
@@ -75,12 +72,11 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
     return (
       <div className='flex items-center justify-center h-full text-3xl font-extrabold'>
         <div className='w-2/3 text-center'>
-          Fill out the form on the left and click submit to generate a message.
+          Fill out the form on the left and click submit to generate a message that lets your friend know they are bad at sports betting.
         </div>
       </div>
     );
   }
-  console.log("loading: ", loading);
 
   return (
     <div className='flex items-center justify-center h-full'>

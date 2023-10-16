@@ -16,6 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ClerkProvider {...pageProps}>
         <Navbar />
         <Component {...pageProps} />
+        <Toaster />
       </ClerkProvider>
     </div>
   );
