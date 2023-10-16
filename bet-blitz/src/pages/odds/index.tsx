@@ -42,6 +42,7 @@ const dateToString = (date: Date) => {
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [query, setQuery] = useState("");
 
   const { userId, getToken } = useAuth();
 
@@ -73,43 +74,117 @@ export default function allOdds() {
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
           </h1>
-          <div className="flex flex-wrap justify-center">
+          {events && (
+            <div className="w-full max-w-xl">
+              <Input
+                placeholder="Search up a team"
+                value={query}
+                onChange={(e) => setQuery(e.currentTarget.value)}
+              />
+            </div>
+          )}
+          <div className="flex w-full flex-wrap justify-center">
             {events &&
-              events.map((event: Event, index: number) => {
-                return (
-                  <Card
-                    key={`event${index}`}
-                    className="relative m-8 w-80 bg-white shadow-xl"
-                  >
-                    <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
-                      {dateToString(
-                        event.commenceTime ? event.commenceTime : new Date(),
-                      )}
-                    </Badge>
-                    <CardHeader>
-                      <div className="flex flex-row items-center">
-                        <CardTitle className="text-md flex-grow">
-                          {event.teamOneName}
-                        </CardTitle>
-                        {event.teamOneOdds && (
-                          <>
+              events
+                .filter((event: Event) => {
+                  if (
+                    event.awayTeam?.toLowerCase().includes(query.toLowerCase()) ||
+                    event.homeTeam?.toLowerCase().includes(query.toLowerCase())
+                  ) {
+                    return true;
+                  }
+                  return false;
+                })
+                .map((event: Event, index: number) => {
+                  return (
+                    <Card
+                      key={`event${index}`}
+                      className="relative m-8 w-80 bg-white shadow-xl"
+                    >
+                      <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
+                        {dateToString(
+                          event.commenceTime ? event.commenceTime : new Date(),
+                        )}
+                      </Badge>
+                      <CardHeader>
+                        <div className="flex flex-row items-center">
+                          <CardTitle className="text-md flex-grow">
+                            {event.teamOneName}
+                          </CardTitle>
+                          {event.teamOneOdds && (
+                            <>
+                              <Dialog>
+                                <DialogTrigger>
+                                  <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                                    {event.teamOneOdds > 0 ? "+" : ""}
+                                    {event.teamOneOdds}
+                                  </div>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Bet on {event.teamOneName}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      How many BlitzBux would you like to bet?
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="grid grid-cols-4 items-center gap-4 py-6">
+                                    <Label
+                                      htmlFor="name"
+                                      className="text-right"
+                                    >
+                                      Bet Amount
+                                    </Label>
+                                    <Input
+                                      id="betAmount"
+                                      defaultValue="100"
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                  <DialogFooter>
+                                    <DialogClose>
+                                      <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                                        Place Bet
+                                      </div>
+                                    </DialogClose>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="flex items-center">
+                          <div className="w-4 border-t border-gray-400"></div>
+                          <span className="mx-4 flex-shrink font-black text-gray-400">
+                            @
+                          </span>
+                          <div className="flex-grow border-t border-gray-400"></div>
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                          <CardTitle className="text-md flex-grow">
+                            {event.teamTwoName}
+                          </CardTitle>
+                          {event.teamTwoOdds && (
                             <Dialog>
                               <DialogTrigger>
                                 <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                                  {event.teamOneOdds > 0 ? "+" : ""}
-                                  {event.teamOneOdds}
+                                  {event.teamTwoOdds > 0 ? "+" : ""}
+                                  {event.teamTwoOdds}
                                 </div>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
                                   <DialogTitle>
-                                    Bet on {event.teamOneName}
+                                    Bet on {event.teamTwoName}
                                   </DialogTitle>
                                   <DialogDescription>
                                     How many BlitzBux would you like to bet?
                                   </DialogDescription>
                                 </DialogHeader>
-                                <div className="grid grid-cols-4 items-center gap-4 py-6">
+                                <div className="grid grid-cols-4 items-center gap-4">
                                   <Label htmlFor="name" className="text-right">
                                     Bet Amount
                                   </Label>
@@ -121,69 +196,17 @@ export default function allOdds() {
                                 </div>
                                 <DialogFooter>
                                   <DialogClose>
-                                    <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                                      Place Bet
-                                    </div>
+                                    <Button type="submit">Place bet</Button>
                                   </DialogClose>
                                 </DialogFooter>
                               </DialogContent>
                             </Dialog>
-                          </>
-                        )}
-                      </div>
-
-                      <div className="flex items-center">
-                        <div className="w-4 border-t border-gray-400"></div>
-                        <span className="mx-4 flex-shrink font-black text-gray-400">
-                          @
-                        </span>
-                        <div className="flex-grow border-t border-gray-400"></div>
-                      </div>
-
-                      <div className="flex flex-row items-center">
-                        <CardTitle className="text-md flex-grow">
-                          {event.teamTwoName}
-                        </CardTitle>
-                        {event.teamTwoOdds && (
-                          <Dialog>
-                            <DialogTrigger>
-                              <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                                {event.teamTwoOdds > 0 ? "+" : ""}
-                                {event.teamTwoOdds}
-                              </div>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Bet on {event.teamTwoName}
-                                </DialogTitle>
-                                <DialogDescription>
-                                  How many BlitzBux would you like to bet?
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="name" className="text-right">
-                                  Bet Amount
-                                </Label>
-                                <Input
-                                  id="betAmount"
-                                  defaultValue="100"
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <DialogFooter>
-                                <DialogClose>
-                                  <Button type="submit">Place bet</Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                      </div>
-                    </CardHeader>
-                  </Card>
-                );
-              })}
+                          )}
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  );
+                })}
           </div>
         </div>
       </main>
