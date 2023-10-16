@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ChirpForm from "~/components/chirp/ChirpForm";
-import ChirpMessage from "~/components/chirp/ChirpMessage";
+import ChirpForm from "../components/chirp/ChirpForm";
+import ChirpMessage from "../components/chirp/ChirpMessage";
 
 // import { Configuration, OpenAIApi } from "openai";
 // const configuration = new Configuration({
@@ -48,7 +48,7 @@ export default function Chirp() {
   // Call the fetchDataFromOpenAI function when the component mounts
 
   return (
-    <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2">
+    <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
       <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} />
       <ChirpMessage message={message} loading={loading} />
     </div>
