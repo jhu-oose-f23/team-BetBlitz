@@ -104,11 +104,6 @@ Rather than wagering real money, BetBlitz users can use our virtual currency, "B
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
-## Getting Started
-
-To start running the database locally, run the following commands:
-
 ### Installation
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
