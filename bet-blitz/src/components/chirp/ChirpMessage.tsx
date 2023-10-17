@@ -2,22 +2,23 @@ import React, { useState, useRef } from "react";
 import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
 const loaderSkeleton = (
   <div className="flex h-fit animate-pulse flex-col rounded shadow-md sm:w-80">
     <div className="flex-1 space-y-4 bg-gray-400 px-4 py-8 sm:p-8">
-      <div className="h-12 w-full rounded bg-gray-300"></div>
-      <div className="h-12 w-full rounded bg-gray-300"></div>
-      <div className="h-12 w-full rounded bg-gray-300"></div>
+      <div className="h-6 w-full rounded bg-gray-300"></div>
+      <div className="h-6 w-full rounded bg-gray-300"></div>
+      <div className="h-6 w-full rounded bg-gray-300"></div>
       <div className="flex h-12 w-full items-center justify-center rounded bg-gray-300 text-center font-extralight text-gray-500">
         Generating your message, please do not refresh.
       </div>
       <div className="flex h-12 w-full items-center justify-center rounded bg-gray-300 text-center font-extralight text-gray-500">
         This may take awhile
       </div>
-      <div className="h-12 w-full rounded bg-gray-300"></div>
-      <div className="h-12 w-full rounded bg-gray-300"></div>
-      <div className="h-12 w-3/4 rounded bg-gray-300"></div>
+      <div className="h-6 w-full rounded bg-gray-300"></div>
+      <div className="h-6 w-full rounded bg-gray-300"></div>
+      <div className="h-6 w-3/4 rounded bg-gray-300"></div>
     </div>
   </div>
 );
@@ -95,7 +96,9 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
           </div>
 
           <Card className="mt-2 bg-black p-4 font-light text-white">
-            {message}
+            <ScrollArea className="h-[300px] w-[400px] rounded-md">
+              {message}
+            </ScrollArea>
           </Card>
         </Card>
       )}
