@@ -79,7 +79,7 @@
 </details>
 
 ## Link to Deployment
-https://team-bet-blitz-olmm5asvp-bet-blitz.vercel.app/
+https://team-bet-blitz.vercel.app/
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
