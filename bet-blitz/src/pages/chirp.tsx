@@ -21,7 +21,7 @@ export default function Chirp() {
     extraInfo: string,
   ) => {
     try {
-      const response = await fetch("/api/generate", {
+      const response = await fetch("/api/generateMessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,6 +32,8 @@ export default function Chirp() {
           extraInfo: `${extraInfo}`,
         }),
       });
+
+      console.log(response)
 
       if (response.ok) {
         const data = await response.json();
