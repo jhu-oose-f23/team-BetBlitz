@@ -89,11 +89,7 @@ Rather than wagering real money, BetBlitz users can use our virtual currency, "B
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ### Built With
-
-
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
 * [![Vercel][Vercel.com]][Vercel-url]
