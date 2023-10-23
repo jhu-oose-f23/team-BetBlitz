@@ -73,6 +73,7 @@ model League {
   schedule   Schedule?              @relation(fields: [scheduleId], references: [id])
   bettors    LeagueBettorsCurrency?
   record     LeagueRecord[]
+  password   String?
 }
 
 model Schedule {
