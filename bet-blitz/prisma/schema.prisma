@@ -35,7 +35,8 @@ model Event {
 
 model Bettor {
   id                String                 @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String
+  fname             String
+  lname             String
   email             String
   privateCurrencyId String                 @unique @db.Uuid
   bets              Bet[]
