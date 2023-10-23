@@ -66,7 +66,7 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
     //startTypewriterAnimation();
   }, []);
 
-  if (loading) {
+  if (false) {
     return (
       <div className="flex h-full items-center justify-center">
         {loaderSkeleton}

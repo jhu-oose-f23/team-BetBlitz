@@ -10,9 +10,15 @@ import ChirpMessage from "../components/chirp/ChirpMessage";
 // const openai = new OpenAIApi(configuration);
 // const response = await openai.listEngines();
 
+import { useAtom } from "jotai";
+import { responseAtom } from "~/utils/store";
+
 export default function Chirp() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [_response, setResponse] = useAtom(responseAtom);
 
   // Create a function to fetch data from the OpenAI endpoint
   const fetchDataFromOpenAI = async (
@@ -45,12 +51,57 @@ export default function Chirp() {
     }
   };
 
-  // Call the fetchDataFromOpenAI function when the component mounts
+  const handleCreateLesson = async (): Promise<void> => {
+    // const validateMsg = form.validate();
+    // if (validateMsg.hasErrors) {
+    //   console.log(form.values);
+    //   console.log(validateMsg);
+    //   return;
+    // }
+    // toggle();
+    const response = await fetch("api/response", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: message,
+      }),
+    });
+    if (!response) {
+      return;
+    }
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    // This data is a ReadableStream
+    const data: ReadableStream<BufferSource> | null = response.body;
+    if (!data) {
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let total = "";
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      if (!value) continue;
+      const chunkValue = decoder.decode(value);
+      setResponse((prev) => prev + chunkValue);
+      total += chunkValue;
+    }
+  };
 
   return (
-    <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
-      <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} />
-      <ChirpMessage message={message} loading={loading} />
+    <div className="bg-green-400 flex justify-center items-center flex-grow border-solid">
+      <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
+        <ChirpForm getMessage={handleCreateLesson} setLoading={setLoading} />
+        <ChirpMessage message={_response} loading={isLoading} />
+      </div>
     </div>
   );
 }
