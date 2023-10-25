@@ -13,8 +13,7 @@
     "format": "npx prettier . --write"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts",
-    "seed-live": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.25.4",

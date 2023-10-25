@@ -135,3 +135,4 @@ enum Result {
   AWAY_TEAM
   DRAW
 }
+
