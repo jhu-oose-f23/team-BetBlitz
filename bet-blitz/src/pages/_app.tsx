@@ -5,7 +5,7 @@ import { Toaster } from "~/components/ui/toaster";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { AppProps } from "next/app";
-import { Navbar } from "~/components/ui/navbar";
+import { Navbar } from "~/components/navbar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
