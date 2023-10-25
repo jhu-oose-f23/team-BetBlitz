@@ -1,7 +1,7 @@
 During iteration 2, our team successfully completed all the tasks planned for the iteration. To name a few:
 
 - Setting up authentication for the website to allow users to create accounts and log in
-- Setting up CRON job to update data in the database once per day
+- Setting up CRON job to update event results in the database once per day
 - Creating a modal that will be used in future iterations for placing bets
 - Creating a navbar to help users easily navigate the website
 - Implementing searching functionality to allow for easily finding bets
