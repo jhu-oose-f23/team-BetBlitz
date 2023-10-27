@@ -75,6 +75,9 @@ model League {
   bettors    LeagueBettorsCurrency?
   record     LeagueRecord[]
   password   String?
+  startDate  DateTime
+  endDate    DateTime
+  maxMembers  Int
 }
 
 model Schedule {
