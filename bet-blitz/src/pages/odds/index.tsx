@@ -20,6 +20,7 @@ import {
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
+import FilterTeams from "~/components/odds/FilterTeams";
 
 const dateToString = (date: Date) => {
   date = new Date(date);
@@ -43,6 +44,9 @@ const dateToString = (date: Date) => {
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState("");
+  const [checkNFL, setCheckNFL] = useState(true);
+  const [checkNBA, setCheckNBA] = useState(true);
+  const [checkMLB, setCheckMLB] = useState(true);
 
   const { userId, getToken } = useAuth();
 
@@ -73,6 +77,14 @@ export default function allOdds() {
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
           </h1>
+          <FilterTeams 
+            checkNFL={checkNFL} 
+            setCheckNFL={setCheckNFL}
+            checkMLB={checkMLB} 
+            setCheckMLB={setCheckMLB}
+            checkNBA={checkNBA}
+            setCheckNBA={setCheckNBA}
+          />
           {events && (
             <div className="w-full max-w-xl">
               <Input
@@ -85,6 +97,18 @@ export default function allOdds() {
           <div className="flex w-full flex-wrap justify-center">
             {events &&
               events
+                .filter((event: Event) => {
+                  if (checkNFL && event.sportKey === "americanfootball_nfl") {
+                    return true;
+                  }
+                  if (checkNBA && event.sportKey === "basketball_nba") {
+                    return true;
+                  }
+                  if (checkMLB && event.sportKey === "baseball_mlb") {
+                    return true;
+                  }
+                  return false;
+                })
                 .filter((event: Event) => {
                   if (
                     event.awayTeam?.toLowerCase().includes(query.toLowerCase()) ||
