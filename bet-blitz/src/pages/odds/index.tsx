@@ -63,18 +63,36 @@ export default function allOdds() {
         betResult: BetResult.IN_PROGRESS
       });
 
-      toast({
-        title: "Successfully created bet",
-        description: `Game at ${dateToString(event.commenceTime!)}`,
-        action: (
-          <ToastAction altText={"View bets"}>View bets</ToastAction>
-        ),
-      })
+      let privateCurrencyId, curAmount;
+
+      const privateCurrencyIdResponse = await supabase.from("Bettor").select("privateCurrencyId");
+      if (privateCurrencyIdResponse.data && privateCurrencyIdResponse.data.length > 0) {
+        privateCurrencyId = privateCurrencyIdResponse.data[0]?.privateCurrencyId;
+      }
+
+      const amountResponse = await supabase.from("Currency").select("amount");
+      if (amountResponse.data && amountResponse.data.length > 0) {
+        curAmount = amountResponse.data[0]?.amount;
+      }
+
+      if (privateCurrencyId && curAmount) {
+        await supabase.from("Currency").update({
+          amount: (curAmount - amount),
+        }).eq("id", privateCurrencyId);
+
+        toast({
+          title: "Successfully created bet",
+          description: `Game at ${dateToString(event.commenceTime!)}`,
+          action: (
+            <ToastAction altText={"View bets"}>View bets</ToastAction>
+          ),
+        });
+      }
     } else {
       toast({
         title: "Error creating bet",
         description: "Please try again later"
-      })
+      });
     }
   }
 
