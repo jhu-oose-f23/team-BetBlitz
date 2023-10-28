@@ -1,7 +1,7 @@
 //write an API endpoint that hits https://api.the-odds-api.com/v4/sports/upcoming/odds/?regions=us&markets=h2h&oddsFormat=american&apiKey=aa362b26e5e964f7edad135db76031aa
 // and then stores the data in a database using prisma
 
-import { Event, PrismaClient, Result } from "@prisma/client";
+import { Event, PrismaClient, EventResult } from "@prisma/client";
 import fs from "fs/promises";
 
 //create prisma client
@@ -65,7 +65,7 @@ const updateOdds = async () => {
         teamTwoName: outcome2.name,
         teamOneOdds: outcome1.price,
         teamTwoOdds: outcome2.price,
-        result: Result.IN_PROGESS,
+        result: EventResult.IN_PROGESS,
       } as Event;
 
       events.push(event);
@@ -95,11 +95,11 @@ const updateResults = async () => {
         const awayTeamScore: number = +scoreData.scores[0]!.score;
         const homeTeamScore: number = +scoreData.scores[1]!.score;
 
-        let result: Result = Result.DRAW;
+        let result: EventResult = EventResult.DRAW;
         if (awayTeamScore > homeTeamScore) {
-          result = Result.AWAY_TEAM;
+          result = EventResult.AWAY_TEAM;
         } else if (awayTeamScore < homeTeamScore) {
-          result = Result.HOME_TEAM;
+          result = EventResult.HOME_TEAM;
         }
 
         try {

@@ -1,4 +1,4 @@
-import { PrismaClient, Result, Event } from "@prisma/client";
+import { PrismaClient, EventResult, Event } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -63,7 +63,7 @@ const updateOdds = async (sportKeys: string[]) => {
           teamTwoName: outcome2.name,
           teamOneOdds: outcome1.price,
           teamTwoOdds: outcome2.price,
-          result: Result.IN_PROGESS,
+          result: EventResult.IN_PROGESS,
         } as Event;
 
         events.push(event);
@@ -108,11 +108,11 @@ const updateResults = async (sportKeys: string[]) => {
           const homeTeamScore: number = +scoreData.scores[0]!.score;
           const awayTeamScore: number = +scoreData.scores[1]!.score;
 
-          let result: Result = Result.DRAW;
+          let result: EventResult = EventResult.DRAW;
           if (awayTeamScore > homeTeamScore) {
-            result = Result.AWAY_TEAM;
+            result = EventResult.AWAY_TEAM;
           } else if (awayTeamScore < homeTeamScore) {
-            result = Result.HOME_TEAM;
+            result = EventResult.HOME_TEAM;
           }
 
           try {

@@ -10,17 +10,19 @@ import {
   DialogTrigger,
   DialogClose,
 } from "~/components/ui/dialog";
+import { useState } from "react";
 
 type PropType = {
   odds: number;
   name: string;
-  handlePlaceBet: () => void;
+  handlePlaceBet: (amount: number) => void;
 }
 
 const BetDialog = (props: PropType) => {
-
   const { odds, name, handlePlaceBet } = props;
-  
+
+  const [bet, setBet] = useState(0);
+
   return (
     <>
       <Dialog>
@@ -48,7 +50,12 @@ const BetDialog = (props: PropType) => {
             </Label>
             <Input
               id="betAmount"
-              defaultValue="100"
+              value={bet}
+              onChange={(e) => {
+                if (!Number.isNaN(+e.currentTarget.value)) {
+                  setBet(+(e.currentTarget.value))
+                }
+              }}
               className="col-span-3"
             />
           </div>
@@ -56,7 +63,7 @@ const BetDialog = (props: PropType) => {
             <DialogClose>
               <div
                 className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
-                onClick={handlePlaceBet}
+                onClick={() => handlePlaceBet(bet)}
               >
                 Place Bet
               </div>

@@ -1,14 +1,16 @@
 import Head from "next/head";
 
 import { useEffect, useState } from "react";
-import { Event } from "@prisma/client";
+import { Bet, BetResult, Event } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 
 import { useAuth } from "@clerk/nextjs";
-import { createClient } from "@supabase/supabase-js";
+import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import BetDialog from "~/components/betDialog";
+import { toast } from "~/components/ui/use-toast";
+import { ToastAction } from "~/components/ui/toast";
 
 const dateToString = (date: Date) => {
   date = new Date(date);
@@ -32,6 +34,7 @@ const dateToString = (date: Date) => {
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState("");
+  const [supabase, setSupabase] = useState<SupabaseClient<any, "public", any>>();
 
   const { userId, getToken } = useAuth();
 
@@ -45,13 +48,34 @@ export default function allOdds() {
       // const supabase = await supabaseClient(token);
       const { data, error } = await supabase.from("Event").select();
 
+      setSupabase(supabase);
       setEvents(data as Event[]);
     };
     fetch();
   }, []);
 
-  const handlePlaceBet = () => {
-    console.log("Test");
+  const handlePlaceBet = async (event: Event, amount: number) => {
+    if (supabase) {
+      await supabase.from("Bet").insert({
+        bettorId: userId,
+        gameId: event.id,
+        amount,
+        betResult: BetResult.IN_PROGRESS
+      });
+
+      toast({
+        title: "Successfully created bet",
+        description: `Game at ${dateToString(event.commenceTime!)}`,
+        action: (
+          <ToastAction altText={"View bets"}>View bets</ToastAction>
+        ),
+      })
+    } else {
+      toast({
+        title: "Error creating bet",
+        description: "Please try again later"
+      })
+    }
   }
 
   return (
@@ -107,7 +131,9 @@ export default function allOdds() {
                             <BetDialog
                               odds={event.teamOneOdds}
                               name={event.teamOneName}
-                              handlePlaceBet={handlePlaceBet}
+                              handlePlaceBet={async (amount: number) => {
+                                handlePlaceBet(event, amount);
+                              }}
                             />
                           )}
                         </div>
@@ -128,7 +154,9 @@ export default function allOdds() {
                             <BetDialog
                               odds={event.teamTwoOdds}
                               name={event.teamTwoName}
-                              handlePlaceBet={handlePlaceBet}
+                              handlePlaceBet={async (amount: number) => {
+                                handlePlaceBet(event, amount);
+                              }}
                             />
                           )}
                         </div>
