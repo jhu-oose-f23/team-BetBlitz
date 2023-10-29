@@ -29,6 +29,6 @@
     "**/*.cjs",
     "**/*.mjs",
     "seeding/seed.js"
-  ],
+, "src/pages/league"  ],
   "exclude": ["node_modules"]
 }
