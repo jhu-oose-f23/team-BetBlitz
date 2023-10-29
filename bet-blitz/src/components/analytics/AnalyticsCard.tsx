@@ -25,11 +25,13 @@ interface MyComponentProps {
 
 const total = -100;
 
+const width = "500";
+
 const AnalyticsCard: React.FC<MyComponentProps> = ({title, component}) => {
     return (
         <div>
             <Card
-                className="relative m-8 w-80 bg-white shadow-xl"
+                className="relative m-8 bg-white shadow-xl"
             >
                 <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
                     {title}
