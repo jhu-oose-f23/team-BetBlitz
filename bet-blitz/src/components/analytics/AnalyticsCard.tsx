@@ -31,12 +31,12 @@ const AnalyticsCard: React.FC<MyComponentProps> = ({title, component}) => {
     return (
         <div>
             <Card
-                className="relative m-8 bg-white shadow-xl"
+                className="relative m-8 bg-white shadow-xl flex justify-center items-center p-8"
             >
                 <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
                     {title}
                 </Badge>
-                <div className="flex shrink-0 justify-center items-center p-8 aspect-[4/3]">
+                <div className="flex w-full justify-center items-center" >
                     {component}
                 </div>
             </Card>

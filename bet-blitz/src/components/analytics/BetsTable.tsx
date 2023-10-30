@@ -51,7 +51,7 @@ const RecentBetsCard: React.FC<MyComponentProps> = () => {
     }, [])
 
     return (
-        <div className="container mx-auto py-10">
+        <div className="w-full">
             <DataTable columns={columns} data={data} />
         </div>
     )
