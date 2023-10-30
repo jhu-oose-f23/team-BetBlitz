@@ -33,28 +33,56 @@ const dateToString = (date: Date) => {
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [currency, setCurrency] = useState<number | undefined>();
+
   const [query, setQuery] = useState("");
-  const [supabase, setSupabase] = useState<SupabaseClient<any, "public", any>>();
 
   const { userId, getToken } = useAuth();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 
   useEffect(() => {
     const fetch = async () => {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      );
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
-      const { data, error } = await supabase.from("Event").select();
-
-      setSupabase(supabase);
-      setEvents(data as Event[]);
+      const { data: events } = await supabase.from("Event").select();
+      setEvents(events as Event[]);
     };
     fetch();
   }, []);
 
-  const handlePlaceBet = async (event: Event, odds: number, amount: number, chosenResult: EventResult) => {
+  useEffect(() => {
+    if (userId) {
+      const fetch = async () => {
+        const { data: bettor } = await supabase
+          .from("Bettor")
+          .select("privateCurrencyId")
+          .eq("id", userId)
+          .single();
+
+        const privateCurrencyId = bettor?.privateCurrencyId;
+
+        const { data: privateCurrency } = await supabase
+          .from("Currency")
+          .select("amount")
+          .eq("id", privateCurrencyId)
+          .single();
+
+        setCurrency(privateCurrency?.amount);
+      }
+
+      fetch();
+    }
+  }, [userId])
+
+  const handlePlaceBet = async (
+    event: Event,
+    odds: number,
+    amount: number,
+    chosenResult: EventResult,
+  ) => {
     if (supabase) {
       await supabase.from("Bet").insert({
         bettorId: userId,
@@ -62,41 +90,54 @@ export default function allOdds() {
         amount,
         odds,
         chosenResult,
-        betResult: BetResult.IN_PROGRESS
+        betResult: BetResult.IN_PROGRESS,
       });
 
       let privateCurrencyId, curAmount;
 
-      const privateCurrencyIdResponse = await supabase.from("Bettor").select("privateCurrencyId");
-      if (privateCurrencyIdResponse.data && privateCurrencyIdResponse.data.length > 0) {
-        privateCurrencyId = privateCurrencyIdResponse.data[0]?.privateCurrencyId;
+      const privateCurrencyIdResponse = await supabase
+        .from("Bettor")
+        .select("privateCurrencyId")
+        .eq("id", userId);
+      if (
+        privateCurrencyIdResponse.data &&
+        privateCurrencyIdResponse.data.length > 0
+      ) {
+        privateCurrencyId =
+          privateCurrencyIdResponse.data[0]?.privateCurrencyId;
       }
 
-      const amountResponse = await supabase.from("Currency").select("amount");
+      const amountResponse = await supabase
+        .from("Currency")
+        .select("amount")
+        .eq("id", privateCurrencyId);
       if (amountResponse.data && amountResponse.data.length > 0) {
         curAmount = amountResponse.data[0]?.amount;
       }
 
       if (privateCurrencyId && curAmount) {
-        await supabase.from("Currency").update({
-          amount: (curAmount - amount),
-        }).eq("id", privateCurrencyId);
+        await supabase
+          .from("Currency")
+          .update({
+            amount: curAmount - amount,
+          })
+          .eq("id", privateCurrencyId);
+        
+        setCurrency(curAmount - amount);
 
         toast({
           title: "Successfully created bet",
           description: `Game at ${dateToString(event.commenceTime!)}`,
-          action: (
-            <ToastAction altText={"View bets"}>View bets</ToastAction>
-          ),
+          action: <ToastAction altText={"View bets"}>View bets</ToastAction>,
         });
       }
     } else {
       toast({
         title: "Error creating bet",
-        description: "Please try again later"
+        description: "Please try again later",
       });
     }
-  }
+  };
 
   return (
     <>
@@ -106,6 +147,9 @@ export default function allOdds() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
+        {currency && <div className="fixed z-50 right-0 translate-y-10 text-black">
+          <span className="bg-black p-8 rounded-xl shadow-xl m-4 text-white font-black underline">{currency.toFixed(2)} ₴</span>
+        </div>}
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
@@ -124,7 +168,9 @@ export default function allOdds() {
               events
                 .filter((event: Event) => {
                   if (
-                    event.awayTeam?.toLowerCase().includes(query.toLowerCase()) ||
+                    event.awayTeam
+                      ?.toLowerCase()
+                      .includes(query.toLowerCase()) ||
                     event.homeTeam?.toLowerCase().includes(query.toLowerCase())
                   ) {
                     return true;
@@ -152,7 +198,12 @@ export default function allOdds() {
                               odds={event.teamOneOdds}
                               name={event.teamOneName}
                               handlePlaceBet={async (amount: number) => {
-                                handlePlaceBet(event, event.teamOneOdds!, amount, EventResult.AWAY_TEAM);
+                                handlePlaceBet(
+                                  event,
+                                  event.teamOneOdds!,
+                                  amount,
+                                  EventResult.AWAY_TEAM,
+                                );
                               }}
                             />
                           )}
@@ -175,7 +226,12 @@ export default function allOdds() {
                               odds={event.teamTwoOdds}
                               name={event.teamTwoName}
                               handlePlaceBet={async (amount: number) => {
-                                handlePlaceBet(event, event.teamTwoOdds!, amount, EventResult.HOME_TEAM);
+                                handlePlaceBet(
+                                  event,
+                                  event.teamTwoOdds!,
+                                  amount,
+                                  EventResult.HOME_TEAM,
+                                );
                               }}
                             />
                           )}

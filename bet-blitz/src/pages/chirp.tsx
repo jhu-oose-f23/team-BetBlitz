@@ -48,7 +48,7 @@ export default function Chirp() {
   // Call the fetchDataFromOpenAI function when the component mounts
 
   return (
-    <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
+    <div className="absolute top-1/2 grid w-full -translate-y-1/2 grid-cols-2">
       <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} />
       <ChirpMessage message={message} loading={loading} />
     </div>

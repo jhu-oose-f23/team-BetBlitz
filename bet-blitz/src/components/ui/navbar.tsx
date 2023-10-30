@@ -1,4 +1,4 @@
-import { SignInButton, UserButton } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
   return (
@@ -57,6 +57,7 @@ export function Navbar() {
               <span className="absolute -inset-1.5"></span>
               <span className="sr-only">View notifications</span>
             </button>
+            
             <UserButton afterSignOutUrl="/" />
           </div>
         </div>

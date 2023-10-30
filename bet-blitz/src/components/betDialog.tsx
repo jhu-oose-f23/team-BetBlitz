@@ -16,7 +16,7 @@ type PropType = {
   odds: number;
   name: string;
   handlePlaceBet: (amount: number) => void;
-}
+};
 
 const BetDialog = (props: PropType) => {
   const { odds, name, handlePlaceBet } = props;
@@ -34,18 +34,13 @@ const BetDialog = (props: PropType) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              Bet on {name}
-            </DialogTitle>
+            <DialogTitle>Bet on {name}</DialogTitle>
             <DialogDescription>
               How many BlitzBux would you like to bet?
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-4 items-center gap-4 py-6">
-            <Label
-              htmlFor="name"
-              className="text-right"
-            >
+            <Label htmlFor="name" className="text-right">
               Bet Amount
             </Label>
             <Input
@@ -53,7 +48,7 @@ const BetDialog = (props: PropType) => {
               value={bet}
               onChange={(e) => {
                 if (!Number.isNaN(+e.currentTarget.value)) {
-                  setBet(+(e.currentTarget.value))
+                  setBet(+e.currentTarget.value);
                 }
               }}
               className="col-span-3"
@@ -72,8 +67,7 @@ const BetDialog = (props: PropType) => {
         </DialogContent>
       </Dialog>
     </>
-  )
-
-}
+  );
+};
 
 export default BetDialog;

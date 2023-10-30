@@ -12,11 +12,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-  | {
-    name: string;
-    score: string;
-  }[]
-  | null;
+    | {
+        name: string;
+        score: string;
+      }[]
+    | null;
   last_update: string | null;
 };
 
@@ -124,7 +124,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) { }
+          } catch (e) {}
         }
       }
     }
@@ -134,64 +134,67 @@ const updateResults = async (sportKeys: string[]) => {
 const updateBets = async () => {
   const events = await prisma.event.findMany({
     where: {
-      NOT: { result: EventResult.IN_PROGESS }
+      NOT: { result: EventResult.IN_PROGESS },
     },
     include: {
-      bets: true
-    }
+      bets: true,
+    },
   });
 
-  events.forEach(event => {
+  events.forEach((event) => {
     event.bets.forEach(async (bet) => {
       if (bet.chosenResult === event.result) {
         const wagerAmount = bet.amount;
         const bettorId = bet.bettorId;
-        
+
         const odds = bet.odds;
-        const winAmount = (odds > 0 ? wagerAmount * (odds / 100) : wagerAmount * (100 / Math.abs(odds))) ;
-        
+        const winAmount =
+          odds > 0
+            ? wagerAmount * (odds / 100)
+            : wagerAmount * (100 / Math.abs(odds));
+
         const bettor = await prisma.bettor.findUnique({
           where: {
-            id: bettorId
+            id: bettorId,
           },
         });
 
         const privateCurrency = await prisma.currency.findUnique({
           where: {
-            id: bettor?.privateCurrencyId
-          }
+            id: bettor?.privateCurrencyId,
+          },
         });
 
         await prisma.currency.update({
           where: {
-            id: bettor?.privateCurrencyId
+            id: bettor?.privateCurrencyId,
           },
           data: {
-            amount: (privateCurrency?.amount || 0) + wagerAmount + winAmount
-          }
+            amount: (privateCurrency?.amount || 0) + wagerAmount + winAmount,
+          },
         });
 
         await prisma.bet.update({
           where: {
-            id: bet.id
+            id: bet.id,
           },
           data: {
-            betResult: BetResult.WIN
-          }
-        })
+            betResult: BetResult.WIN,
+          },
+        });
       } else {
         await prisma.bet.update({
           where: {
-            id: bet.id
+            id: bet.id,
           },
           data: {
-            betResult: BetResult.LOSS
-          }
-        })
+            betResult: BetResult.LOSS,
+          },
+        });
       }
     });
   });
-}
+};
 
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();

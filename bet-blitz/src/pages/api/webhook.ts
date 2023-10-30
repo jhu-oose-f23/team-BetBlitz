@@ -1,16 +1,16 @@
-import type { IncomingHttpHeaders } from 'http';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { WebhookRequiredHeaders } from 'svix';
-import type { WebhookEvent } from '@clerk/nextjs/server';
-import { Webhook } from 'svix';
-import { PrismaClient } from '@prisma/client';
+import type { IncomingHttpHeaders } from "http";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { WebhookRequiredHeaders } from "svix";
+import type { WebhookEvent } from "@clerk/nextjs/server";
+import { Webhook } from "svix";
+import { PrismaClient } from "@prisma/client";
 
 const webhookSecret: string = process.env.WEBHOOK_SECRET!;
 const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequestWithSvixRequiredHeaders,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const payload = JSON.stringify(req.body);
   const headers = req.headers;
@@ -29,13 +29,13 @@ export default async function handler(
   const { id } = evt.data;
   const eventType = evt.type;
 
-  if (eventType === 'user.created' && id) {
+  if (eventType === "user.created" && id) {
     console.log(`User ${id} was ${eventType}`);
 
     const privateCurrency = await prisma.currency.create({
       data: {
-        amount: 1000
-      }
+        amount: 1000,
+      },
     });
 
     const bettor = await prisma.bettor.create({
@@ -44,13 +44,13 @@ export default async function handler(
         name: evt.data.first_name + " " + evt.data.last_name,
         email: evt.data.email_addresses[0]?.email_address || "",
         privateCurrencyId: privateCurrency.id,
-      }
-    })
+      },
+    });
 
     res.status(201).json({ bettor });
   }
 
-  if (eventType === 'session.created') {
+  if (eventType === "session.created") {
     console.log(`Session created with: User ${id} was ${eventType}`);
     res.status(201).json({});
   }

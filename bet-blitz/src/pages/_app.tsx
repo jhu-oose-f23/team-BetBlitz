@@ -9,13 +9,13 @@ import { Navbar } from "~/components/ui/navbar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className="bg-[#EEEEEE] h-screen">
-      <ClerkProvider {...pageProps}>
+    <ClerkProvider {...pageProps}>
+      <div className="min-h-screen bg-[#EEEEEE]">
         <Navbar />
         <Component {...pageProps} />
         <Toaster />
-      </ClerkProvider>
-    </div>
+      </div >
+    </ClerkProvider>
   );
 }
 
