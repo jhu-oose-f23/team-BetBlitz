@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import { useEffect, useState } from "react";
-import { Bet, BetResult, Event } from "@prisma/client";
+import { BetResult, Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
@@ -54,12 +54,14 @@ export default function allOdds() {
     fetch();
   }, []);
 
-  const handlePlaceBet = async (event: Event, amount: number) => {
+  const handlePlaceBet = async (event: Event, odds: number, amount: number, chosenResult: EventResult) => {
     if (supabase) {
       await supabase.from("Bet").insert({
         bettorId: userId,
         gameId: event.id,
         amount,
+        odds,
+        chosenResult,
         betResult: BetResult.IN_PROGRESS
       });
 
@@ -150,7 +152,7 @@ export default function allOdds() {
                               odds={event.teamOneOdds}
                               name={event.teamOneName}
                               handlePlaceBet={async (amount: number) => {
-                                handlePlaceBet(event, amount);
+                                handlePlaceBet(event, event.teamOneOdds!, amount, EventResult.AWAY_TEAM);
                               }}
                             />
                           )}
@@ -173,7 +175,7 @@ export default function allOdds() {
                               odds={event.teamTwoOdds}
                               name={event.teamTwoName}
                               handlePlaceBet={async (amount: number) => {
-                                handlePlaceBet(event, amount);
+                                handlePlaceBet(event, event.teamTwoOdds!, amount, EventResult.HOME_TEAM);
                               }}
                             />
                           )}

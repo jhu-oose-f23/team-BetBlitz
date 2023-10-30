@@ -29,7 +29,7 @@ model Event {
   createdAt    DateTime?   @default(now())
   updatedAt    DateTime?   @updatedAt
   id           String      @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  Bet          Bet[]
+  bets         Bet[]
   BetBoard     BetBoard?
 }
 
@@ -54,16 +54,18 @@ model Currency {
 }
 
 model Bet {
-  id        String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bettorId  String
-  gameId    String    @db.Uuid
-  amount    Float
-  leagueId  String?   @db.Uuid
-  betResult BetResult
-  bettor    Bettor    @relation(fields: [bettorId], references: [id])
-  game      Event     @relation(fields: [gameId], references: [id])
-  league    League?   @relation(fields: [leagueId], references: [id])
-  createdAt DateTime  @default(now())
+  id           String      @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bettorId     String
+  gameId       String      @db.Uuid
+  amount       Float
+  leagueId     String?     @db.Uuid
+  odds         Int
+  chosenResult EventResult
+  betResult    BetResult
+  bettor       Bettor      @relation(fields: [bettorId], references: [id])
+  game         Event       @relation(fields: [gameId], references: [id])
+  league       League?     @relation(fields: [leagueId], references: [id])
+  createdAt    DateTime    @default(now())
 }
 
 model League {

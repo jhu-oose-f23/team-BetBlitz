@@ -1,4 +1,4 @@
-import { PrismaClient, EventResult, Event } from "@prisma/client";
+import { PrismaClient, EventResult, Event, BetResult } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -12,11 +12,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-    | {
-        name: string;
-        score: string;
-      }[]
-    | null;
+  | {
+    name: string;
+    score: string;
+  }[]
+  | null;
   last_update: string | null;
 };
 
@@ -124,12 +124,74 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     }
   }
 };
+
+const updateBets = async () => {
+  const events = await prisma.event.findMany({
+    where: {
+      NOT: { result: EventResult.IN_PROGESS }
+    },
+    include: {
+      bets: true
+    }
+  });
+
+  events.forEach(event => {
+    event.bets.forEach(async (bet) => {
+      if (bet.chosenResult === event.result) {
+        const wagerAmount = bet.amount;
+        const bettorId = bet.bettorId;
+        
+        const odds = bet.odds;
+        const winAmount = (odds > 0 ? wagerAmount * (odds / 100) : wagerAmount * (100 / Math.abs(odds))) ;
+        
+        const bettor = await prisma.bettor.findUnique({
+          where: {
+            id: bettorId
+          },
+        });
+
+        const privateCurrency = await prisma.currency.findUnique({
+          where: {
+            id: bettor?.privateCurrencyId
+          }
+        });
+
+        await prisma.currency.update({
+          where: {
+            id: bettor?.privateCurrencyId
+          },
+          data: {
+            amount: (privateCurrency?.amount || 0) + wagerAmount + winAmount
+          }
+        });
+
+        await prisma.bet.update({
+          where: {
+            id: bet.id
+          },
+          data: {
+            betResult: BetResult.WIN
+          }
+        })
+      } else {
+        await prisma.bet.update({
+          where: {
+            id: bet.id
+          },
+          data: {
+            betResult: BetResult.LOSS
+          }
+        })
+      }
+    });
+  });
+}
 
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();
@@ -137,8 +199,9 @@ export default async function seedDatabase() {
 
   updateOdds(sportKeys)
     .then(() => updateResults(sportKeys))
+    .then(() => updateBets())
     .then(() => console.log("Success"))
-    .catch((e) => console.error("Error"));
+    .catch((e) => console.error("Error:", e));
 }
 
 seedDatabase();
