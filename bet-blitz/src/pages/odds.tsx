@@ -11,25 +11,7 @@ import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import BetDialog from "~/components/betDialog";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
-
-const dateToString = (date: Date) => {
-  date = new Date(date);
-  let str = "";
-
-  if (date.getHours() !== 0) {
-    str += date.getHours() <= 12 ? date.getHours() : date.getHours() - 12;
-  } else {
-    str += "12";
-  }
-
-  str += ":";
-
-  if (date.getMinutes() < 10) str += "0";
-  str += date.getMinutes();
-  str += date.getHours() >= 12 ? " PM" : " AM";
-
-  return str;
-};
+import { dateToTimeString } from "~/utils/helpers";
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -116,20 +98,27 @@ export default function allOdds() {
       }
 
       if (privateCurrencyId && curAmount) {
-        await supabase
-          .from("Currency")
-          .update({
-            amount: curAmount - amount,
-          })
-          .eq("id", privateCurrencyId);
-        
-        setCurrency(curAmount - amount);
+        if (curAmount - amount < 0) {
+          toast({
+            title: "You're broke",
+            description: "Go make some money",
+          });
+        } else {
+          await supabase
+            .from("Currency")
+            .update({
+              amount: curAmount - amount,
+            })
+            .eq("id", privateCurrencyId);
 
-        toast({
-          title: "Successfully created bet",
-          description: `Game at ${dateToString(event.commenceTime!)}`,
-          action: <ToastAction altText={"View bets"}>View bets</ToastAction>,
-        });
+          setCurrency(curAmount - amount);
+
+          toast({
+            title: "Successfully created bet",
+            description: `Game at ${dateToTimeString(event.commenceTime!)}`,
+            action: <ToastAction altText={"View bets"}>View bets</ToastAction>,
+          });
+        }
       }
     } else {
       toast({
@@ -184,7 +173,7 @@ export default function allOdds() {
                       className="relative m-8 w-80 bg-white shadow-xl"
                     >
                       <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
-                        {dateToString(
+                        {dateToTimeString(
                           event.commenceTime ? event.commenceTime : new Date(),
                         )}
                       </Badge>
