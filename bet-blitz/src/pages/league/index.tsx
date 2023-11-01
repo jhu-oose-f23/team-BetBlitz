@@ -20,6 +20,7 @@ import {
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
+import moment from "moment";
 
 export default function leagueLanding() {
     const [leagues, setLeagues] = useState<League[]>([]);
@@ -35,9 +36,10 @@ export default function leagueLanding() {
           );
           const token = await getToken({ template: "supabase" });
           // const supabase = await supabaseClient(token);
-          const { data, error } = await supabase.from("League").select();
+            let currDate = moment().toISOString(new Date());
+            let { data: League, error } = await supabase.from('League').select('*').gt('startDate', currDate)
     
-          setLeagues(data as League[]);
+          setLeagues(League as League[]);
         };
         fetch();
     }, []);
@@ -83,7 +85,7 @@ export default function leagueLanding() {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell>{league.name}</TableCell>
-                                        <TableCell>Public</TableCell>
+                                        <TableCell>{league.password ? 'Private' : 'Public'}</TableCell>
                                         <TableCell>{league.maxMembers}</TableCell>
                                         <TableCell>{league.startDate}</TableCell>
                                         <TableCell>

@@ -78,6 +78,7 @@ model League {
   startDate  DateTime
   endDate    DateTime
   maxMembers  Int
+  startingCurrency Int
 }
 
 model Schedule {
