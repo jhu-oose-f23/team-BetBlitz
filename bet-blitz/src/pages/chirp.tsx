@@ -2,55 +2,72 @@ import React, { useState, useEffect } from "react";
 import ChirpForm from "../components/chirp/ChirpForm";
 import ChirpMessage from "../components/chirp/ChirpMessage";
 
-// import { Configuration, OpenAIApi } from "openai";
-// const configuration = new Configuration({
-//     organization: "org-JWFdAWgKGUkAnKNGZubG57jz",
-//     apiKey: process.env.OPENAI_API_KEY,
-// });
-// const openai = new OpenAIApi(configuration);
-// const response = await openai.listEngines();
+import { useAtom } from "jotai";
+import { responseAtom } from "~/utils/store";
 
 export default function Chirp() {
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [_response, setResponse] = useAtom(responseAtom);
 
-  // Create a function to fetch data from the OpenAI endpoint
   const fetchDataFromOpenAI = async (
     name1: string,
     name2: string,
     extraInfo: string,
-  ) => {
-    try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name1: `${name1}`,
-          name2: `${name2}`,
-          extraInfo: `${extraInfo}`,
-        }),
-      });
+  ): Promise<void> => {
 
-      if (response.ok) {
-        const data = await response.json();
-        setMessage(data.message); // Set the data as the state
-        setLoading(false);
-      } else {
-        console.error("Failed to fetch data from OpenAI");
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    const generatePrompt = (from: string, to: string, extraInfo: string) => {
+      const prompt = `Create a message I can send to my friend ${to} to let them know that they are bad at sports betting. Make sure to include: ${extraInfo}, keep the response under 250 words, make the tone casual, and sign the message from ${from}.`;
+      return prompt;
+    };
+
+    const prompt = generatePrompt(name1, name2, extraInfo);
+
+    const response = await fetch("api/response", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+      }),
+    });
+    if (!response) {
+      return;
     }
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    // This data is a ReadableStream
+    const data: ReadableStream<BufferSource> | null = response.body;
+    if (!data) {
+      return;
+    }
+
+    setLoading(false);
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let total = "";
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      if (!value) continue;
+      const chunkValue = decoder.decode(value);
+      setResponse((prev) => prev + chunkValue);
+      total += chunkValue;
+    }
+
   };
 
-  // Call the fetchDataFromOpenAI function when the component mounts
-
   return (
-    <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
-      <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} />
-      <ChirpMessage message={message} loading={loading} />
+    <div className="bg-green-400 flex justify-center items-center flex-grow border-solid">
+      <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
+        <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} setResponse={setResponse}/>
+        <ChirpMessage message={_response} loading={loading} />
+      </div>
     </div>
   );
 }

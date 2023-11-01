@@ -29,25 +29,6 @@ interface MyComponentProps {
 }
 
 const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
-  const [displayText, setDisplayText] = useState("");
-  const textRef = useRef(null);
-
-  //   const copyToClipboard = () => {
-  //     textRef.current.select();
-  //     document.execCommand('copy');
-  //   };
-
-  const startTypewriterAnimation = () => {
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index === message.length) {
-        clearInterval(interval);
-      } else {
-        setDisplayText((prevText) => prevText + message[index]);
-        index++;
-      }
-    }, 100); // Adjust the animation speed as needed
-  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -60,11 +41,6 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
       ),
     });
   };
-
-  // Start the typewriter animation when the component is mounted
-  React.useEffect(() => {
-    //startTypewriterAnimation();
-  }, []);
 
   if (loading) {
     return (
@@ -107,8 +83,3 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
 };
 
 export default ChirpMessage;
-
-{
-  /* <p className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</p>
-        <h1 className="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white pr-5 text-black font-bold">{message}</h1> */
-}
