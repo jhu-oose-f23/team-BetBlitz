@@ -8,99 +8,138 @@ import { Badge } from "~/components/ui/badge";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "~/components/ui/table"
-  
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import moment from "moment";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@radix-ui/react-dialog";
+import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
+import { X } from "lucide-react";
+
+const getDate = (date: Date) => {
+  date = new Date(date);
+  let dateStr = "";
+
+  dateStr += date.getDate();
+  dateStr += "-";
+  dateStr += date.getMonth();
+  dateStr += "-";
+  dateStr += date.getFullYear();
+
+  return dateStr;
+};
 
 export default function leagueLanding() {
-    const [leagues, setLeagues] = useState<League[]>([]);
-    const [query, setQuery] = useState("");
-  
-    const { userId, getToken } = useAuth();
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-    useEffect(() => {
-        const fetch = async () => {
-          const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          );
-          const token = await getToken({ template: "supabase" });
-          // const supabase = await supabaseClient(token);
-            let currDate = moment().toISOString(new Date());
-            let { data: League, error } = await supabase.from('League').select('*').gt('startDate', currDate)
-    
-          setLeagues(League as League[]);
-        };
-        fetch();
-    }, []);
+  const { userId, getToken } = useAuth();
 
-    return(
-        <>
-        <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
-            <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-                    League Play
-                </h1>
-                <div>
-                    <Button>Create your own league</Button>
-                    <span className="ml-4">or select one from below to join!</span>
-                </div>
-                <Table>
-                    <TableCaption>Select a league to get started!</TableCaption>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[300px]">League Name</TableHead>
-                            <TableHead className="w-[300px]">Status</TableHead>
-                            <TableHead className="w-[300px]">Players</TableHead>
-                            {/*<TableHead className="w-[300px]">Budget</TableHead>*/}
-                            <TableHead className="w-[200px]">Start Date</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    {/* <TableBody>
-                        <TableRow>
-                            <TableCell>My League</TableCell>
-                            <TableCell>Public</TableCell>
-                            <TableCell>24</TableCell>
-                            <TableCell>11/4/2023</TableCell>
-                            <TableCell>
-                                <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 text-center">
-                                    Join League
-                                </div> 
-                            </TableCell>
-                        </TableRow>
-                    </TableBody> */}
-                    {leagues &&
-                        leagues.map((league: League) => {
-                            return(
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>{league.name}</TableCell>
-                                        <TableCell>{league.password ? 'Private' : 'Public'}</TableCell>
-                                        <TableCell>{league.maxMembers}</TableCell>
-                                        <TableCell>{league.startDate}</TableCell>
-                                        <TableCell>
-                                            <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                                                Join League
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            )
-                        }
-                    )}
-                </Table>
+  useEffect(() => {
+    const fetch = async () => {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      );
+      const token = await getToken({ template: "supabase" });
+      // const supabase = await supabaseClient(token);
+      let currDate = moment().toISOString(new Date());
+      let { data: League, error } = await supabase
+        .from("League")
+        .select("*")
+        .gt("startDate", currDate);
+
+      setLeagues(League as League[]);
+    };
+    fetch();
+  }, []);
+
+  return (
+    <>
+      <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
+        <Dialog open={dialogOpen}>
+          <DialogContent className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-xl bg-white p-4">
+            <DialogHeader>
+              <div className="flex">
+                <DialogTitle>Join League</DialogTitle>
+                <DialogClose className="flex grow justify-end" onClick={() => setDialogOpen(false)}><X /></DialogClose>
+              </div>
+            </DialogHeader>
+            <div className="grid grid-cols-4 items-center gap-4 py-6">
+              <Label htmlFor="name" className="text-right">
+                Enter Password
+              </Label>
+              <Input id="LeaguePass" defaultValue="" className="col-span-3" />
             </div>
-        </main>
-        </>
-    );
+          </DialogContent>
+        </Dialog>
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+            League Play
+          </h1>
+          <div>
+            <Button>Create your own league</Button>
+            <span className="ml-4">or select one from below to join!</span>
+          </div>
+          <div>
+            <a href="myLeagues">
+              <Button variant="link">View my joined leagues</Button>
+            </a>
+          </div>
+          <Table>
+            <TableCaption>Select a league to get started!</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[250px]">League Name</TableHead>
+                <TableHead className="w-[250px]">Status</TableHead>
+                <TableHead className="w-[250px]">Players</TableHead>
+                <TableHead className="w-[250px]">Budget</TableHead>
+                <TableHead className="w-[200px]">Start Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leagues &&
+                leagues.map((league: League) => {
+                  return (
+                    <TableRow key={league.id}>
+                      <TableCell>{league.name}</TableCell>
+                      <TableCell>
+                        {league.password ? "Private" : "Public"}
+                      </TableCell>
+                      <TableCell>{league.maxMembers}</TableCell>
+                      <TableCell>{league.startingCurrency}</TableCell>
+                      <TableCell>{getDate(league.startDate)}</TableCell>
+                      <TableCell>
+                        <button
+                          className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90"
+                          onClick={() => {
+                            setDialogOpen(true);
+                          }}
+                        >
+                          Join League
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </div>
+      </main>
+    </>
+  );
 }
