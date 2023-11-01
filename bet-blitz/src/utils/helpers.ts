@@ -29,10 +29,10 @@ const months = [
   "September",
   "October",
   "November",
-  "December"
-]
+  "December",
+];
 
 export const dateToString = (date: Date) => {
   date = new Date(date);
   return `${months[date.getMonth()]} ${date.getUTCDay()}`;
-}
+};

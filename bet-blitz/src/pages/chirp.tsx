@@ -14,7 +14,6 @@ export default function Chirp() {
     name2: string,
     extraInfo: string,
   ): Promise<void> => {
-
     const generatePrompt = (from: string, to: string, extraInfo: string) => {
       const prompt = `Create a message I can send to my friend ${to} to let them know that they are bad at sports betting. Make sure to include: ${extraInfo}, keep the response under 250 words, make the tone casual, and sign the message from ${from}.`;
       return prompt;
@@ -59,13 +58,16 @@ export default function Chirp() {
       setResponse((prev) => prev + chunkValue);
       total += chunkValue;
     }
-
   };
 
   return (
-    <div className="bg-green-400 flex justify-center items-center flex-grow border-solid">
-      <div className="grid grid-cols-2 absolute top-1/2 -translate-y-1/2 w-full">
-        <ChirpForm getMessage={fetchDataFromOpenAI} setLoading={setLoading} setResponse={setResponse}/>
+    <div className="flex flex-grow items-center justify-center border-solid bg-green-400">
+      <div className="absolute top-1/2 grid w-full -translate-y-1/2 grid-cols-2">
+        <ChirpForm
+          getMessage={fetchDataFromOpenAI}
+          setLoading={setLoading}
+          setResponse={setResponse}
+        />
         <ChirpMessage message={_response} loading={loading} />
       </div>
     </div>

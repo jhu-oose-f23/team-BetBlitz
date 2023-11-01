@@ -31,8 +31,13 @@ export default async (req: any, res: any) => {
     //   : "An error occurred generating the response";
     // res.status(200).json({ message: response });
 
-    setTimeout(() => {res.status(200).json({message:generatePrompt2(body.name1, body.name2, body.extraInfo)});}, 1000);
-    
+    setTimeout(() => {
+      res
+        .status(200)
+        .json({
+          message: generatePrompt2(body.name1, body.name2, body.extraInfo),
+        });
+    }, 1000);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).end(); // Return a 500 Internal Server Error in case of an error

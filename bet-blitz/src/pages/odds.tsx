@@ -53,11 +53,11 @@ export default function allOdds() {
           .single();
 
         setCurrency(privateCurrency?.amount);
-      }
+      };
 
       fetch();
     }
-  }, [userId])
+  }, [userId]);
 
   const handlePlaceBet = async (
     event: Event,
@@ -136,10 +136,14 @@ export default function allOdds() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
-        {currency && <div className="fixed z-50 right-0 translate-y-10 text-black">
-          <span className="bg-black p-8 rounded-xl shadow-xl m-4 text-white font-black underline">{currency.toFixed(2)} ₴</span>
-        </div>}
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+        {currency && (
+          <div className="fixed right-0 z-50 translate-y-10 text-black">
+            <span className="m-4 rounded-xl bg-black p-8 font-black text-white underline shadow-xl">
+              {currency.toFixed(2)} ₴
+            </span>
+          </div>
+        )}
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
           </h1>

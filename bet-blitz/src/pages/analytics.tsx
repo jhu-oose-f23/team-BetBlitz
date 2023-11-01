@@ -2,30 +2,74 @@ import TotalWinningsCard from "~/components/analytics/TotalWinningsCard";
 import BettingPercentageCard from "~/components/analytics/BettingPercentageCard";
 import RecentBets from "~/components/analytics/BetsTable";
 import BetsCard from "~/components/analytics/BetsCard";
+import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { createClient } from "@supabase/supabase-js";
+import { Bet, Event } from "@prisma/client";
+import Head from "next/head";
+import { getWinPercentage, getWinnings } from "~/utils/analytics";
 
 export default function Analytics() {
-    return (
-        <div className="container flex flex-col items-center justify-center px-4 py-4">
-            <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-                Analytics
-            </h1>
-            <div className="container flex justify-center">
-                <div className="mx-4 grow">
-                    <TotalWinningsCard></TotalWinningsCard>
-                </div>
-                <div className="mx-4 grow">
-                    <BettingPercentageCard></BettingPercentageCard>
-                </div>
+  const [bets, setBets] = useState<
+    (Bet & {
+      Event: Event;
+    })[]
+  >([]);
 
+  const { userId, getToken } = useAuth();
 
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        const { data, error } = await supabase
+          .from("Bet")
+          .select(
+            `
+                *,
+                Event ( 
+                  homeTeam, awayTeam, teamOneOdds, teamTwoOdds, result
+                )
+                `,
+          )
+          .eq("bettorId", userId);
+
+        setBets(
+          data as (Bet & {
+            Event: Event;
+          })[],
+        );
+      }
+    };
+    fetchData();
+  }, [userId]);
+
+  return (
+    <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+      <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+        Analytics
+      </h1>
+      {bets.length !== 0 && (
+        <>
+          <div className="container flex justify-center">
+            <div className="mx-4 grow">
+              <TotalWinningsCard total={getWinnings(bets)} />
             </div>
-            <div className="container flex justify-center">
-                <div className="mx-4 grow">
-                    <BetsCard></BetsCard>
-                </div>
-
+            <div className="mx-4 grow">
+              <BettingPercentageCard percentage={getWinPercentage(bets)} />
             </div>
-
-        </div>
-    )
+          </div>
+          <div className="container flex justify-center">
+            <div className="mx-4 grow">
+              <BetsCard bets={bets} />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }

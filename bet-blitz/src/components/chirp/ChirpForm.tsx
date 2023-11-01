@@ -37,7 +37,11 @@ const FormSchema = z.object({
   extraInfo: z.string().optional(),
 });
 
-const ChirpForm: React.FC<MyComponentProps> = ({ getMessage, setLoading, setResponse }) => {
+const ChirpForm: React.FC<MyComponentProps> = ({
+  getMessage,
+  setLoading,
+  setResponse,
+}) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
