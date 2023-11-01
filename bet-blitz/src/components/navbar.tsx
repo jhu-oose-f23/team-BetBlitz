@@ -3,6 +3,7 @@
 import { UserButton } from "@clerk/nextjs";
 
 import { useRouter } from "next/router";
+import { twMerge } from "tailwind-merge";
 
 export function Navbar() {
   const router = useRouter();
@@ -27,44 +28,42 @@ export function Navbar() {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                {router.pathname === "/odds" ? (
-                  <a
-                    href="odds"
-                    className="rounded-md bg-gray-500 px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
-                  >
-                    Odds
-                  </a>
-                ) : (
-                  <a
-                    href="odds"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Odds
-                  </a>
-                )}
-
+                <a
+                  href="odds"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/odds" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Odds
+                </a>
                 <a
                   href="bets"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/bets" ? "bg-gray-500" : "",
+                  )}
                 >
-                  View Bets
+                  Bets
                 </a>
-
-                {router.pathname === "/chirp" ? (
-                  <a
-                    href="chirp"
-                    className="rounded-md bg-gray-500 px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white"
-                  >
-                    Message Creator
-                  </a>
-                ) : (
-                  <a
-                    href="chirp"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Message Creator
-                  </a>
-                )}
+                <a
+                  href="analytics"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/analytics" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Analytics
+                </a>
+                <a
+                  href="chirp"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/chirp" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Chirp
+                </a>
               </div>
             </div>
           </div>

@@ -12,6 +12,7 @@ import BetDialog from "~/components/betDialog";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
 import { dateToTimeString } from "~/utils/helpers";
+import Link from "next/link";
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -66,15 +67,6 @@ export default function allOdds() {
     chosenResult: EventResult,
   ) => {
     if (supabase) {
-      await supabase.from("Bet").insert({
-        bettorId: userId,
-        gameId: event.id,
-        amount,
-        odds,
-        chosenResult,
-        betResult: BetResult.IN_PROGRESS,
-      });
-
       let privateCurrencyId, curAmount;
 
       const privateCurrencyIdResponse = await supabase
@@ -104,6 +96,15 @@ export default function allOdds() {
             description: "Go make some money",
           });
         } else {
+          await supabase.from("Bet").insert({
+            bettorId: userId,
+            gameId: event.id,
+            amount,
+            odds,
+            chosenResult,
+            betResult: BetResult.IN_PROGRESS,
+          });
+          
           await supabase
             .from("Currency")
             .update({
@@ -116,7 +117,11 @@ export default function allOdds() {
           toast({
             title: "Successfully created bet",
             description: `Game at ${dateToTimeString(event.commenceTime!)}`,
-            action: <ToastAction altText={"View bets"}>View bets</ToastAction>,
+            action: (
+              <ToastAction altText={"View bets"}>
+                <Link href={"/bets"}>View bets</Link>
+              </ToastAction>
+            ),
           });
         }
       }

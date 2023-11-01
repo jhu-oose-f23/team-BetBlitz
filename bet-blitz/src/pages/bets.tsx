@@ -11,9 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { dateToString, dateToTimeString } from "~/utils/helpers";
+import { dateToTimeString } from "~/utils/helpers";
 
 const Bets = () => {
   const [bets, setBets] = useState<
@@ -37,7 +35,7 @@ const Bets = () => {
             `
             *,
             Event ( 
-              homeTeam, awayTeam, commenceTime
+              teamOneName, teamTwoName, commenceTime
             )
             `,
           )
@@ -74,14 +72,14 @@ const Bets = () => {
                   <CardHeader>
                     <CardTitle>
                       {bet.chosenResult === EventResult.AWAY_TEAM
-                        ? bet.Event.awayTeam
-                        : bet.Event.homeTeam}
+                        ? bet.Event.teamOneName
+                        : bet.Event.teamTwoName}
                     </CardTitle>
                     <CardDescription>
                       Placed at {dateToTimeString(bet.createdAt)}
                     </CardDescription>
                     <CardDescription>
-                      {bet.Event.awayTeam} vs {bet.Event.homeTeam}
+                      {bet.Event.teamOneName} vs {bet.Event.teamTwoName}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

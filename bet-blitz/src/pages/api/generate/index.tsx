@@ -32,11 +32,9 @@ export default async (req: any, res: any) => {
     // res.status(200).json({ message: response });
 
     setTimeout(() => {
-      res
-        .status(200)
-        .json({
-          message: generatePrompt2(body.name1, body.name2, body.extraInfo),
-        });
+      res.status(200).json({
+        message: generatePrompt2(body.name1, body.name2, body.extraInfo),
+      });
     }, 1000);
   } catch (error) {
     console.error("Error fetching data:", error);
