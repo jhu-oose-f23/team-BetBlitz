@@ -63,7 +63,7 @@ async function OpenAIStream(payload: {
     async start(controller) {
       // callback
       const onParse: EventSourceParseCallback = (
-        event: ParsedEvent | ReconnectInterval
+        event: ParsedEvent | ReconnectInterval,
       ) => {
         if (event.type === "event") {
           const data: string = event.data;

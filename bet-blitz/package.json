@@ -13,8 +13,7 @@
     "format": "npx prettier . --write"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts",
-    "seed-live": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-live.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.25.4",
@@ -31,6 +30,7 @@
     "@supabase/supabase-js": "^2.37.0",
     "@t3-oss/env-nextjs": "^0.6.0",
     "@tanstack/react-query": "^4.32.6",
+    "@tanstack/react-table": "^8.10.7",
     "@trpc/client": "^10.37.1",
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
@@ -49,6 +49,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.47.0",
     "superjson": "^1.13.1",
+    "svix": "^1.13.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

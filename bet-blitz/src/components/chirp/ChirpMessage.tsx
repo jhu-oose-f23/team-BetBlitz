@@ -29,7 +29,6 @@ interface MyComponentProps {
 }
 
 const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
-
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
     toast({

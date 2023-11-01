@@ -1,4 +1,4 @@
-import { PrismaClient, Result, Event } from "@prisma/client";
+import { PrismaClient, EventResult, Event, BetResult } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -63,7 +63,7 @@ const updateOdds = async (sportKeys: string[]) => {
           teamTwoName: outcome2.name,
           teamOneOdds: outcome1.price,
           teamTwoOdds: outcome2.price,
-          result: Result.IN_PROGESS,
+          result: EventResult.IN_PROGESS,
         } as Event;
 
         events.push(event);
@@ -83,6 +83,19 @@ const updateOdds = async (sportKeys: string[]) => {
     });
   });
 };
+
+const getAllSports = async () => {
+  const API_URL = `https://api.the-odds-api.com/v4/sports/?apiKey=${process.env.ODDS_API_KEY}`;
+  const response = await fetch(API_URL);
+  const sports = await response.json();
+
+  let sportsKeys: string[] = [];
+  for (const sport of sports) {
+    sportsKeys.push(sport.key);
+  }
+  return sportsKeys;
+};
+
 const updateResults = async (sportKeys: string[]) => {
   for (const sportKey of sportKeys) {
     const API_URL = `https://api.the-odds-api.com/v4/sports/${sportKey}/scores/?apiKey=${process.env.ODDS_API_KEY}&daysFrom=1`;
@@ -95,11 +108,11 @@ const updateResults = async (sportKeys: string[]) => {
           const homeTeamScore: number = +scoreData.scores[0]!.score;
           const awayTeamScore: number = +scoreData.scores[1]!.score;
 
-          let result: Result = Result.DRAW;
+          let result: EventResult = EventResult.DRAW;
           if (awayTeamScore > homeTeamScore) {
-            result = Result.AWAY_TEAM;
+            result = EventResult.AWAY_TEAM;
           } else if (awayTeamScore < homeTeamScore) {
-            result = Result.HOME_TEAM;
+            result = EventResult.HOME_TEAM;
           }
 
           try {
@@ -118,20 +131,82 @@ const updateResults = async (sportKeys: string[]) => {
   }
 };
 
-export default async function handler(req: any, res: any) {
-  if (req.query.key !== "sharedKey") {
-    res.status(404).end();
-    return;
-  }
+const updateBets = async () => {
+  const events = await prisma.event.findMany({
+    where: {
+      NOT: { result: EventResult.IN_PROGESS },
+    },
+    include: {
+      bets: true,
+    },
+  });
 
-  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"];
+  events.forEach((event) => {
+    event.bets.forEach(async (bet) => {
+      if (bet.betResult === BetResult.IN_PROGRESS) {
+        if (bet.chosenResult === event.result) {
+          const wagerAmount = bet.amount;
+          const bettorId = bet.bettorId;
 
-  try {
-    await updateOdds(sportKeys).then(() => updateResults(sportKeys));
-  } catch (e) {
-    res.status(400).end();
-    return;
-  }
+          const odds = bet.odds;
+          const winAmount =
+            odds > 0
+              ? wagerAmount * (odds / 100)
+              : wagerAmount * (100 / Math.abs(odds));
 
-  res.status(200).end();
+          const bettor = await prisma.bettor.findUnique({
+            where: {
+              id: bettorId,
+            },
+          });
+
+          const privateCurrency = await prisma.currency.findUnique({
+            where: {
+              id: bettor?.privateCurrencyId,
+            },
+          });
+
+          await prisma.currency.update({
+            where: {
+              id: bettor?.privateCurrencyId,
+            },
+            data: {
+              amount: (privateCurrency?.amount || 0) + wagerAmount + winAmount,
+            },
+          });
+
+          await prisma.bet.update({
+            where: {
+              id: bet.id,
+            },
+            data: {
+              betResult: BetResult.WIN,
+            },
+          });
+        } else {
+          await prisma.bet.update({
+            where: {
+              id: bet.id,
+            },
+            data: {
+              betResult: BetResult.LOSS,
+            },
+          });
+        }
+      }
+    });
+  });
+};
+
+export default async function seedDatabase() {
+  // const sportKeys = await getAllSports();
+  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
+
+  updateOdds(sportKeys)
+    .then(() => updateResults(sportKeys))
+    .then(() => updateBets())
+    .then(() => console.log("Success"))
+    .catch((e) => console.error("Error:", e));
 }
+
+seedDatabase();

@@ -13,7 +13,6 @@ export default function Home() {
       //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       // );
       const token = await getToken({ template: "supabase" });
-      console.log("token");
     };
     fetch();
   }, []);
