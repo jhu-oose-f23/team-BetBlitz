@@ -104,7 +104,7 @@ export default function allOdds() {
             chosenResult,
             betResult: BetResult.IN_PROGRESS,
           });
-          
+
           await supabase
             .from("Currency")
             .update({

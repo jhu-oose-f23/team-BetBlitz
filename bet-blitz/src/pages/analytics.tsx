@@ -5,8 +5,7 @@ import BetsCard from "~/components/analytics/BetsCard";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
-import { Bet, Event } from "@prisma/client";
-import Head from "next/head";
+import { Bet, BetResult, Event, EventResult } from "@prisma/client";
 import { getWinPercentage, getWinnings } from "~/utils/analytics";
 
 export default function Analytics() {
@@ -30,11 +29,11 @@ export default function Analytics() {
           .from("Bet")
           .select(
             `
-                *,
-                Event ( 
-                  homeTeam, awayTeam, teamOneOdds, teamTwoOdds, result
-                )
-                `,
+              *,
+              Event ( 
+                homeTeam, awayTeam, teamOneOdds, teamTwoOdds, result
+              )
+            `,
           )
           .eq("bettorId", userId);
 
@@ -48,6 +47,13 @@ export default function Analytics() {
     fetchData();
   }, [userId]);
 
+  const hasSettledBets = () => {
+    for (let bet of bets) {
+      if (bet.betResult !== BetResult.IN_PROGRESS) return true;
+    }
+    return false;
+  };
+
   return (
     <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
       <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
@@ -55,14 +61,17 @@ export default function Analytics() {
       </h1>
       {bets.length !== 0 && (
         <>
-          <div className="container flex justify-center">
-            <div className="mx-4 grow">
-              <TotalWinningsCard total={getWinnings(bets)} />
+          {hasSettledBets() && (
+            <div className="container flex justify-center">
+              <div className="mx-4 grow">
+                <TotalWinningsCard total={getWinnings(bets)} />
+              </div>
+              <div className="mx-4 grow">
+                <BettingPercentageCard percentage={getWinPercentage(bets)} />
+              </div>
             </div>
-            <div className="mx-4 grow">
-              <BettingPercentageCard percentage={getWinPercentage(bets)} />
-            </div>
-          </div>
+          )}
+
           <div className="container flex justify-center">
             <div className="mx-4 grow">
               <BetsCard bets={bets} />

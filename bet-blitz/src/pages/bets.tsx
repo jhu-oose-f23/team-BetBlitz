@@ -2,16 +2,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Bet, Event, EventResult } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { dateToTimeString } from "~/utils/helpers";
+import BetCard from "~/components/bets/betCard";
 
 const Bets = () => {
   const [bets, setBets] = useState<
@@ -35,7 +26,7 @@ const Bets = () => {
             `
             *,
             Event ( 
-              teamOneName, teamTwoName, commenceTime
+              teamOneName, teamTwoName, teamOneOdds, teamTwoOdds, commenceTime
             )
             `,
           )
@@ -67,31 +58,7 @@ const Bets = () => {
               },
               index: number,
             ) => {
-              return (
-                <Card className="w-[350px]" key={`bet${index}`}>
-                  <CardHeader>
-                    <CardTitle>
-                      {bet.chosenResult === EventResult.AWAY_TEAM
-                        ? bet.Event.teamOneName
-                        : bet.Event.teamTwoName}
-                    </CardTitle>
-                    <CardDescription>
-                      Placed at {dateToTimeString(bet.createdAt)}
-                    </CardDescription>
-                    <CardDescription>
-                      {bet.Event.teamOneName} vs {bet.Event.teamTwoName}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="font-semibold">
-                      Wager:<span className="font-black"> {bet.amount}₴</span>
-                    </div>
-                  </CardContent>
-                  {/* <CardFooter className="flex justify-end text-sm text-s-500">
-                Game on {dateToString(bet.Event.commenceTime!)}
-              </CardFooter> */}
-                </Card>
-              );
+              return <BetCard index={index} bet={bet} />;
             },
           )}
         </div>
