@@ -21,9 +21,10 @@ import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 
 export default function myLeagues() {
-  const [userLeagues, setUserLeagues] = useState<LeagueBettorsCurrency[]>([]);
+  const [userLeagues, setUserLeagues] = useState<League[]>([]);
+  //const [userId, setUserID] = useState();
 
-  const { userId, getToken } = useAuth();
+  const { userId, getToken, isLoaded } = useAuth();
 
   useEffect(() => {
     const fetch = async () => {
@@ -33,14 +34,20 @@ export default function myLeagues() {
       );
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
-      let { data: LeagueBettorsCurrency, error } = await supabase
-      .from('LeagueBettersCurrency')
-      .select('leagueId').eq('bettorId', userId)
+      if (userId) {
+        let { data, error } = await supabase
+          .from('LeagueBettorsCurrency')
+          .select('League (*)')
+          .eq('bettorId', userId)
 
-      setUserLeagues(LeagueBettorsCurrency as LeagueBettorsCurrency[]);
+          console.log(userId);
+          setUserLeagues(data);
+      }
+
     };
     fetch();
-  }, []);
+    
+  }, [userId]);
 
   return (
     <>
@@ -49,6 +56,33 @@ export default function myLeagues() {
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             My Leagues
           </h1>
+          <Table>
+            <TableCaption>Select a league to get started!</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[250px]">League Name</TableHead>
+                <TableHead className="w-[250px]">Status</TableHead>
+                <TableHead className="w-[250px]">Players</TableHead>
+                <TableHead className="w-[250px]">Budget</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {userLeagues &&
+                userLeagues.map((userLeague: League) => {
+                  return (
+                    <TableRow key={userLeague.League.id}>
+                      <TableCell>{userLeague.League.name}</TableCell>
+                      <TableCell>
+                        {userLeague.League.password ? "Private" : "Public"}
+                      </TableCell>
+                      <TableCell>{userLeague.League.maxMembers}</TableCell>
+                      <TableCell>{userLeague.League.startingCurrency}</TableCell>
+                    </TableRow>
+                  );
+              
+              })}
+            </TableBody>
+          </Table>
         </div>
       </main>
     </>

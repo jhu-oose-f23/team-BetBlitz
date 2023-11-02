@@ -26,9 +26,9 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@radix-ui/react-dialog";
+} from "~/components/ui/dialog";
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
-import { X } from "lucide-react";
+import { Currency, X } from "lucide-react";
 
 const getDate = (date: Date) => {
   date = new Date(date);
@@ -45,54 +45,59 @@ const getDate = (date: Date) => {
 
 export default function leagueLanding() {
   const [leagues, setLeagues] = useState<League[]>([]);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const { userId, getToken } = useAuth();
 
+	const supabase = createClient(
+		process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+	);
+
   useEffect(() => {
     const fetch = async () => {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      );
+      
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
-      let currDate = moment().toISOString(new Date());
+			let currDate = moment().toISOString(new Date());
       let { data: League, error } = await supabase
         .from("League")
         .select("*")
-        .gt("startDate", currDate);
+        .gt("startDate", currDate); 
 
       setLeagues(League as League[]);
     };
     fetch();
   }, []);
 
+	const handleJoinLeague = async (league: League) => {
+		
+		const { data: currencyData, error:currencyError } = await supabase
+		.from('Currency')
+		.insert([ { amount: league.startingCurrency } ])
+		.select()
+
+		console.log(currencyData[0].id);
+		const { data: data, error: error } = await supabase
+		.from('LeagueBettorsCurrency')
+		.insert([ { bettorId: userId, leagueId: league.id, currencyId: currencyData[0].id } ])
+		.select()
+		console.log(data);
+		console.log(error);
+	}
+
+	const handleCreateLeague = async () => {
+		
+	}
+
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
-        <Dialog open={dialogOpen}>
-          <DialogContent className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-xl bg-white p-4">
-            <DialogHeader>
-              <div className="flex">
-                <DialogTitle>Join League</DialogTitle>
-                <DialogClose className="flex grow justify-end" onClick={() => setDialogOpen(false)}><X /></DialogClose>
-              </div>
-            </DialogHeader>
-            <div className="grid grid-cols-4 items-center gap-4 py-6">
-              <Label htmlFor="name" className="text-right">
-                Enter Password
-              </Label>
-              <Input id="LeaguePass" defaultValue="" className="col-span-3" />
-            </div>
-          </DialogContent>
-        </Dialog>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             League Play
           </h1>
           <div>
-            <Button>Create your own league</Button>
+            <Button onClick={() => handleCreateLeague()}>Create your own league</Button>
             <span className="ml-4">or select one from below to join!</span>
           </div>
           <div>
@@ -124,14 +129,33 @@ export default function leagueLanding() {
                       <TableCell>{league.startingCurrency}</TableCell>
                       <TableCell>{getDate(league.startDate)}</TableCell>
                       <TableCell>
-                        <button
-                          className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90"
-                          onClick={() => {
-                            setDialogOpen(true);
-                          }}
-                        >
-                          Join League
-                        </button>
+                        <Dialog>
+                          <DialogTrigger>
+                            <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90">
+                              Join League
+                            </div>
+                          </DialogTrigger>
+                          <DialogContent className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-xl bg-white p-4">
+                            <DialogHeader>
+                              <div className="flex">
+                                <DialogTitle>Join League</DialogTitle>
+                              </div>
+                            </DialogHeader>
+                            <div className="grid grid-cols-4 items-center gap-4 py-6">
+                              <Label htmlFor="name" className="text-right">
+                                Enter Password
+                              </Label>
+                              <Input
+                                id="LeaguePass"
+                                defaultValue="If public enter nothing"
+                                className="col-span-3"
+                              />
+                            </div>
+														<DialogFooter>
+															<Button onClick={() => handleJoinLeague(league)}>Join</Button>
+														</DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   );
