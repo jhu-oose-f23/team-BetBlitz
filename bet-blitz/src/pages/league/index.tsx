@@ -30,6 +30,7 @@ import {
 } from "~/components/ui/dialog";
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { Currency, X } from "lucide-react";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
 const getDate = (date: Date) => {
   date = new Date(date);
@@ -108,7 +109,9 @@ export default function leagueLanding() {
               </DialogTrigger>
 							<span className="ml-4">or select one from below to join!</span>
               <DialogContent>
+                <ScrollArea className="h-[400px]">
                 <LeagueForm></LeagueForm>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
             {/* <Button>Create your own league</Button>

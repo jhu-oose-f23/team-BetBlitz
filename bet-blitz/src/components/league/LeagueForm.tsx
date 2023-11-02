@@ -28,8 +28,10 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "~/components/ui/popover"
-import { createClient } from "@supabase/supabase-js";
+// import { createClient } from "@supabase/supabase-js";
 import moment from "moment";
+import { useAuth } from "@clerk/nextjs";
+import { supabaseClient } from "~/utils/supabaseClient";
 
 interface MyComponentProps { }
 
@@ -83,19 +85,21 @@ const FormSchema = z.object({
 });
 
 const LeagueForm: React.FC<MyComponentProps> = () => {
+    const { userId, getToken } = useAuth();
     const [date, setDate] = React.useState<Date>();
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     });
 
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      );
+    // const supabase = createClient(
+    //     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+    //     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    //   );
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        
-        console.log(data);
+
+        const token = await getToken({ template: "supabase" });
+      const supabase = await supabaseClient(token);
 
         const { data: formData, error } = await supabase
         .from('League')
@@ -107,7 +111,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
     }
 
     return (
-        <div className="flex h-full flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
