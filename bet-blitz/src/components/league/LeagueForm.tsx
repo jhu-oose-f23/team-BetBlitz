@@ -28,6 +28,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "~/components/ui/popover"
+import { createClient } from "@supabase/supabase-js";
+import moment from "moment";
 
 interface MyComponentProps { }
 
@@ -86,9 +88,22 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
         resolver: zodResolver(FormSchema),
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log("form submitted");
-        //TODO: send data to backend
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      );
+
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+        
+        console.log(data);
+
+        const { data: formData, error } = await supabase
+        .from('League')
+        .insert([ { name: data.leagueName, startDate: data.startingDate, endDate: moment(data.startingDate).add(data.seasonLength, 'weeks').toISOString(), maxMembers: data.maxPlayers, startingCurrency: data.startingMoney, numMembers: '1' } ])
+        .select()
+
+        console.log(formData);
+        console.log(error)
     }
 
     return (
