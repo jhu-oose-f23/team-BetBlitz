@@ -1,5 +1,6 @@
 import Head from "next/head";
 
+import LeagueForm from "~/components/league/LeagueForm";
 import { useEffect, useState } from "react";
 import { League } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
@@ -48,46 +49,48 @@ export default function leagueLanding() {
 
   const { userId, getToken } = useAuth();
 
-	const supabase = createClient(
-		process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-	);
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 
   useEffect(() => {
     const fetch = async () => {
-      
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
-			let currDate = moment().toISOString(new Date());
+      let currDate = moment().toISOString(new Date());
       let { data: League, error } = await supabase
         .from("League")
         .select("*")
-        .gt("startDate", currDate); 
+        .gt("startDate", currDate);
 
       setLeagues(League as League[]);
     };
     fetch();
   }, []);
 
-	const handleJoinLeague = async (league: League) => {
-		
-		const { data: currencyData, error:currencyError } = await supabase
-		.from('Currency')
-		.insert([ { amount: league.startingCurrency } ])
-		.select()
+  const handleJoinLeague = async (league: League) => {
+    const { data: currencyData, error: currencyError } = await supabase
+      .from("Currency")
+      .insert([{ amount: league.startingCurrency }])
+      .select();
 
-		console.log(currencyData[0].id);
-		const { data: data, error: error } = await supabase
-		.from('LeagueBettorsCurrency')
-		.insert([ { bettorId: userId, leagueId: league.id, currencyId: currencyData[0].id } ])
-		.select()
-		console.log(data);
-		console.log(error);
-	}
+    console.log(currencyData[0].id);
+    const { data: data, error: error } = await supabase
+      .from("LeagueBettorsCurrency")
+      .insert([
+        {
+          bettorId: userId,
+          leagueId: league.id,
+          currencyId: currencyData[0].id,
+        },
+      ])
+      .select();
+    console.log(data);
+    console.log(error);
+  };
 
-	const handleCreateLeague = async () => {
-		
-	}
+  const handleCreateLeague = async () => {};
 
   return (
     <>
@@ -97,8 +100,19 @@ export default function leagueLanding() {
             League Play
           </h1>
           <div>
-            <Button onClick={() => handleCreateLeague()}>Create your own league</Button>
-            <span className="ml-4">or select one from below to join!</span>
+            <Dialog>
+              <DialogTrigger>
+                <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90">
+                  Create your own league
+                </div>
+              </DialogTrigger>
+							<span className="ml-4">or select one from below to join!</span>
+              <DialogContent>
+                <LeagueForm></LeagueForm>
+              </DialogContent>
+            </Dialog>
+            {/* <Button>Create your own league</Button>
+            <span className="ml-4">or select one from below to join!</span> */}
           </div>
           <div>
             <a href="myLeagues">
@@ -151,9 +165,11 @@ export default function leagueLanding() {
                                 className="col-span-3"
                               />
                             </div>
-														<DialogFooter>
-															<Button onClick={() => handleJoinLeague(league)}>Join</Button>
-														</DialogFooter>
+                            <DialogFooter>
+                              <Button onClick={() => handleJoinLeague(league)}>
+                                Join
+                              </Button>
+                            </DialogFooter>
                           </DialogContent>
                         </Dialog>
                       </TableCell>
