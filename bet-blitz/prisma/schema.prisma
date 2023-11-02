@@ -40,7 +40,7 @@ model Bettor {
   privateCurrencyId String                 @unique @db.Uuid
   bets              Bet[]
   privateCurrency   Currency               @relation(fields: [privateCurrencyId], references: [id])
-  leagues           LeagueBettorsCurrency?
+  leagues           LeagueBettorsCurrency[]
   record            LeagueRecord[]
   matchUp1          MatchUp[]              @relation("Bettor1")
   matchUp2          MatchUp[]              @relation("Bettor2")
@@ -69,13 +69,19 @@ model Bet {
 }
 
 model League {
-  id         String                 @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name       String
-  scheduleId String?                @unique @db.Uuid
-  bets       Bet[]
-  schedule   Schedule?              @relation(fields: [scheduleId], references: [id])
-  bettors    LeagueBettorsCurrency?
-  record     LeagueRecord[]
+  id               String                  @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  scheduleId       String?                 @unique @db.Uuid
+  bets             Bet[]
+  schedule         Schedule?               @relation(fields: [scheduleId], references: [id])
+  bettors          LeagueBettorsCurrency[]
+  record           LeagueRecord[]
+  password         String?
+  startDate        DateTime
+  endDate          DateTime
+  maxMembers       Int
+  startingCurrency Int
+  numMembers       Int
 }
 
 model Schedule {
@@ -117,6 +123,7 @@ model LeagueBettorsCurrency {
   currency   Currency @relation(fields: [currencyId], references: [id])
   league     League   @relation(fields: [leagueId], references: [id])
 
+  @@unique([bettorId, leagueId])
   @@id([bettorId, leagueId])
 }
 

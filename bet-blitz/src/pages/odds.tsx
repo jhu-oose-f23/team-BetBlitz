@@ -6,8 +6,10 @@ import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 
+import { supabaseClient } from "~/utils/supabaseClient";
+
 import { useAuth } from "@clerk/nextjs";
-import { SupabaseClient, createClient } from "@supabase/supabase-js";
+//import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import BetDialog from "~/components/betDialog";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
@@ -21,15 +23,17 @@ export default function allOdds() {
   const [query, setQuery] = useState("");
 
   const { userId, getToken } = useAuth();
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  // const supabase = createClient(
+  //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+  //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  // );
+
+
 
   useEffect(() => {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
+      const supabase = await supabaseClient(token);
       const { data: events } = await supabase.from("Event").select();
       setEvents(events as Event[]);
     };
@@ -39,6 +43,8 @@ export default function allOdds() {
   useEffect(() => {
     if (userId) {
       const fetch = async () => {
+        const token = await getToken({ template: "supabase" });
+        const supabase = await supabaseClient(token);
         const { data: bettor } = await supabase
           .from("Bettor")
           .select("privateCurrencyId")
@@ -66,6 +72,8 @@ export default function allOdds() {
     amount: number,
     chosenResult: EventResult,
   ) => {
+    const token = await getToken({ template: "supabase" });
+    const supabase = await supabaseClient(token);
     if (supabase) {
       let privateCurrencyId, curAmount;
 
