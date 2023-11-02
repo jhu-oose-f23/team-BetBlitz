@@ -1,13 +1,19 @@
+"use client";
+
 import { UserButton } from "@clerk/nextjs";
 
+import { useRouter } from "next/router";
+import { twMerge } from "tailwind-merge";
+
 export function Navbar() {
+  const router = useRouter();
   return (
     <nav className="sticky top-0 z-40 bg-black shadow-xl">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex flex-shrink-0 items-center">
             <a
-              href="#"
+              href="/"
               className="flex items-center whitespace-nowrap text-2xl font-semibold text-white"
             >
               <img
@@ -24,27 +30,39 @@ export function Navbar() {
               <div className="flex space-x-4">
                 <a
                   href="odds"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/odds" ? "bg-gray-500" : "",
+                  )}
                 >
                   Odds
                 </a>
                 <a
+                  href="bets"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/bets" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Bets
+                </a>
+                <a
+                  href="analytics"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/analytics" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Analytics
+                </a>
+                <a
                   href="chirp"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/chirp" ? "bg-gray-500" : "",
+                  )}
                 >
-                  Message Creator
-                </a>
-                <a
-                  href="#"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  Page 2
-                </a>
-                <a
-                  href="#"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  Page 3
+                  Chirp
                 </a>
               </div>
             </div>
@@ -57,6 +75,7 @@ export function Navbar() {
               <span className="absolute -inset-1.5"></span>
               <span className="sr-only">View notifications</span>
             </button>
+
             <UserButton afterSignOutUrl="/" />
           </div>
         </div>

@@ -5,17 +5,17 @@ import { Toaster } from "~/components/ui/toaster";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { AppProps } from "next/app";
-import { Navbar } from "~/components/ui/navbar";
+import { Navbar } from "~/components/navbar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className="bg-[#EEEEEE] h-screen">
-      <ClerkProvider {...pageProps}>
+    <ClerkProvider {...pageProps}>
+      <div className="min-h-screen bg-[#EEEEEE]">
         <Navbar />
         <Component {...pageProps} />
         <Toaster />
-      </ClerkProvider>
-    </div>
+      </div>
+    </ClerkProvider>
   );
 }
 
