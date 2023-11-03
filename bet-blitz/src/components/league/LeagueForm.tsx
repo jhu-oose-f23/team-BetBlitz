@@ -144,7 +144,6 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
                                     <Input
                                         placeholder="10"
                                         className="resize-none"
-                                        defaultValue={10}
                                         {...field}
                                     />
                                 </FormControl>
@@ -197,19 +196,19 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
                                     <div>
                                         <div className="relative mt-2 rounded-md shadow-sm">
                                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                <span className="text-gray-500 sm:text-sm">$</span>
+                                                <span className="text-gray-500 sm:text-sm"></span>
                                             </div>
                                             <Input
                                                 type="text"
                                                 id="price"
-                                                className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900   ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                                                className=" w-full rounded-md py-1.5 pr-12 sm:text-sm sm:leading-6" //add pl-7 back to create space for symbol
                                                 placeholder="0.00"
                                                 aria-describedby="price-currency"
                                                 {...field}
                                             />
 
                                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                                <span className="text-gray-500 sm:text-sm" id="price-currency">USD</span>
+                                                <span className="text-gray-500 sm:text-sm" id="price-currency">Blitz Bux</span>
                                             </div>
                                         </div>
                                     </div>
@@ -266,7 +265,8 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
                                             selected={field.value}
                                             onSelect={field.onChange}
                                             disabled={(date) =>
-                                                date > new Date() || date < new Date("1900-01-01")
+                                                date < new Date() 
+                                                // || date < new Date("1900-01-01")
                                             }
                                             initialFocus
                                         />
