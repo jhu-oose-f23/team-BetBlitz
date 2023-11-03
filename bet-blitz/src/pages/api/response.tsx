@@ -23,11 +23,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
   const payload = {
     model: "gpt-3.5-turbo",
     messages: [
-      {
-        role: "system",
-        content:
-          "You are an experienced teacher and an expert in creating detailed, 5E's teaching model lesson plans for K-12 educators with HTML formatting. Your lesson plans are logical, student-first, and always at least 500 words or more.",
-      },
       { role: "user", content: prompt },
     ],
     top_p: 1,
