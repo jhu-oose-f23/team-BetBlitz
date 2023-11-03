@@ -50,6 +50,11 @@ async function OpenAIStream(payload: {
 
   let counter = 0;
 
+  //throw error if OPENAI_API_KEY is not set
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not set");
+  }
+
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
