@@ -28,12 +28,6 @@ export default function allOdds() {
   const [checkNBA, setCheckNBA] = useState(true);
   const [checkMLB, setCheckMLB] = useState(true);
 
-
-  // const supabase = createClient(
-  //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-  //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  // );
-
   useEffect(() => {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
@@ -153,13 +147,13 @@ export default function allOdds() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-start bg-[#EEEEEE]">
-        {currency && (
+        {currency && (currency !== 0 ? (
           <div className="fixed right-0 z-50 translate-y-10 text-black">
             <span className="m-4 rounded-xl bg-black p-8 font-black text-white underline shadow-xl">
               {currency.toFixed(2)} ₴
             </span>
           </div>
-        )}
+        ) : <></>)}
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
