@@ -107,10 +107,10 @@ export default function leagueLanding() {
                   Create your own league
                 </div>
               </DialogTrigger>
-							<span className="ml-4">or select one from below to join!</span>
+              <span className="ml-4">or select one from below to join!</span>
               <DialogContent>
                 <ScrollArea className="h-[400px]">
-                <LeagueForm></LeagueForm>
+                  <LeagueForm></LeagueForm>
                 </ScrollArea>
               </DialogContent>
             </Dialog>

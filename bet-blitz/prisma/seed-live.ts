@@ -12,11 +12,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-  | {
-    name: string;
-    score: string;
-  }[]
-  | null;
+    | {
+        name: string;
+        score: string;
+      }[]
+    | null;
   last_update: string | null;
 };
 
@@ -102,7 +102,6 @@ const updateResults = async (sportKeys: string[]) => {
     const response = await fetch(API_URL);
     const scoresData: ScoreData[] = Array.from(await response.json());
 
-
     if (scoresData) {
       for (const scoreData of scoresData) {
         console.log(scoreData);
@@ -135,7 +134,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) { }
+          } catch (e) {}
         }
       }
     }

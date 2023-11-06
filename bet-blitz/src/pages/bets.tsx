@@ -51,16 +51,17 @@ const Bets = () => {
           Your Bets
         </h1>
         <div className="flex flex-wrap items-center justify-center gap-8">
-          {bets && bets.map(
-            (
-              bet: Bet & {
-                Event: Event;
+          {bets &&
+            bets.map(
+              (
+                bet: Bet & {
+                  Event: Event;
+                },
+                index: number,
+              ) => {
+                return <BetCard index={index} bet={bet} />;
               },
-              index: number,
-            ) => {
-              return <BetCard index={index} bet={bet} />;
-            },
-          )}
+            )}
         </div>
       </div>
     </main>

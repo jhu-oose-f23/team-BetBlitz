@@ -36,17 +36,15 @@ export default function myLeagues() {
       // const supabase = await supabaseClient(token);
       if (userId) {
         let { data, error } = await supabase
-          .from('LeagueBettorsCurrency')
-          .select('League (*)')
-          .eq('bettorId', userId)
+          .from("LeagueBettorsCurrency")
+          .select("League (*)")
+          .eq("bettorId", userId);
 
-          console.log(userId);
-          setUserLeagues(data);
+        console.log(userId);
+        setUserLeagues(data);
       }
-
     };
     fetch();
-    
   }, [userId]);
 
   return (
@@ -76,11 +74,12 @@ export default function myLeagues() {
                         {userLeague.League.password ? "Private" : "Public"}
                       </TableCell>
                       <TableCell>{userLeague.League.maxMembers}</TableCell>
-                      <TableCell>{userLeague.League.startingCurrency}</TableCell>
+                      <TableCell>
+                        {userLeague.League.startingCurrency}
+                      </TableCell>
                     </TableRow>
                   );
-              
-              })}
+                })}
             </TableBody>
           </Table>
         </div>
