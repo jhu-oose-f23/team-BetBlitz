@@ -12,11 +12,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-    | {
-        name: string;
-        score: string;
-      }[]
-    | null;
+  | {
+    name: string;
+    score: string;
+  }[]
+  | null;
   last_update: string | null;
 };
 
@@ -105,8 +105,16 @@ const updateResults = async (sportKeys: string[]) => {
     if (scoresData) {
       for (const scoreData of scoresData) {
         if (scoreData.completed === true && scoreData.scores) {
-          const homeTeamScore: number = +scoreData.scores[0]!.score;
-          const awayTeamScore: number = +scoreData.scores[1]!.score;
+          let homeTeamScore: number = 0; // +scoreData.scores[0]!.score;
+          let awayTeamScore: number = 0; // +scoreData.scores[1]!.score;
+
+          if (scoreData.home_team === scoreData.scores[0]!.name) {
+            homeTeamScore = +scoreData.scores[0]!.score;
+            awayTeamScore = +scoreData.scores[1]!.score;
+          } else {
+            awayTeamScore = +scoreData.scores[0]!.score;
+            homeTeamScore = +scoreData.scores[1]!.score;
+          }
 
           let result: EventResult = EventResult.DRAW;
           if (awayTeamScore > homeTeamScore) {
@@ -124,7 +132,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     }
