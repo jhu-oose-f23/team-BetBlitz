@@ -153,7 +153,11 @@ export default function allOdds() {
               {currency.toFixed(2)} ₴
             </span>
           </div>
-        ) : <></>)}
+        ) : <div className="fixed right-0 z-50 translate-y-10 text-black">
+          <span className="m-4 rounded-xl bg-black p-8 font-black text-white underline shadow-xl">
+            You have no Blitz Bucks!
+          </span>
+        </div>)}
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
