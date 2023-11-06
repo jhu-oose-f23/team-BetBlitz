@@ -5,6 +5,7 @@ import type { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 import { PrismaClient } from "@prisma/client";
 
+
 const webhookSecret: string = process.env.WEBHOOK_SECRET!;
 const prisma = new PrismaClient();
 

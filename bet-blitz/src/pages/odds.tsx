@@ -5,14 +5,16 @@ import { BetResult, Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
+import { supabaseClient } from "~/utils/supabaseClient";
 
 import { useAuth } from "@clerk/nextjs";
-import { SupabaseClient, createClient } from "@supabase/supabase-js";
+//import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import BetDialog from "~/components/betDialog";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
 import { dateToTimeString } from "~/utils/helpers";
 import Link from "next/link";
+import FilterTeams from "~/components/odds/FilterTeams";
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -21,15 +23,21 @@ export default function allOdds() {
   const [query, setQuery] = useState("");
 
   const { userId, getToken } = useAuth();
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+
+  const [checkNFL, setCheckNFL] = useState(true);
+  const [checkNBA, setCheckNBA] = useState(true);
+  const [checkMLB, setCheckMLB] = useState(true);
+
+
+  // const supabase = createClient(
+  //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
+  //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  // );
 
   useEffect(() => {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
+      const supabase = await supabaseClient(token);
       const { data: events } = await supabase.from("Event").select();
       setEvents(events as Event[]);
     };
@@ -39,6 +47,8 @@ export default function allOdds() {
   useEffect(() => {
     if (userId) {
       const fetch = async () => {
+        const token = await getToken({ template: "supabase" });
+        const supabase = await supabaseClient(token);
         const { data: bettor } = await supabase
           .from("Bettor")
           .select("privateCurrencyId")
@@ -66,6 +76,8 @@ export default function allOdds() {
     amount: number,
     chosenResult: EventResult,
   ) => {
+    const token = await getToken({ template: "supabase" });
+    const supabase = await supabaseClient(token);
     if (supabase) {
       let privateCurrencyId, curAmount;
 
@@ -152,6 +164,14 @@ export default function allOdds() {
           <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             Bet Blitz
           </h1>
+          <FilterTeams
+            checkNFL={checkNFL}
+            setCheckNFL={setCheckNFL}
+            checkMLB={checkMLB}
+            setCheckMLB={setCheckMLB}
+            checkNBA={checkNBA}
+            setCheckNBA={setCheckNBA}
+          />
           {events && (
             <div className="w-full max-w-xl">
               <Input
@@ -164,6 +184,18 @@ export default function allOdds() {
           <div className="flex w-full flex-wrap justify-center">
             {events &&
               events
+                .filter((event: Event) => {
+                  if (checkNFL && event.sportKey === "americanfootball_nfl") {
+                    return true;
+                  }
+                  if (checkNBA && event.sportKey === "basketball_nba") {
+                    return true;
+                  }
+                  if (checkMLB && event.sportKey === "baseball_mlb") {
+                    return true;
+                  }
+                  return false;
+                })
                 .filter((event: Event) => {
                   if (
                     event.awayTeam
