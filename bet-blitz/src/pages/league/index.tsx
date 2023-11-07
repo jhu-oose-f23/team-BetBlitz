@@ -31,6 +31,7 @@ import {
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { Currency, X } from "lucide-react";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { toast } from "~/components/ui/use-toast";
 
 const getDate = (date: Date) => {
   date = new Date(date);
@@ -89,6 +90,11 @@ export default function leagueLanding() {
       .select();
     console.log(data);
     console.log(error);
+    
+    toast({
+      title: "Success!",
+      description: "You have successfully joined the league!",
+    });
   };
 
   const handleCreateLeague = async () => {};
