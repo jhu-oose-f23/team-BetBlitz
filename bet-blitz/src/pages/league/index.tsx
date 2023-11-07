@@ -1,11 +1,6 @@
-import Head from "next/head";
-
-import LeagueForm from "~/components/league/LeagueForm";
 import { useEffect, useState } from "react";
 import { League } from "@prisma/client";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
@@ -20,18 +15,22 @@ import {
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
-import moment from "moment";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
-import { Currency, X } from "lucide-react";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { toast } from "~/components/ui/use-toast";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "~/components/ui/sheet";
+import LeagueForm from "~/components/league/LeagueForm";
 
 const getDate = (date: Date) => {
   date = new Date(date);
@@ -60,13 +59,13 @@ export default function leagueLanding() {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
-      let currDate = moment().toISOString(new Date());
-      let { data: League, error } = await supabase
+      let currDate = new Date();
+      let { data: league, error } = await supabase
         .from("League")
         .select("*")
         .gt("startDate", currDate);
 
-      setLeagues(League as League[]);
+      setLeagues(league as League[]);
     };
     fetch();
   }, []);
@@ -77,27 +76,21 @@ export default function leagueLanding() {
       .insert([{ amount: league.startingCurrency }])
       .select();
 
-    console.log(currencyData[0].id);
-    const { data: data, error: error } = await supabase
-      .from("LeagueBettorsCurrency")
-      .insert([
-        {
-          bettorId: userId,
-          leagueId: league.id,
-          currencyId: currencyData[0].id,
-        },
-      ])
-      .select();
-    console.log(data);
-    console.log(error);
-    
-    toast({
-      title: "Success!",
-      description: "You have successfully joined the league!",
-    });
+    if (currencyData) {
+      const { data: data, error: error } = await supabase
+        .from("LeagueBettorsCurrency")
+        .insert([
+          {
+            bettorId: userId,
+            leagueId: league.id,
+            currencyId: currencyData[0].id,
+          },
+        ])
+        .select();
+    }
   };
 
-  const handleCreateLeague = async () => {};
+  const handleCreateLeague = async () => { };
 
   return (
     <>
@@ -107,19 +100,38 @@ export default function leagueLanding() {
             League Play
           </h1>
           <div>
-            <Dialog>
+            <Sheet>
+              <SheetTrigger>
+                <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90">
+                  Create your own league
+                </div>
+              </SheetTrigger>
+              <span className="ml-4 text-sm font-bold uppercase tracking-tighter">
+                or select one from below to join!
+              </span>
+              <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle>Create League</SheetTitle>
+                </SheetHeader>
+
+                <section className="my-8">
+                  <LeagueForm />
+                </section>
+              </SheetContent>
+            </Sheet>
+            {/* <Dialog>
               <DialogTrigger>
                 <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-center text-primary-foreground hover:bg-primary/90">
                   Create your own league
                 </div>
               </DialogTrigger>
-							<span className="ml-4">or select one from below to join!</span>
+              <span className="ml-4 font-bold uppercase tracking-tighter text-sm">or select one from below to join!</span>
               <DialogContent>
                 <ScrollArea className="h-[400px]">
-                <LeagueForm></LeagueForm>
+                  <LeagueForm />
                 </ScrollArea>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
             {/* <Button>Create your own league</Button>
             <span className="ml-4">or select one from below to join!</span> */}
           </div>
@@ -128,20 +140,20 @@ export default function leagueLanding() {
               <Button variant="link">View my joined leagues</Button>
             </a>
           </div>
-          <Table>
-            <TableCaption>Select a league to get started!</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[250px]">League Name</TableHead>
-                <TableHead className="w-[250px]">Status</TableHead>
-                <TableHead className="w-[250px]">Players</TableHead>
-                <TableHead className="w-[250px]">Budget</TableHead>
-                <TableHead className="w-[200px]">Start Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leagues &&
-                leagues.map((league: League) => {
+          {leagues && leagues.length > 0 && (
+            <Table className="rounded-xl bg-white">
+              <TableCaption>Select a league to get started!</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[250px]">League Name</TableHead>
+                  <TableHead className="w-[250px]">Status</TableHead>
+                  <TableHead className="w-[250px]">Players</TableHead>
+                  <TableHead className="w-[250px]">Budget</TableHead>
+                  <TableHead className="w-[200px]">Start Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {leagues.map((league: League) => {
                   return (
                     <TableRow key={league.id}>
                       <TableCell>{league.name}</TableCell>
@@ -185,8 +197,9 @@ export default function leagueLanding() {
                     </TableRow>
                   );
                 })}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          )}
         </div>
       </main>
     </>
