@@ -122,15 +122,12 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="leagueName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="grow">
                 <FormLabel>League Name</FormLabel>
                 <FormControl>
                   <Input
@@ -147,7 +144,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
             control={form.control}
             name="seasonLength"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="">
                 <FormLabel>Season Length (Weeks)</FormLabel>
                 <FormControl>
                   <Input placeholder="10" className="resize-none" {...field} />
@@ -156,6 +153,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="password"
@@ -185,6 +183,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="startingMoney"
@@ -200,7 +199,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
                       <Input
                         type="text"
                         id="price"
-                        className=" w-full rounded-md py-1.5 pr-12 sm:text-sm sm:leading-6" //add pl-7 back to create space for symbol
+                        className="w-full rounded-md py-1.5 pr-12 sm:text-sm sm:leading-6" //add pl-7 back to create space for symbol
                         placeholder="0.00"
                         aria-describedby="price-currency"
                         {...field}
