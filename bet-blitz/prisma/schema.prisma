@@ -116,8 +116,8 @@ model BetBoard {
 }
 
 model LeagueBettorsCurrency {
-  bettorId   String   @unique
-  leagueId   String   @unique @db.Uuid
+  bettorId   String   
+  leagueId   String   @db.Uuid
   currencyId String   @unique @db.Uuid
   bettor     Bettor   @relation(fields: [bettorId], references: [id])
   currency   Currency @relation(fields: [currencyId], references: [id])
