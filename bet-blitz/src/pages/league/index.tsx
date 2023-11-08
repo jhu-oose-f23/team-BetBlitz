@@ -37,8 +37,7 @@ export default function myLeagues() {
       const token = await getToken({ template: "supabase" });
       // const supabase = await supabaseClient(token);
       if (userId) {
-        let { data, error
-        } = await supabase
+        let { data, error } = await supabase
           .from("LeagueBettorsCurrency")
           .select("League (*)")
           .eq("bettorId", userId);
@@ -46,7 +45,7 @@ export default function myLeagues() {
         const leagues: League[] = [];
         data?.forEach((league) => {
           leagues.push(league.League as unknown as League);
-        })
+        });
         setUserLeagues(leagues);
       }
     };
@@ -68,10 +67,7 @@ export default function myLeagues() {
             </Link>
           </div>
           <div className="flex flex-col items-center justify-center gap-y-2">
-            <LeagueTable
-              leagues={userLeagues}
-              displayJoinLeague={false}
-            />
+            <LeagueTable leagues={userLeagues} displayJoinLeague={false} />
           </div>
         </div>
       </main>

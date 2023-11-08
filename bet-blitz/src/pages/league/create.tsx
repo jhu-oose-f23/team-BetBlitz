@@ -57,12 +57,11 @@ export default function leagueLanding() {
         ])
         .select();
 
-        console.log(data);
+      console.log(data);
     }
-    
   };
 
-  const handleCreateLeague = async () => { };
+  const handleCreateLeague = async () => {};
 
   return (
     <>
@@ -102,7 +101,9 @@ export default function leagueLanding() {
                 displayJoinLeague={true}
                 handleJoinLeague={handleJoinLeague}
               />
-              <span className="font-black uppercase tracking-none my-2">Select a league to get started!</span>
+              <span className="tracking-none my-2 font-black uppercase">
+                Select a league to get started!
+              </span>
             </section>
           )}
         </div>

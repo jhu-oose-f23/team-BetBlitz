@@ -19,6 +19,7 @@ import {
 } from "~/components/ui/dialog";
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { useRouter } from "next/router";
+import { twMerge } from "tailwind-merge";
 
 type PropType = {
   leagues: League[];
@@ -59,11 +60,18 @@ const LeagueTable = (props: PropType) => {
       <TableBody>
         {leagues.map((league: League) => {
           return (
-            <TableRow 
-              key={league.id} 
-              className="whitespace-nowrap font-bold transition duration-300 ease-in-out hover:cursor-pointer hover:bg-black hover:text-white"
+            <TableRow
+              key={league.id}
+              className={twMerge(
+                "whitespace-nowrap font-bold transition duration-300 ease-in-out",
+                displayJoinLeague
+                  ? ""
+                  : "hover:cursor-pointer hover:bg-black hover:text-white",
+              )}
               onClick={() => {
-                router.push(`/league/${league.id}`);
+                if (!displayJoinLeague) {
+                  router.push(`/league/${league.id}`);
+                }
               }}
             >
               <TableCell>{league.name}</TableCell>
@@ -71,7 +79,7 @@ const LeagueTable = (props: PropType) => {
               <TableCell>{league.maxMembers}</TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
               <TableCell>{getDate(league.startDate)}</TableCell>
-              {displayJoinLeague &&
+              {displayJoinLeague && (
                 <TableCell>
                   <Dialog>
                     <DialogTrigger>
@@ -97,16 +105,18 @@ const LeagueTable = (props: PropType) => {
                       </div>
 
                       <DialogFooter>
-                        <Button onClick={() => {
-                          if (handleJoinLeague) handleJoinLeague(league)
-                        }}>
+                        <Button
+                          onClick={() => {
+                            if (handleJoinLeague) handleJoinLeague(league);
+                          }}
+                        >
                           Join
                         </Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
                 </TableCell>
-              }
+              )}
             </TableRow>
           );
         })}

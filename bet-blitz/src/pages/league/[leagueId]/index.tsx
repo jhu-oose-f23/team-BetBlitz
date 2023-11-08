@@ -26,32 +26,33 @@ const LeagueHomePage = () => {
           .single();
 
         setLeague(league);
-      }
+      };
       fetch();
     }
-  }, [leagueId])
+  }, [leagueId]);
 
-
-  return (<>
-    <main className="flex min-h-screen flex-col items-center justify-start overflow-x-scroll bg-[#EEEEEE]">
-      {league && leagueId &&
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-            {league.name}
-          </h1>
-          <Link href={`/league/${leagueId}/odds`}>
-            <Button>Place a bet!</Button>
-          </Link>
-          <div>
-            <div className="text-xl font-black tracking-none uppercase">Standings</div>
-            <span>Need to implement</span>
+  return (
+    <>
+      <main className="flex min-h-screen flex-col items-center justify-start overflow-x-scroll bg-[#EEEEEE]">
+        {league && leagueId && (
+          <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+            <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+              {league.name}
+            </h1>
+            <Link href={`/league/${leagueId}/odds`}>
+              <Button>Place a bet!</Button>
+            </Link>
+            <div>
+              <div className="tracking-none text-xl font-black uppercase text-center">
+                Standings
+              </div>
+              <span>Need to implement</span>
+            </div>
           </div>
-
-        </div>
-      }
-    </main>
-  </>);
-
-}
+        )}
+      </main>
+    </>
+  );
+};
 
 export default LeagueHomePage;

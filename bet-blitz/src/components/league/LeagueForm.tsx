@@ -32,7 +32,7 @@ import { useAuth } from "@clerk/nextjs";
 import { supabaseClient } from "~/utils/supabaseClient";
 import { useRouter } from "next/router";
 
-interface MyComponentProps { }
+interface MyComponentProps {}
 
 const FormSchema = z
   .object({
@@ -95,7 +95,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
       passwordConfirm: "",
       startingMoney: -1,
       maxPlayers: -1,
-      startingDate: undefined
+      startingDate: undefined,
     },
     resolver: zodResolver(FormSchema),
   });
@@ -119,7 +119,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
         },
       ])
       .select();
-    
+
     if (formData) router.reload();
   }
 
