@@ -22,9 +22,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
   const payload = {
     model: "gpt-3.5-turbo",
-    messages: [
-      { role: "user", content: prompt },
-    ],
+    messages: [{ role: "user", content: prompt }],
     top_p: 1,
     stream: true,
   };
