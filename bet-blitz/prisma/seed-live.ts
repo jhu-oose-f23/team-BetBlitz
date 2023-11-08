@@ -107,9 +107,9 @@ const updateResults = async (sportKeys: string[]) => {
         console.log(scoreData);
         console.log(scoreData.scores);
         if (scoreData.completed === true && scoreData.scores) {
-          let homeTeamScore: number = 0; // +scoreData.scores[0]!.score;
-          let awayTeamScore: number = 0; // +scoreData.scores[1]!.score;
-
+          let homeTeamScore: number = 0;
+          let awayTeamScore: number = 0;
+          
           if (scoreData.home_team === scoreData.scores[0]!.name) {
             homeTeamScore = +scoreData.scores[0]!.score;
             awayTeamScore = +scoreData.scores[1]!.score;
