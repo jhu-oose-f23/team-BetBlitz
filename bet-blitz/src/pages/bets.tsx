@@ -50,7 +50,7 @@ const Bets = () => {
         <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
           Your Bets
         </h1>
-        <div className="flex flex-wrap items-center justify-center gap-8">
+        <div className="flex flex-auto items-center justify-center gap-8">
           {bets &&
             bets.map(
               (
@@ -59,7 +59,11 @@ const Bets = () => {
                 },
                 index: number,
               ) => {
-                return <BetCard index={index} bet={bet} />;
+                return (
+                  <div className="flex h-full">
+                    <BetCard index={index} bet={bet} />
+                  </div>
+                )
               },
             )}
         </div>
