@@ -26,7 +26,7 @@ const BetCard = ({ index, bet }: PropType) => {
   const oddsToString = odds > 0 ? `+${odds}` : odds?.toString();
 
   return (
-    <Card className="w-[350px]" key={`bet${index}`}>
+    <Card className="flex h-[225px] w-[350px] flex-col" key={`bet${index}`}>
       <CardHeader>
         <CardTitle>
           {bet.chosenResult === EventResult.AWAY_TEAM
@@ -42,14 +42,14 @@ const BetCard = ({ index, bet }: PropType) => {
           {bet.Event.teamOneName} vs {bet.Event.teamTwoName}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex grow items-end">
         <div className="font-semibold">
           Wager:<span className="font-black"> {bet.amount}₴</span>
         </div>
       </CardContent>
       {/* <CardFooter className="flex justify-end text-sm text-s-500">
-                Game on {dateToString(bet.Event.commenceTime!)}
-              </CardFooter> */}
+        Game on {dateToString(bet.Event.commenceTime!)}
+      </CardFooter> */}
     </Card>
   );
 };
