@@ -43,7 +43,7 @@ const LeagueHomePage = () => {
               <Button>Place a bet!</Button>
             </Link>
             <div>
-              <div className="tracking-none text-xl font-black uppercase text-center">
+              <div className="tracking-none text-center text-xl font-black uppercase">
                 Standings
               </div>
               <span>Need to implement</span>
