@@ -1,7 +1,7 @@
-import { useAuth } from "@clerk/nextjs";
-import { Bet, Event, EventResult, League } from "@prisma/client";
+import { Bet, Bettor, Event, League } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
-import { SetStateAction, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
 
@@ -12,10 +12,11 @@ const Bets = () => {
       League: League;
     })[]
   >([]);
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [filter, setFilter] = useState<string[]>([]);
-
-  const { userId } = useAuth();
+  const [bettorName, setBettorName] = useState("");
+  const [leagueName, setLeagueName] = useState("");
+  const router = useRouter();
+  const bettorId = router.query.bettorId;
+  const leagueId = router.query.leagueId;
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
@@ -24,7 +25,7 @@ const Bets = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
+      if (bettorId) {
         const { data: bets, error } = await supabase
           .from("Bet")
           .select(
@@ -35,10 +36,14 @@ const Bets = () => {
             ),
             League (
               id, name
+            ),
+            Bettor (
+              id, name
             )
             `,
           )
-          .eq("bettorId", userId);
+          .eq("bettorId", bettorId)
+          .eq("leagueId", leagueId);
 
         setBets(
           bets as (Bet & {
@@ -47,37 +52,46 @@ const Bets = () => {
           })[],
         );
 
+        if (bets && bets.length > 0) {
+          setBettorName(bets[0].Bettor.name);
+          setLeagueName(bets[0].League.name);
+        }
+
         const curLeagues: League[] = [];
         bets?.forEach((bet) => {
           const curLeague = bet.League as League;
           if (curLeague) {
-            if (!curLeagues.find(league => league.id === curLeague.id)) {
+            if (!curLeagues.find((league) => league.id === curLeague.id)) {
               curLeagues.push(curLeague);
             }
           } else {
             curLeagues.push(curLeague); // Private currency
           }
         });
-        setLeagues(curLeagues);
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [bettorId]);
 
   return (
     <main>
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-          Your Bets
-        </h1>
-        {leagues && (
-          <FilterBetsByLeagues
-            leagues={leagues}
-            filter={filter}
-            setFilter={setFilter}
-          />
+        {bettorName !== "" ? (
+          <div className="flex flex-col items-center justify-center gap-y-4">
+            <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+              {bettorName}'s Bets
+            </h1>
+            <h4 className="text-3xl font-bold uppercase tracking-tight text-[#222831] sm:text-[3rem]">
+              {leagueName}
+            </h4>
+          </div>
+        ) : (
+          <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem] text-center">
+            They haven't placed any bets!
+          </h1>
         )}
+
         <div className="flex flex-wrap items-center justify-center gap-8">
           {bets &&
             bets.map(
@@ -88,14 +102,16 @@ const Bets = () => {
                 index: number,
               ) => {
                 if (bet.leagueId) {
-                  if (!filter.includes(bet.leagueId!)) {
-                    return <BetCard index={index} bet={bet} key={`betCard${index}`} />
+                  if (bet.leagueId === leagueId) {
+                    return (
+                      <BetCard
+                        index={index}
+                        bet={bet}
+                        key={`betCard${index}`}
+                      />
+                    );
                   }
-                } else {
-                  if (!filter.includes("privateCurrency")) {
-                    return <BetCard index={index} bet={bet} key={`betCard${index}`} />
-                  }
-                } 
+                }
               },
             )}
         </div>
