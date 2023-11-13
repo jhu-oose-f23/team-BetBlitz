@@ -20,7 +20,7 @@ const FilterBetsByLeagues = (props: PropType) => {
   const handleSetFilter = (leagueId: string) => {
     const updatedFilter = filter;
 
-    if (filter.find(id => id === leagueId)) {
+    if (filter.find((id) => id === leagueId)) {
       const filteredLeagues = updatedFilter.filter((id) => id !== leagueId);
       setFilter([...filteredLeagues]);
     } else {
@@ -38,14 +38,14 @@ const FilterBetsByLeagues = (props: PropType) => {
               return league ? (
                 <LeagueBadge
                   name={league.name}
-                  checked={!(filter.find(id => id === league.id))}
+                  checked={!filter.find((id) => id === league.id)}
                   setCheck={() => handleSetFilter(league.id)}
                   key={`leagueBadge${index}`}
                 />
               ) : (
                 <LeagueBadge
                   name={"Private currency"}
-                  checked={!(filter.find(name => name === "privateCurrency"))}
+                  checked={!filter.find((name) => name === "privateCurrency")}
                   setCheck={() => handleSetFilter("privateCurrency")}
                   key={`leagueBadge${index}`}
                 />
