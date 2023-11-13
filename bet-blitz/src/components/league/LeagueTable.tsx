@@ -78,7 +78,7 @@ const LeagueTable = (props: PropType) => {
             >
               <TableCell>{league.name}</TableCell>
               <TableCell>{league.password ? "Private" : "Public"}</TableCell>
-              <TableCell>{league.maxMembers}</TableCell>
+              <TableCell>{league.numMembers}/{league.maxMembers}</TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
               <TableCell>{getDate(league.startDate)}</TableCell>
               {displayJoinLeague && (
@@ -112,7 +112,7 @@ const LeagueTable = (props: PropType) => {
                         <Button
                           onClick={() => {
                             console.log(value);
-                            if (handleJoinLeague) handleJoinLeague(league);
+                            if (handleJoinLeague) handleJoinLeague(league, value);
                           }}
                         >
                           Join
