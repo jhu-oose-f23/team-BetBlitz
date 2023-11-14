@@ -32,17 +32,14 @@ const LeagueTable = (props: PropType) => {
 
   const router = useRouter();
 
-  const getDate = (date: Date) => {
-    date = new Date(date);
-    let dateStr = "";
-
-    dateStr += date.getDate();
-    dateStr += "-";
-    dateStr += date.getMonth();
-    dateStr += "-";
-    dateStr += date.getFullYear();
-
-    return dateStr;
+  const getDate = (league: League) => {
+    const date = new Date(league.startDate);
+  
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const day = date.getDate().toString().padStart(2, '0');
+    const fullyear = date.getFullYear();
+  
+    return `${month}-${day}-${fullyear}`;
   };
 
   return (
@@ -78,7 +75,7 @@ const LeagueTable = (props: PropType) => {
               <TableCell>{league.password ? "Private" : "Public"}</TableCell>
               <TableCell>{league.maxMembers}</TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
-              <TableCell>{getDate(league.startDate)}</TableCell>
+              <TableCell>{getDate(league)}</TableCell>
               {displayJoinLeague && (
                 <TableCell>
                   <Dialog>
