@@ -51,6 +51,8 @@ export default function allOdds() {
 
         const privateCurrencyId = bettor?.privateCurrencyId;
 
+        console.log(bettor, userId);
+
         const { data: privateCurrency } = await supabase
           .from("Currency")
           .select("amount")

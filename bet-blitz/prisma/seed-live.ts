@@ -1,10 +1,4 @@
-import {
-  PrismaClient,
-  EventResult,
-  Event,
-  BetResult,
-  Bet,
-} from "@prisma/client";
+import { PrismaClient, EventResult, Event, BetResult, Bet } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -270,9 +264,11 @@ const updateParlays = async () => {
     },
   });
 
+  console.log(parlays);
 
   //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progrress otherwise
   parlays.forEach(async (parlay) => {
+    console.log(parlay)
     let parlayResult: BetResult = BetResult.IN_PROGRESS;
     if (parlayResult === BetResult.IN_PROGRESS) {
       let allBetsWon = true;
