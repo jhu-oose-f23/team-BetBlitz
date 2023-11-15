@@ -14,6 +14,8 @@ const Bets = () => {
   >([]);
   const [bettorName, setBettorName] = useState("");
   const [leagueName, setLeagueName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
   const bettorId = router.query.bettorId;
   const leagueId = router.query.leagueId;
@@ -68,6 +70,8 @@ const Bets = () => {
             curLeagues.push(curLeague); // Private currency
           }
         });
+
+        setIsLoading(false);
       }
     };
 
@@ -76,46 +80,49 @@ const Bets = () => {
 
   return (
     <main>
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        {bettorName !== "" ? (
-          <div className="flex flex-col items-center justify-center gap-y-4">
-            <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-              {bettorName}'s Bets
+      {
+        !isLoading &&
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          {bettorName !== "" ? (
+            <div className="flex flex-col items-center justify-center gap-y-4">
+              <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+                {bettorName}'s Bets
+              </h1>
+              <h4 className="text-3xl font-bold uppercase tracking-tight text-[#222831] sm:text-[3rem]">
+                {leagueName}
+              </h4>
+            </div>
+          ) : (
+            <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem] text-center">
+              They haven't placed any bets!
             </h1>
-            <h4 className="text-3xl font-bold uppercase tracking-tight text-[#222831] sm:text-[3rem]">
-              {leagueName}
-            </h4>
-          </div>
-        ) : (
-          <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem] text-center">
-            They haven't placed any bets!
-          </h1>
-        )}
+          )}
 
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          {bets &&
-            bets.map(
-              (
-                bet: Bet & {
-                  Event: Event;
-                },
-                index: number,
-              ) => {
-                if (bet.leagueId) {
-                  if (bet.leagueId === leagueId) {
-                    return (
-                      <BetCard
-                        index={index}
-                        bet={bet}
-                        key={`betCard${index}`}
-                      />
-                    );
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            {bets &&
+              bets.map(
+                (
+                  bet: Bet & {
+                    Event: Event;
+                  },
+                  index: number,
+                ) => {
+                  if (bet.leagueId) {
+                    if (bet.leagueId === leagueId) {
+                      return (
+                        <BetCard
+                          index={index}
+                          bet={bet}
+                          key={`betCard${index}`}
+                        />
+                      );
+                    }
                   }
-                }
-              },
-            )}
+                },
+              )}
+          </div>
         </div>
-      </div>
+      }
     </main>
   );
 };

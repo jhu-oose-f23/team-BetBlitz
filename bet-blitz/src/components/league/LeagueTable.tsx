@@ -20,6 +20,7 @@ import {
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { useRouter } from "next/router";
 import { twMerge } from "tailwind-merge";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 type PropType = {
   leagues: League[];
@@ -104,15 +105,16 @@ const LeagueTable = (props: PropType) => {
                         />
                       </div>
 
-                      <DialogFooter>
-                        <Button
+                      <DialogClose className="flex justify-end">
+                        <div
                           onClick={() => {
                             if (handleJoinLeague) handleJoinLeague(league);
                           }}
+                          className="h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           Join
-                        </Button>
-                      </DialogFooter>
+                        </div>
+                      </DialogClose>
                     </DialogContent>
                   </Dialog>
                 </TableCell>
