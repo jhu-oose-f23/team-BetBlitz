@@ -196,7 +196,7 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                                 } else {
                                   handleAddLeg(
                                     event,
-                                    event.teamTwoOdds!,
+                                    event.teamOneOdds!,
                                     amount,
                                     EventResult.HOME_TEAM,
                                   );
@@ -240,7 +240,7 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                                 } else {
                                   handleAddLeg(
                                     event,
-                                    event.teamOneOdds!,
+                                    event.teamTwoOdds!,
                                     amount,
                                     EventResult.HOME_TEAM,
                                   );
