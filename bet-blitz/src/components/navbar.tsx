@@ -74,6 +74,15 @@ export function Navbar() {
                 >
                   League
                 </Link>
+                <Link
+                  href="/parlay"
+                  className={twMerge(
+                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
+                    router.pathname === "/league" ? "bg-gray-500" : "",
+                  )}
+                >
+                  Parlay
+                </Link>
               </div>
             </div>
           </div>
