@@ -22,17 +22,6 @@ export type ParlayLegType = {
   chosenResult: EventResult,
 }
 
-
-
-const placeParlay = (parlayBets: ParlayLegType[]) => {
-  console.log(parlayBets);
-  //place each of the bets in the parlay
-  for (let i = 0; i < parlayBets.length; i++) {
-    const parlayLeg = parlayBets[i];
-    //placeBet(parlayLeg.event.id, parlayLeg.chosenResult, parlayLeg.amount);
-  }
-}
-
 export default function Parlay() {
   const [parlayBets, setParlayBets] = useState<ParlayLegType[]>([]);
   const [calculatedOdds, setCalculatedOdds] = useState<number>(0);
@@ -118,6 +107,21 @@ export default function Parlay() {
   };
 
   const placeParlay = async (parlayBets: ParlayLegType[]) => {
+    if (amount <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid amount",
+      });
+      return;
+    }
+
+    if (parlayBets.length <= 0) {
+      toast({
+        title: "Invalid parlay",
+        description: "Please add at least one bet to your parlay",
+      });
+      return;
+    }
     //create the Parlay first
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
@@ -155,8 +159,8 @@ export default function Parlay() {
         } else {
           const { data: parlay, error } = await supabase.from("Parlay").insert({
             bettorId: userId,
-            amount: 0,
-            odds: calculateOdds(parlayBets),
+            amount: amount,
+            odds: Math.floor(calculatedOdds),
             betResult: BetResult.IN_PROGRESS,
           }).select();
 
@@ -196,7 +200,7 @@ export default function Parlay() {
             description: `You have ${curAmount - amount} blitzbux left`,
             action: (
               <ToastAction altText={"View bets"}>
-                {/* <Link href={"/bets"}>View bets</Link> */}
+                <Link href={"/bets"}>View bets</Link>
               </ToastAction>
             ),
           });
