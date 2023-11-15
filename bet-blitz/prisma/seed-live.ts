@@ -243,12 +243,12 @@ export default async function seedDatabase() {
   // const sportKeys = await getAllSports();
   const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
 
-  // updateOdds(sportKeys)
-  //   .then(() => updateResults(sportKeys))
-  //   .then(() => updateBets())
-  //   .then(() => console.log("Success"))
-  //   .catch((e) => console.error("Error:", e));
-  updateBets();
+  updateOdds(sportKeys)
+    .then(() => updateResults(sportKeys))
+    .then(() => updateBets())
+    .then(() => console.log("Success"))
+    .catch((e) => console.error("Error:", e));
+  // updateBets();
 }
 
 seedDatabase();
