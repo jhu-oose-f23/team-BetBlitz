@@ -23,7 +23,7 @@ export default function viewParlays() {
                 const { data, error } = await supabase
                     .from("Parlay")
                     .select(`
-                    *
+                    *,
                     Bet (
                         *
                     )

@@ -214,10 +214,11 @@ export default function Parlay() {
   return (
     <div className="flex flex-row h-screen">
       {/* Left Column (two-thirds width) */}
-      <div className="w-2/3 overflow-y-auto">
+      <div className="relative w-2/3 overflow-y-auto">
         {/* Add your content for the left column here */}
         <ParlayEvents parlayBets={parlayBets} setParlayBets={setParlayBets} />
         {/* This column will take up two-thirds of the width and scroll independently */}
+        
       </div>
 
       {/* Right Column (one-third width) */}

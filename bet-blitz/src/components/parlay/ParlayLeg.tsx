@@ -62,12 +62,12 @@ const ParlayLeg: React.FC<ParlayLegProps> = ({ parlayLeg, index, setParlayBets }
                     </CardTitle>
                     {chosenTeam === 1 ?
 
-                        <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                        <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground ">
                             {event.teamOneOdds > 0 ? "+" : ""}
                             {event.teamOneOdds}
                         </div>
                         :
-                        <div className="ml-4 h-10 rounded-md bg-slate-100 px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                        <div className="ml-4 h-10 rounded-md bg-slate-300 px-4 py-2 text-primary-foreground ">
                             {event.teamOneOdds > 0 ? "+" : ""}
                             {event.teamOneOdds}
                         </div>
@@ -89,12 +89,12 @@ const ParlayLeg: React.FC<ParlayLegProps> = ({ parlayLeg, index, setParlayBets }
                     </CardTitle>
                     {chosenTeam === 2 ?
 
-                        <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                        <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground ">
                             {event.teamTwoOdds > 0 ? "+" : ""}
                             {event.teamTwoOdds}
                         </div>
                         :
-                        <div className="ml-4 h-10 rounded-md bg-slate-100 px-4 py-2 text-primary-foreground hover:bg-primary/90">
+                        <div className="ml-4 h-10 rounded-md bg-slate-300 px-4 py-2 text-primary-foreground   ">
                             {event.teamTwoOdds > 0 ? "+" : ""}
                             {event.teamTwoOdds}
                         </div>
