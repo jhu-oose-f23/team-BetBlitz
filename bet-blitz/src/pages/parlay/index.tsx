@@ -1,28 +1,26 @@
-import { Split } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import SplitPane, { Pane } from 'split-pane-react';
+import { Split } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import SplitPane, { Pane } from "split-pane-react";
 import ParlayEvents from "~/components/parlay/ParlayEvents";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
-import { Bet, EventResult, Event, BetResult } from '@prisma/client';
-import ParlayLeg from '~/components/parlay/ParlayLeg';
+import { Bet, EventResult, Event, BetResult } from "@prisma/client";
+import ParlayLeg from "~/components/parlay/ParlayLeg";
 import { supabaseClient } from "~/utils/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
-import { Button } from '~/components/ui/button';
-import { toast } from '~/components/ui/use-toast';
-import { ToastAction } from '~/components/ui/toast';
-import Link from 'next/link';
-
+import { Button } from "~/components/ui/button";
+import { toast } from "~/components/ui/use-toast";
+import { ToastAction } from "~/components/ui/toast";
+import Link from "next/link";
+import { calculateOdds } from "~/utils/helpers";
 
 export type ParlayLegType = {
-  event: Event,
-  odds: number,
-  amount: number,
-  chosenResult: EventResult,
-}
-
-
+  event: Event;
+  odds: number;
+  amount: number;
+  chosenResult: EventResult;
+};
 
 const placeParlay = (parlayBets: ParlayLegType[]) => {
   console.log(parlayBets);
@@ -31,7 +29,7 @@ const placeParlay = (parlayBets: ParlayLegType[]) => {
     const parlayLeg = parlayBets[i];
     //placeBet(parlayLeg.event.id, parlayLeg.chosenResult, parlayLeg.amount);
   }
-}
+};
 
 export default function Parlay() {
   const [parlayBets, setParlayBets] = useState<ParlayLegType[]>([]);
@@ -68,29 +66,10 @@ export default function Parlay() {
     }
   }, [userId]);
 
-  const calculateOdds = (parlayBets: ParlayLegType[]) => {
-    let probability = 1;
-    for (let i = 0; i < parlayBets.length; i++) {
-      let legProbability = 1
-      const legOdds = parlayBets[i].odds;
-      console.log(parlayBets[i])
-      if (legOdds > 0) {
-        legProbability = 100 / (legOdds + 100);
-      } else {
-        legProbability = -legOdds / (-legOdds + 100);
-      }
-      console.log(legProbability)
-      probability *= legProbability;
-    }
-    console.log(probability)
-    return (100 / probability) - 100;
-  }
-
   useEffect(() => {
     const newOdds = calculateOdds(parlayBets);
     setCalculatedOdds(newOdds);
   }, [parlayBets]);
-
 
   const handlePlaceBet = async (
     event: Event,
@@ -122,7 +101,6 @@ export default function Parlay() {
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
 
-
     if (supabase) {
       let privateCurrencyId, curAmount;
 
@@ -153,12 +131,15 @@ export default function Parlay() {
             description: "Go make some money",
           });
         } else {
-          const { data: parlay, error } = await supabase.from("Parlay").insert({
-            bettorId: userId,
-            amount: 0,
-            odds: calculateOdds(parlayBets),
-            betResult: BetResult.IN_PROGRESS,
-          }).select();
+          const { data: parlay, error } = await supabase
+            .from("Parlay")
+            .insert({
+              bettorId: userId,
+              amount: 0,
+              odds: calculateOdds(parlayBets),
+              betResult: BetResult.IN_PROGRESS,
+            })
+            .select();
 
           if (parlay) {
             const parlayId = parlay[0].id;
@@ -171,12 +152,13 @@ export default function Parlay() {
                 parlayLeg.odds,
                 parlayLeg.amount,
                 parlayLeg.chosenResult,
-                parlayId);
+                parlayId,
+              );
               parlayLegs.push(newBet);
             }
           }
 
-          console.log("new parlay")
+          console.log("new parlay");
           console.log(parlay);
           console.log(error);
 
@@ -209,12 +191,6 @@ export default function Parlay() {
       });
     }
 
-
-
-
-
-
-
     // console.log(parlayBets);
     // let parlayLegs = [];
     // //place each of the bets in the parlay
@@ -225,40 +201,44 @@ export default function Parlay() {
     // }
 
     //create the parlay
-
-  }
+  };
 
   return (
-    <div className="flex flex-row h-screen">
+    <div className="flex h-screen flex-row">
       {/* Left Column (two-thirds width) */}
       <div className="w-2/3 overflow-y-auto">
         {/* Add your content for the left column here */}
-        <ParlayEvents 
-         currency={currency}
-         setCurrency={setCurrency}
-         parlayBets={parlayBets} 
-         setParlayBets={setParlayBets} 
-         setCalculatedOdds={setCalculatedOdds} />
+        <ParlayEvents
+          currency={currency}
+          setCurrency={setCurrency}
+          parlayBets={parlayBets}
+          setParlayBets={setParlayBets}
+          setCalculatedOdds={setCalculatedOdds}
+        />
         {/* This column will take up two-thirds of the width and scroll independently */}
-
       </div>
 
       {/* Right Column (one-third width) */}
       <div className="w-1/3 overflow-y-auto bg-slate-200">
         {/* Add your content for the right column here */}
-        {parlayBets.length > 0 ?
+        {parlayBets.length > 0 ? (
           parlayBets.map((parlayLeg, index) => (
-            <ParlayLeg key={index} parlayLeg={parlayLeg} index={index} setParlayBets={setParlayBets} />
+            <ParlayLeg
+              key={index}
+              parlayLeg={parlayLeg}
+              index={index}
+              setParlayBets={setParlayBets}
+            />
           ))
-          :
-          <div className='flex h-full justify-center items-center text-center p-20 text-3xl font-extrabold'>
+        ) : (
+          <div className="flex h-full items-center justify-center p-20 text-center text-3xl font-extrabold">
             Place a bet on the left to start building a parlay
           </div>
-        }
+        )}
 
         {/* This column will take up one-third of the width and scroll independently */}
       </div>
-      <Card className='fixed bottom-0 right-0 p-4 w-1/3 flex flex-row items-center'>
+      <Card className="fixed bottom-0 right-0 flex w-1/3 flex-row items-center p-4">
         <div className="flex flex-row items-center">
           <Input
             id="amount"
@@ -268,7 +248,7 @@ export default function Parlay() {
                 setAmount(+e.currentTarget.value);
               }
             }}
-            className="w-24 mr-4"
+            className="mr-4 w-24"
           />
           <CardTitle className="text-md flex-grow">
             Calculated Odds: + {calculatedOdds.toFixed(0)}
@@ -279,11 +259,8 @@ export default function Parlay() {
           >
             Place Parlay
           </Button>
-
-
         </div>
-
       </Card>
     </div>
   );
-};
+}
