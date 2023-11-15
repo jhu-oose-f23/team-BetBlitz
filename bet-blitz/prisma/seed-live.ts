@@ -1,4 +1,4 @@
-import { PrismaClient, EventResult, Event, BetResult } from "@prisma/client";
+import { PrismaClient, EventResult, Event, BetResult, Bet } from "@prisma/client";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -238,6 +238,110 @@ const updateBets = async () => {
     });
   });
 };
+
+const updateParlays = async () => {
+  const parlayBets = await prisma.bet.findMany({
+    where: {
+      //where parlay is not null
+      parlayId: { not: null },
+    },
+  });
+
+  //create a map of betId to event
+  const betIdToBet = new Map<string, Bet>();
+  parlayBets.forEach((bet) => {
+    betIdToBet.set(bet.id, bet);
+  });
+
+  const parlays = await prisma.parlay.findMany({
+    where: {
+      NOT: { betResult: BetResult.IN_PROGRESS },
+    },
+    include: {
+      bets: true,
+    },
+  });
+
+  //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progrress otherwise
+  parlays.forEach(async (parlay) => {
+    let parlayResult: BetResult = BetResult.IN_PROGRESS;
+    parlay.bets.forEach((bet) => {
+      if (bet.betResult === BetResult.LOSS) {
+        parlayResult = BetResult.LOSS;
+      } else if (bet.betResult === BetResult.IN_PROGRESS) {
+        parlayResult = BetResult.IN_PROGRESS;
+      }
+    });
+
+    if (parlayResult === BetResult.IN_PROGRESS) {
+      let allBetsWon = true;
+      parlay.bets.forEach((bet) => {
+        if (bet.betResult !== BetResult.WIN) {
+          allBetsWon = false;
+        }
+      });
+
+      if (allBetsWon) {
+        parlayResult = BetResult.WIN;
+      }
+    }
+
+    await prisma.parlay.update({
+      where: {
+        id: parlay.id,
+      },
+      data: {
+        betResult: parlayResult,
+      },
+    });
+
+    if (parlayResult === BetResult.WIN) {
+      const wagerAmount = parlay.amount;
+      const bettorId = parlay.bettorId;
+
+      const odds = parlay.odds;
+      const winAmount =
+        odds > 0 ? wagerAmount * (odds / 100) : wagerAmount * (100 / odds);
+
+      const bettor = await prisma.bettor.findUnique({
+        where: {
+          id: bettorId,
+        },
+      });
+
+      
+
+    }
+    
+    if (parlayResult === BetResult.LOSS) {
+      const bettorId = parlay.bettorId;
+      const bettor = await prisma.bettor.findUnique({
+        where: {
+          id: bettorId,
+        },
+      });
+
+      const privateCurrency = await prisma.currency.findUnique({
+        where: {
+          id: bettor?.privateCurrencyId,
+        },
+      });
+
+      await prisma.currency.update({
+        where: {
+          id: bettor?.privateCurrencyId,
+        },
+        data: {
+          amount: (privateCurrency?.amount || 0) + parlay.amount,
+        },
+      });
+    }
+
+
+
+
+
+}
 
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();

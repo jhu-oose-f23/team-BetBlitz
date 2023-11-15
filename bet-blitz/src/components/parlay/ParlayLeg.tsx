@@ -9,6 +9,7 @@ interface ParlayLegProps {
     parlayLeg: ParlayLegType;
     index: number;
     setParlayBets?: React.Dispatch<React.SetStateAction<ParlayLegType[]>>;
+    setCalculatedOdds?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const findChosenTeam = (parlayLeg: ParlayLegType) => {
@@ -35,7 +36,7 @@ const handleRemoveLeg = (parlayLeg: ParlayLegType, setParlayBets: React.Dispatch
     });
 }
 
-const ParlayLeg: React.FC<ParlayLegProps> = ({ parlayLeg, index, setParlayBets }) => {
+const ParlayLeg: React.FC<ParlayLegProps> = ({ parlayLeg, index, setParlayBets, setCalculatedOdds }) => {
     const event = parlayLeg.event;
     const chosenTeam = findChosenTeam(parlayLeg);
     return (
