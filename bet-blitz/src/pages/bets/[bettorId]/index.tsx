@@ -1,19 +1,9 @@
-import { useAuth } from "@clerk/nextjs";
-import {
-  Bet,
-  BetResult,
-  Event,
-  EventResult,
-  League,
-  Parlay,
-} from "@prisma/client";
+import { Bet, Bettor, Event, League } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
-import { SetStateAction, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
-import { calculateOdds } from "~/utils/helpers";
-import { ParlayLegType } from "./parlay";
-import ParlayCard from "~/components/parlay/ParlayCard";
 
 const Bets = () => {
   const [bets, setBets] = useState<
@@ -22,18 +12,12 @@ const Bets = () => {
       League: League;
     })[]
   >([]);
-  const [parlayBets, setParlayBets] = useState<
-    (Parlay & {
-      Bet: (Bet & {
-        Event: Event
-      })[];
-    })[]
-  >([]);
-
+  const [bettorName, setBettorName] = useState("");
   const [leagues, setLeagues] = useState<League[]>([]);
   const [filter, setFilter] = useState<string[]>([]);
 
-  const { userId } = useAuth();
+  const router = useRouter();
+  const bettorId = router.query.bettorId;
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
@@ -42,8 +26,8 @@ const Bets = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
-        const { data: bets } = await supabase
+      if (bettorId) {
+        const { data: bets, error } = await supabase
           .from("Bet")
           .select(
             `
@@ -53,26 +37,13 @@ const Bets = () => {
             ),
             League (
               id, name
+            ),
+            Bettor (
+              name
             )
             `,
           )
-          .eq("bettorId", userId)
-          .is("parlayId", null);
-
-        const { data: parlay } = await supabase
-          .from("Parlay")
-          .select(
-            `
-              *,
-              Bet (
-                *,
-                Event (
-                  *
-                )
-              )
-            `,
-          )
-          .eq("bettorId", userId);
+          .eq("bettorId", bettorId);
 
         setBets(
           bets as (Bet & {
@@ -81,13 +52,9 @@ const Bets = () => {
           })[],
         );
 
-        setParlayBets(
-          parlay as (Parlay & {
-            Bet: (Bet & {
-              Event: Event
-            })[];
-          })[],
-        );
+        if (bets && bets.length > 0) {
+          setBettorName(bets[0].Bettor.name);
+        }
 
         const curLeagues: League[] = [];
         bets?.forEach((bet) => {
@@ -105,13 +72,13 @@ const Bets = () => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [bettorId]);
 
   return (
     <main>
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
         <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-          Your Bets
+          {bettorName}'s Bets
         </h1>
         {leagues && (
           <FilterBetsByLeagues
@@ -153,33 +120,6 @@ const Bets = () => {
               },
             )}
         </div>
-        {
-          parlayBets.length !== 0 &&
-          <div className="w-full">
-            <div className="relative flex py-5 items-center">
-              <div className="flex-grow border-t border-gray-400"></div>
-              <span className="flex-shrink mx-4 uppercase font-black tracking-none text-xl">Parlays</span>
-              <div className="flex-grow border-t border-gray-400"></div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-8">
-              {
-                parlayBets.map(
-                  (
-                    parlay: (Parlay & {
-                      Bet: (Bet & {
-                        Event: Event
-                      })[];
-                    }),
-                    index: number,
-                  ) => <ParlayCard index={index} parlay={parlay} />,
-                )}
-            </div>
-          </div>
-
-
-
-        }
       </div>
     </main>
   );
