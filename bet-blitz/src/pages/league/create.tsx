@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import LeagueTable from "~/components/league/LeagueTable";
+import { toast } from "~/components/ui/use-toast";
 
 export default function leagueLanding() {
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -39,25 +40,56 @@ export default function leagueLanding() {
     fetch();
   }, []);
 
-  const handleJoinLeague = async (league: League) => {
-    const { data: currencyData, error: currencyError } = await supabase
-      .from("Currency")
-      .insert([{ amount: league.startingCurrency }])
-      .select();
+  const handleJoinLeague = async (league: League, password: String) => {
 
-    if (currencyData) {
-      const { data: data, error: error } = await supabase
-        .from("LeagueBettorsCurrency")
-        .insert([
-          {
-            bettorId: userId,
-            leagueId: league.id,
-            currencyId: currencyData[0].id,
-          },
-        ])
-        .select();
 
-      console.log(data);
+    let { data: pword, error: err1 } = await supabase
+        .from('League')
+        .select('password')
+        .eq("id", league.id);
+
+    let { data: members, error: err2 } = await supabase
+        .from('League')
+        .select('numMembers, maxMembers')
+        .eq("id", league.id);
+
+    if (members[0].numMembers >= members[0].maxMembers) {
+      toast({
+        title: "League full"
+      });
+    }
+    if (pword[0].password && pword[0].password != password) {
+      toast({
+        title: "Invalid Password"
+      });
+    }
+
+    if ((pword[0].password == password || !pword[0].password) && members[0].numMembers < members[0].maxMembers) {
+      const {data: currencyData, error: currencyError} = await supabase
+          .from("Currency")
+          .insert([{amount: league.startingCurrency}])
+          .select();
+
+      if (currencyData) {
+        const {data: data, error: err3} = await supabase
+            .from("LeagueBettorsCurrency")
+            .insert([
+              {
+                bettorId: userId,
+                leagueId: league.id,
+                currencyId: currencyData[0].id,
+              },
+            ])
+            .select();
+        const { error: err4 } = await supabase
+            .from('League')
+            .update({ numMembers: members[0].numMembers+1 })
+            .eq('id', league.id);
+        toast({
+          title: "League Joined!"
+        });
+
+      }
     }
   };
 

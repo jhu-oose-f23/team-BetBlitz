@@ -20,6 +20,7 @@ import {
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { useRouter } from "next/router";
 import { twMerge } from "tailwind-merge";
+import {useState} from "react";
 
 type PropType = {
   leagues: League[];
@@ -30,6 +31,7 @@ type PropType = {
 const LeagueTable = (props: PropType) => {
   const { leagues, displayJoinLeague, handleJoinLeague } = props;
 
+  const [value, setValue] = useState("");
   const router = useRouter();
 
   const getDate = (league: League) => {
@@ -73,7 +75,7 @@ const LeagueTable = (props: PropType) => {
             >
               <TableCell>{league.name}</TableCell>
               <TableCell>{league.password ? "Private" : "Public"}</TableCell>
-              <TableCell>{league.maxMembers}</TableCell>
+              <TableCell>{league.numMembers}/{league.maxMembers}</TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
               <TableCell>{getDate(league)}</TableCell>
               {displayJoinLeague && (
@@ -96,6 +98,8 @@ const LeagueTable = (props: PropType) => {
                         </Label>
                         <Input
                           id="LeaguePass"
+                          value={value}
+                          onChange={(e) => setValue(e.currentTarget.value)}
                           placeholder="If public enter nothing"
                           className="col-span-3"
                         />
@@ -104,7 +108,8 @@ const LeagueTable = (props: PropType) => {
                       <DialogFooter>
                         <Button
                           onClick={() => {
-                            if (handleJoinLeague) handleJoinLeague(league);
+                            console.log(value);
+                            if (handleJoinLeague) handleJoinLeague(league, value);
                           }}
                         >
                           Join
