@@ -74,7 +74,7 @@ export default function Analytics() {
 
           <div className="container flex justify-center">
             <div className="mx-4 grow">
-              <BetsCard bets={bets} />
+              <BetsCard />
             </div>
           </div>
         </>

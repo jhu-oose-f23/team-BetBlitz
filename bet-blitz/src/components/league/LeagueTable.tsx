@@ -20,27 +20,28 @@ import {
 import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
 import { useRouter } from "next/router";
 import { twMerge } from "tailwind-merge";
-import {useState} from "react";
+import { useState } from "react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 type PropType = {
   leagues: League[];
   displayJoinLeague: boolean;
-  handleJoinLeague?: (league: League) => void;
+  handleJoinLeague?: (league: League, password: string) => void;
 };
 
 const LeagueTable = (props: PropType) => {
   const { leagues, displayJoinLeague, handleJoinLeague } = props;
 
-  const [value, setValue] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const getDate = (league: League) => {
     const date = new Date(league.startDate);
-  
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-    const day = date.getDate().toString().padStart(2, '0');
+
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+    const day = date.getDate().toString().padStart(2, "0");
     const fullyear = date.getFullYear();
-  
+
     return `${month}-${day}-${fullyear}`;
   };
 
@@ -75,7 +76,9 @@ const LeagueTable = (props: PropType) => {
             >
               <TableCell>{league.name}</TableCell>
               <TableCell>{league.password ? "Private" : "Public"}</TableCell>
-              <TableCell>{league.numMembers}/{league.maxMembers}</TableCell>
+              <TableCell>
+                {league.numMembers}/{league.maxMembers}
+              </TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
               <TableCell>{getDate(league)}</TableCell>
               {displayJoinLeague && (
@@ -98,23 +101,25 @@ const LeagueTable = (props: PropType) => {
                         </Label>
                         <Input
                           id="LeaguePass"
-                          value={value}
-                          onChange={(e) => setValue(e.currentTarget.value)}
+                          value={password}
+                          onChange={(e) => setPassword(e.currentTarget.value)}
                           placeholder="If public enter nothing"
                           className="col-span-3"
                         />
                       </div>
 
-                      <DialogFooter>
-                        <Button
+                      <DialogClose className="flex justify-end">
+                        <div
+                          className="ml-4 h-10 w-18 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
                           onClick={() => {
-                            console.log(value);
-                            if (handleJoinLeague) handleJoinLeague(league, value);
+                            console.log(password);
+                            if (handleJoinLeague)
+                              handleJoinLeague(league, password);
                           }}
                         >
                           Join
-                        </Button>
-                      </DialogFooter>
+                        </div>
+                      </DialogClose>
                     </DialogContent>
                   </Dialog>
                 </TableCell>

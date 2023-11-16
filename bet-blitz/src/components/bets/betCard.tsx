@@ -34,7 +34,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
     } else {
       return false;
     }
-  }
+  };
 
   const winOrLoss = (bet: Bet) => {
     if (bet.betResult == BetResult.WIN) {
@@ -42,13 +42,19 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
     } else if (bet.betResult == BetResult.LOSS) {
       return false;
     }
-  }
+  };
 
   return (
-    <Card className={twMerge("w-[350px] border-4", inProgress(bet)
-      ? "border-yellow-400"
-      : winOrLoss(bet) ? "border-green-500" : "border-red-600",
-      forParlay && "h-[175px]")}
+    <Card
+      className={twMerge(
+        "w-[350px] border-4 z-40",
+        inProgress(bet)
+          ? "border-yellow-400"
+          : winOrLoss(bet)
+          ? "border-green-500"
+          : "border-red-600",
+        forParlay && "h-[200px] m-4",
+      )}
       key={`bet${index}`}
     >
       <CardHeader>
@@ -67,25 +73,27 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
         </CardDescription>
       </CardHeader>
       <div className="relative h-2">
-        <div className="absolute top-0 right-0 h-14 w-14">
-          {inProgress(bet)
-            ? <Timer size={40} color="#f3cf00" />
-            : winOrLoss(bet) ? <CheckCircle size={40} color="#00cd00" /> : <XCircle size={40} color="#ff0000" />
-          }
+        <div className="absolute right-0 top-0 h-14 w-14">
+          {inProgress(bet) ? (
+            <Timer size={40} color="#f3cf00" />
+          ) : winOrLoss(bet) ? (
+            <CheckCircle size={40} color="#00cd00" />
+          ) : (
+            <XCircle size={40} color="#ff0000" />
+          )}
         </div>
       </div>
-      {
-        !forParlay &&
+      {!forParlay && (
         <CardContent>
           <div className="font-semibold">
             Wager:<span className="font-black"> {bet.amount}₴</span>
           </div>
         </CardContent>
-      }
+      )}
       {/* <CardFooter className="flex justify-end text-sm text-s-500">
         Game on {dateToString(bet.Event.commenceTime!)}
       </CardFooter> */}
-    </Card >
+    </Card>
   );
 };
 

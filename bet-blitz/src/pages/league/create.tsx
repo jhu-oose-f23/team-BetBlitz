@@ -41,54 +41,54 @@ export default function leagueLanding() {
   }, []);
 
   const handleJoinLeague = async (league: League, password: String) => {
-
-
     let { data: pword, error: err1 } = await supabase
-        .from('League')
-        .select('password')
-        .eq("id", league.id);
+      .from("League")
+      .select("password")
+      .eq("id", league.id);
 
     let { data: members, error: err2 } = await supabase
-        .from('League')
-        .select('numMembers, maxMembers')
-        .eq("id", league.id);
+      .from("League")
+      .select("numMembers, maxMembers")
+      .eq("id", league.id);
 
-    if (members[0].numMembers >= members[0].maxMembers) {
+    if (members![0]!.numMembers >= members![0]!.maxMembers) {
       toast({
-        title: "League full"
+        title: "League full",
       });
     }
-    if (pword[0].password && pword[0].password != password) {
+    if (pword![0]!.password && pword![0]!.password != password) {
       toast({
-        title: "Invalid Password"
+        title: "Invalid Password",
       });
     }
 
-    if ((pword[0].password == password || !pword[0].password) && members[0].numMembers < members[0].maxMembers) {
-      const {data: currencyData, error: currencyError} = await supabase
-          .from("Currency")
-          .insert([{amount: league.startingCurrency}])
-          .select();
+    if (
+      (pword![0]!.password == password || !pword![0]!.password) &&
+      members![0]!.numMembers < members![0]!.maxMembers
+    ) {
+      const { data: currencyData, error: currencyError } = await supabase
+        .from("Currency")
+        .insert([{ amount: league.startingCurrency }])
+        .select();
 
       if (currencyData) {
-        const {data: data, error: err3} = await supabase
-            .from("LeagueBettorsCurrency")
-            .insert([
-              {
-                bettorId: userId,
-                leagueId: league.id,
-                currencyId: currencyData[0].id,
-              },
-            ])
-            .select();
+        const { data: data, error: err3 } = await supabase
+          .from("LeagueBettorsCurrency")
+          .insert([
+            {
+              bettorId: userId,
+              leagueId: league.id,
+              currencyId: currencyData[0].id,
+            },
+          ])
+          .select();
         const { error: err4 } = await supabase
-            .from('League')
-            .update({ numMembers: members[0].numMembers+1 })
-            .eq('id', league.id);
+          .from("League")
+          .update({ numMembers: members![0]!.numMembers + 1 })
+          .eq("id", league.id);
         toast({
-          title: "League Joined!"
+          title: "League Joined!",
         });
-
       }
     }
   };

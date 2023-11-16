@@ -21,22 +21,18 @@ import { set } from "date-fns";
 
 interface MyComponentProps {
   // props
-  currency: undefined;
-  setCurrency: (currency: number) => void;
   parlayBets: ParlayLegType[];
   setParlayBets: (bets: ParlayLegType[]) => void;
   setCalculatedOdds: (odds: number) => void;
 }
 
 const ParlayEvents: React.FC<MyComponentProps> = ({
-  currency,
-  setCurrency,
   parlayBets,
   setParlayBets,
   setCalculatedOdds,
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
-  // const [currency, setCurrency] = useState<number | undefined>();
+  const [currency, setCurrency] = useState<number | undefined>();
 
   const [query, setQuery] = useState("");
 

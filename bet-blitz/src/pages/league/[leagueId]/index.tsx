@@ -45,7 +45,7 @@ const LeagueHomePage = () => {
 
         setLeague(league);
         leagueBettorsCurrency?.sort(
-          (a, b) => a.Currency.amount - b.Currency.amount,
+          (a, b) => b.Currency.amount - a.Currency.amount,
         );
         setBettorInfos(leagueBettorsCurrency || []);
       };
