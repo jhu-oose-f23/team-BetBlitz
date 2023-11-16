@@ -239,15 +239,24 @@ const updateBets = async () => {
   });
 };
 
-export default async function seedDatabase() {
-  // const sportKeys = await getAllSports();
-  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
+export default async function handler(req: any, res: any) {
+  if (req.query.key !== "sharedKey") {
+    res.status(404).end();
+    return;
+  }
 
-  updateOdds(sportKeys)
-    .then(() => updateResults(sportKeys))
-    .then(() => updateBets())
-    .then(() => console.log("Success"))
-    .catch((e) => console.error("Error:", e));
+  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"];
+
+  try {
+    await updateOdds(sportKeys)
+      .then(() => updateResults(sportKeys))
+      .then(() => updateBets())
+      .then(() => console.log("Success"))
+      .catch((e) => console.error("Error:", e));
+  } catch (e) {
+    res.status(400).end();
+    return;
+  }
+
+  res.status(200).end();
 }
-
-seedDatabase();
