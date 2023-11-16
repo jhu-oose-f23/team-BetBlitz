@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import { useEffect, useState } from "react";
-import { BetResult, Event, EventResult } from "@prisma/client";
+import { BetResult, Currency, Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
@@ -15,14 +15,19 @@ import { ToastAction } from "~/components/ui/toast";
 import { dateToTimeString } from "~/utils/helpers";
 import Link from "next/link";
 import FilterTeams from "~/components/odds/FilterTeams";
+import { useRouter } from "next/router";
 
 export default function allOdds() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [currency, setCurrency] = useState<number | undefined>();
-
   const [query, setQuery] = useState("");
 
+  const [currency, setCurrency] = useState<number | undefined>();
+  const [currencyId, setCurrencyId] = useState<string>();
+
+  const router = useRouter();
+
   const { userId, getToken } = useAuth();
+  const leagueId = router.query.leagueId;
 
   const [checkNFL, setCheckNFL] = useState(true);
   const [checkNBA, setCheckNBA] = useState(true);
@@ -39,30 +44,34 @@ export default function allOdds() {
   }, []);
 
   useEffect(() => {
-    if (userId) {
+    if (userId && leagueId) {
       const fetch = async () => {
         const token = await getToken({ template: "supabase" });
         const supabase = await supabaseClient(token);
-        const { data: bettor } = await supabase
-          .from("Bettor")
-          .select("privateCurrencyId")
-          .eq("id", userId)
+        const { data: bettorInfo } = await supabase
+          .from("LeagueBettorsCurrency")
+          .select()
+          .eq("bettorId", userId)
+          .eq("leagueId", leagueId)
           .single();
 
-        const privateCurrencyId = bettor?.privateCurrencyId;
+        console.log(bettorInfo);
 
-        const { data: privateCurrency } = await supabase
+        const currnecyId = bettorInfo?.currencyId;
+
+        const { data: currency } = await supabase
           .from("Currency")
-          .select("amount")
-          .eq("id", privateCurrencyId)
+          .select()
+          .eq("id", currnecyId)
           .single();
 
-        setCurrency(privateCurrency?.amount);
+        setCurrency(currency.amount);
+        setCurrencyId(currency.id);
       };
 
       fetch();
     }
-  }, [userId]);
+  }, [userId, leagueId]);
 
   const handlePlaceBet = async (
     event: Event,
@@ -74,29 +83,17 @@ export default function allOdds() {
     const supabase = await supabaseClient(token);
 
     if (supabase) {
-      let privateCurrencyId, curAmount;
-
-      const privateCurrencyIdResponse = await supabase
-        .from("Bettor")
-        .select("privateCurrencyId")
-        .eq("id", userId);
-      if (
-        privateCurrencyIdResponse.data &&
-        privateCurrencyIdResponse.data.length > 0
-      ) {
-        privateCurrencyId =
-          privateCurrencyIdResponse.data[0]?.privateCurrencyId;
-      }
+      let curAmount;
 
       const amountResponse = await supabase
         .from("Currency")
         .select("amount")
-        .eq("id", privateCurrencyId);
+        .eq("id", currencyId);
       if (amountResponse.data && amountResponse.data.length > 0) {
         curAmount = amountResponse.data[0]?.amount;
       }
 
-      if (privateCurrencyId && curAmount) {
+      if (currencyId && curAmount) {
         if (curAmount - amount < 0) {
           toast({
             title: "You're broke",
@@ -106,6 +103,7 @@ export default function allOdds() {
           await supabase.from("Bet").insert({
             bettorId: userId,
             gameId: event.id,
+            leagueId,
             amount,
             odds,
             chosenResult,
@@ -117,7 +115,7 @@ export default function allOdds() {
             .update({
               amount: curAmount - amount,
             })
-            .eq("id", privateCurrencyId);
+            .eq("id", currencyId);
 
           setCurrency(curAmount - amount);
 

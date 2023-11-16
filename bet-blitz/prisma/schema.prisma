@@ -66,6 +66,18 @@ model Bet {
   game         Event       @relation(fields: [gameId], references: [id])
   league       League?     @relation(fields: [leagueId], references: [id])
   createdAt    DateTime    @default(now())
+  parlayId     String?     @db.Uuid
+  parlay       Parlay?     @relation(fields: [parlayId], references: [id])
+}
+
+model Parlay {
+  id        String   @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bettorId  String
+  bets      Bet[]   
+  amount    Float
+  odds      Int
+  betResult BetResult
+  createdAt DateTime @default(now())
 }
 
 model League {
@@ -116,8 +128,8 @@ model BetBoard {
 }
 
 model LeagueBettorsCurrency {
-  bettorId   String   @unique
-  leagueId   String   @unique @db.Uuid
+  bettorId   String   
+  leagueId   String   @db.Uuid
   currencyId String   @unique @db.Uuid
   bettor     Bettor   @relation(fields: [bettorId], references: [id])
   currency   Currency @relation(fields: [currencyId], references: [id])

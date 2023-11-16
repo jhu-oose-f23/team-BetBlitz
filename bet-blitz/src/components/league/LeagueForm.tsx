@@ -13,8 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { Textarea } from "~/components/ui/textarea";
-import { toast } from "~/components/ui/use-toast";
 import { Input } from "~/components/ui/input";
 
 import * as React from "react";
@@ -32,6 +30,7 @@ import {
 import moment from "moment";
 import { useAuth } from "@clerk/nextjs";
 import { supabaseClient } from "~/utils/supabaseClient";
+import { useRouter } from "next/router";
 
 interface MyComponentProps {}
 
@@ -85,15 +84,21 @@ const FormSchema = z
 
 const LeagueForm: React.FC<MyComponentProps> = () => {
   const { userId, getToken } = useAuth();
-  const [date, setDate] = React.useState<Date>();
+
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof FormSchema>>({
+    defaultValues: {
+      leagueName: "",
+      seasonLength: -1,
+      password: "",
+      passwordConfirm: "",
+      startingMoney: -1,
+      maxPlayers: -1,
+      startingDate: undefined,
+    },
     resolver: zodResolver(FormSchema),
   });
-
-  // const supabase = createClient(
-  //     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-  //     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  //   );
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const token = await getToken({ template: "supabase" });
@@ -111,26 +116,23 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
           maxMembers: data.maxPlayers,
           startingCurrency: data.startingMoney,
           numMembers: "1",
+          password: data.password
         },
       ])
       .select();
 
-    console.log(formData);
-    console.log(error);
+    if (formData) router.reload();
   }
 
   return (
     <div className="flex flex-col items-center justify-center">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="leagueName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="grow">
                 <FormLabel>League Name</FormLabel>
                 <FormControl>
                   <Input
@@ -147,15 +149,21 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
             control={form.control}
             name="seasonLength"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="">
                 <FormLabel>Season Length (Weeks)</FormLabel>
                 <FormControl>
-                  <Input placeholder="10" className="resize-none" {...field} />
+                  <Input
+                    placeholder="10"
+                    className="resize-none"
+                    {...field}
+                    value={field.value === -1 ? "" : field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="password"
@@ -185,6 +193,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="startingMoney"
@@ -200,10 +209,11 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
                       <Input
                         type="text"
                         id="price"
-                        className=" w-full rounded-md py-1.5 pr-12 sm:text-sm sm:leading-6" //add pl-7 back to create space for symbol
+                        className="w-full rounded-md py-1.5 pr-12 sm:text-sm sm:leading-6" //add pl-7 back to create space for symbol
                         placeholder="0.00"
                         aria-describedby="price-currency"
                         {...field}
+                        value={field.value === -1 ? "" : field.value}
                       />
 
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -228,7 +238,11 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
               <FormItem>
                 <FormLabel>Maximum Number of Players</FormLabel>
                 <FormControl>
-                  <Input className="resize-none" {...field} />
+                  <Input
+                    className="resize-none"
+                    {...field}
+                    value={field.value === -1 ? "" : field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

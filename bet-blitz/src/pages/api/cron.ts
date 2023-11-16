@@ -104,9 +104,11 @@ const updateResults = async (sportKeys: string[]) => {
 
     if (scoresData) {
       for (const scoreData of scoresData) {
+        console.log(scoreData);
+        console.log(scoreData.scores);
         if (scoreData.completed === true && scoreData.scores) {
-          let homeTeamScore: number = 0; // +scoreData.scores[0]!.score;
-          let awayTeamScore: number = 0; // +scoreData.scores[1]!.score;
+          let homeTeamScore: number = 0;
+          let awayTeamScore: number = 0;
 
           if (scoreData.home_team === scoreData.scores[0]!.name) {
             homeTeamScore = +scoreData.scores[0]!.score;
@@ -168,20 +170,51 @@ const updateBets = async () => {
             },
           });
 
-          const privateCurrency = await prisma.currency.findUnique({
-            where: {
-              id: bettor?.privateCurrencyId,
-            },
-          });
+          if (bet.leagueId) {
+            // BET WAS MADE IN A LEAGUE
+            const leagueId = bet.leagueId;
 
-          await prisma.currency.update({
-            where: {
-              id: bettor?.privateCurrencyId,
-            },
-            data: {
-              amount: (privateCurrency?.amount || 0) + wagerAmount + winAmount,
-            },
-          });
+            const leagueBettorsCurrency =
+              await prisma.leagueBettorsCurrency.findFirst({
+                where: {
+                  leagueId,
+                  bettorId,
+                },
+              });
+
+            const currencyId = leagueBettorsCurrency?.currencyId;
+            const currency = await prisma.currency.findUnique({
+              where: {
+                id: currencyId,
+              },
+            });
+
+            await prisma.currency.update({
+              where: {
+                id: currencyId,
+              },
+              data: {
+                amount: (currency?.amount || 0) + wagerAmount + winAmount,
+              },
+            });
+          } else {
+            // BET WAS MADE USING PRIVATE CURRENCY (NON-LEAGUE CURRENCY)
+            const privateCurrency = await prisma.currency.findUnique({
+              where: {
+                id: bettor?.privateCurrencyId,
+              },
+            });
+
+            await prisma.currency.update({
+              where: {
+                id: bettor?.privateCurrencyId,
+              },
+              data: {
+                amount:
+                  (privateCurrency?.amount || 0) + wagerAmount + winAmount,
+              },
+            });
+          }
 
           await prisma.bet.update({
             where: {
@@ -206,15 +239,24 @@ const updateBets = async () => {
   });
 };
 
-export default async function seedDatabase() {
-  // const sportKeys = await getAllSports();
-  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
+export default async function handler(req: any, res: any) {
+  if (req.query.key !== "sharedKey") {
+    res.status(404).end();
+    return;
+  }
 
-  updateOdds(sportKeys)
-    .then(() => updateResults(sportKeys))
-    .then(() => updateBets())
-    .then(() => console.log("Success"))
-    .catch((e) => console.error("Error:", e));
+  const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"];
+
+  try {
+    await updateOdds(sportKeys)
+      .then(() => updateResults(sportKeys))
+      .then(() => updateBets())
+      .then(() => console.log("Success"))
+      .catch((e) => console.error("Error:", e));
+  } catch (e) {
+    res.status(400).end();
+    return;
+  }
+
+  res.status(200).end();
 }
-
-seedDatabase();
