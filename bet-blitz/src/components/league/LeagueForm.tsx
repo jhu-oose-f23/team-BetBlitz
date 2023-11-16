@@ -116,6 +116,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
           maxMembers: data.maxPlayers,
           startingCurrency: data.startingMoney,
           numMembers: "1",
+          password: data.password
         },
       ])
       .select();

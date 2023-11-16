@@ -8,11 +8,9 @@ import {
   Parlay,
 } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
-import { calculateOdds } from "~/utils/helpers";
-import { ParlayLegType } from "./parlay";
 import ParlayCard from "~/components/parlay/ParlayCard";
 
 const Bets = () => {
@@ -109,6 +107,8 @@ const Bets = () => {
     fetchData();
   }, [userId]);
 
+  console.log(parlayBets);
+
   return (
     <main>
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
@@ -130,29 +130,23 @@ const Bets = () => {
                   Event: Event;
                 },
                 index: number,
-              ) => {
-                if (bet.leagueId) {
-                  if (!filter.includes(bet.leagueId!)) {
-                    return (
-                      <BetCard
-                        index={index}
-                        bet={bet}
-                        key={`betCard${index}`}
-                      />
-                    );
-                  }
-                } else {
-                  if (!filter.includes("privateCurrency")) {
-                    return (
-                      <BetCard
-                        index={index}
-                        bet={bet}
-                        key={`betCard${index}`}
-                      />
-                    );
-                  }
-                }
-              },
+              ) => (
+                <div key={`bet${index}`}>
+                  {bet.leagueId
+                    ? !filter.includes(bet.leagueId!) && (
+                        <BetCard
+                          index={index}
+                          bet={bet}
+                        />
+                      )
+                    : !filter.includes("privateCurrency") && (
+                        <BetCard
+                          index={index}
+                          bet={bet}
+                        />
+                      )}
+                </div>
+              ),
             )}
         </div>
         {parlayBets.length !== 0 && (
@@ -175,7 +169,7 @@ const Bets = () => {
                   },
                   index: number,
                 ) => (
-                  <ParlayCard index={index} parlay={parlay} />
+                  <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`}/>
                 ),
               )}
             </div>

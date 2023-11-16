@@ -18,11 +18,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-  | {
-    name: string;
-    score: string;
-  }[]
-  | null;
+    | {
+        name: string;
+        score: string;
+      }[]
+    | null;
   last_update: string | null;
 };
 
@@ -140,7 +140,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) { }
+          } catch (e) {}
         }
       }
     }
@@ -264,12 +264,11 @@ const updateParlays = async () => {
   //   betIdToBet.set(bet.id, bet);
   // });
 
-  const parlays = await prisma.parlay.findMany({    
+  const parlays = await prisma.parlay.findMany({
     include: {
       bets: true,
     },
   });
-
 
   //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progrress otherwise
   parlays.forEach(async (parlay) => {
@@ -320,8 +319,8 @@ const updateParlays = async () => {
             id: bettorId,
           },
           include: {
-            privateCurrency: true
-          }
+            privateCurrency: true,
+          },
         });
 
         // Parlays are always made using private currency
@@ -344,7 +343,7 @@ const updateParlays = async () => {
       }
     }
   });
-}
+};
 
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();

@@ -1,11 +1,10 @@
 import { Split } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import SplitPane, { Pane } from "split-pane-react";
 import ParlayEvents from "~/components/parlay/ParlayEvents";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
-import { Bet, EventResult, Event, BetResult } from "@prisma/client";
+import { Bet, EventResult, Event, BetResult, Parlay } from "@prisma/client";
 import ParlayLeg from "~/components/parlay/ParlayLeg";
 import { supabaseClient } from "~/utils/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
@@ -58,7 +57,7 @@ export default function Parlay() {
   }, [userId]);
 
   useEffect(() => {
-    const newOdds = calculateOdds(parlayBets);
+    const newOdds = calculateOdds(parlayBets as unknown as Parlay[]);
     setCalculatedOdds(newOdds);
   }, [parlayBets]);
 
@@ -154,10 +153,10 @@ export default function Parlay() {
             for (let i = 0; i < parlayBets.length; i++) {
               const parlayLeg = parlayBets[i];
               const newBet = await handlePlaceBet(
-                parlayLeg.event,
-                parlayLeg.odds,
-                parlayLeg.amount,
-                parlayLeg.chosenResult,
+                parlayLeg!.event,
+                parlayLeg!.odds,
+                parlayLeg!.amount,
+                parlayLeg!.chosenResult,
                 parlayId,
               );
               parlayLegs.push(newBet);
@@ -196,17 +195,6 @@ export default function Parlay() {
         description: "Please try again later",
       });
     }
-
-    // console.log(parlayBets);
-    // let parlayLegs = [];
-    // //place each of the bets in the parlay
-    // for (let i = 0; i < parlayBets.length; i++) {
-    //   const parlayLeg = parlayBets[i];
-    //   const newBet = await handlePlaceBet(parlayLeg.event, parlayLeg.odds, parlayLeg.amount, parlayLeg.chosenResult);
-    //   parlayLegs.push(newBet);
-    // }
-
-    //create the parlay
   };
 
   return (
@@ -215,8 +203,6 @@ export default function Parlay() {
       <div className="w-2/3 overflow-y-auto">
         {/* Add your content for the left column here */}
         <ParlayEvents
-          currency={currency}
-          setCurrency={setCurrency}
           parlayBets={parlayBets}
           setParlayBets={setParlayBets}
           setCalculatedOdds={setCalculatedOdds}
@@ -245,7 +231,7 @@ export default function Parlay() {
         {/* This column will take up one-third of the width and scroll independently */}
       </div>
       <Card className="fixed bottom-0 right-0 flex w-1/3 flex-row items-center p-4">
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center w-full">
           <Input
             id="amount"
             value={amount}
@@ -259,12 +245,14 @@ export default function Parlay() {
           <CardTitle className="text-md flex-grow">
             Calculated Odds: + {calculatedOdds.toFixed(0)}
           </CardTitle>
-          <Button
-            className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
-            onClick={() => placeParlay(parlayBets)}
-          >
-            Place Parlay
-          </Button>
+          <div className="flex grow justify-end">
+            <Button
+              className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
+              onClick={() => placeParlay(parlayBets)}
+            >
+              Place Parlay
+            </Button>
+          </div>
         </div>
       </Card>
     </div>
