@@ -87,7 +87,7 @@ const Bets = () => {
             </h4>
           </div>
         ) : (
-          <h1 className="text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem] text-center">
+          <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
             They haven't placed any bets!
           </h1>
         )}

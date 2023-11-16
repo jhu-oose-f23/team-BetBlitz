@@ -1,5 +1,6 @@
 import { Button } from "~/components/ui/button";
-import { Bet, Event, EventResult } from "@prisma/client";
+import { Bet, BetResult, Event, EventResult } from "@prisma/client";
+import { XCircle, CheckCircle, Timer } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -27,8 +28,29 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
   )!;
   const oddsToString = odds > 0 ? `+${odds}` : odds?.toString();
 
+  const inProgress = (checkBet: Bet) => {
+    if (checkBet.betResult == BetResult.IN_PROGRESS) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const winOrLoss = (bet: Bet) => {
+    if (bet.betResult == BetResult.WIN) {
+      return true;
+    } else if (bet.betResult == BetResult.LOSS) {
+      return false;
+    }
+  }
+
   return (
-    <Card className={twMerge("flex h-[225px] w-[350px] flex-col z-20 m-4", forParlay && "h-[175px]")} key={`bet${index}`}>
+    <Card className={twMerge("w-[350px] border-4", inProgress(bet)
+      ? "border-yellow-400"
+      : winOrLoss(bet) ? "border-green-500" : "border-red-600",
+      forParlay && "h-[175px]")}
+      key={`bet${index}`}
+    >
       <CardHeader>
         <CardTitle>
           {bet.chosenResult === EventResult.AWAY_TEAM
@@ -44,19 +66,26 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
           {bet.Event.teamOneName} vs {bet.Event.teamTwoName}
         </CardDescription>
       </CardHeader>
+      <div className="relative h-2">
+        <div className="absolute top-0 right-0 h-14 w-14">
+          {inProgress(bet)
+            ? <Timer size={40} color="#f3cf00" />
+            : winOrLoss(bet) ? <CheckCircle size={40} color="#00cd00" /> : <XCircle size={40} color="#ff0000" />
+          }
+        </div>
+      </div>
       {
         !forParlay &&
-        <CardContent className="flex grow items-end">
+        <CardContent>
           <div className="font-semibold">
             Wager:<span className="font-black"> {bet.amount}₴</span>
           </div>
         </CardContent>
       }
-
       {/* <CardFooter className="flex justify-end text-sm text-s-500">
         Game on {dateToString(bet.Event.commenceTime!)}
       </CardFooter> */}
-    </Card>
+    </Card >
   );
 };
 

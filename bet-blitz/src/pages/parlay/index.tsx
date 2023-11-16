@@ -16,11 +16,11 @@ import Link from "next/link";
 import { calculateOdds } from "~/utils/helpers";
 
 export type ParlayLegType = {
-  event: Event,
-  odds: number,
-  amount: number,
-  chosenResult: EventResult,
-}
+  event: Event;
+  odds: number;
+  amount: number;
+  chosenResult: EventResult;
+};
 
 export default function Parlay() {
   const [parlayBets, setParlayBets] = useState<ParlayLegType[]>([]);
@@ -137,12 +137,15 @@ export default function Parlay() {
             description: "Go make some money",
           });
         } else {
-          const { data: parlay, error } = await supabase.from("Parlay").insert({
-            bettorId: userId,
-            amount: amount,
-            odds: Math.floor(calculatedOdds),
-            betResult: BetResult.IN_PROGRESS,
-          }).select();
+          const { data: parlay, error } = await supabase
+            .from("Parlay")
+            .insert({
+              bettorId: userId,
+              amount: amount,
+              odds: Math.floor(calculatedOdds),
+              betResult: BetResult.IN_PROGRESS,
+            })
+            .select();
 
           if (parlay) {
             const parlayId = parlay[0].id;

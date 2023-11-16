@@ -66,7 +66,7 @@ const LeagueHomePage = () => {
             </Link>
 
             <div>
-              <div className="tracking-none text-center text-xl font-black uppercase mb-8">
+              <div className="tracking-none mb-8 text-center text-xl font-black uppercase">
                 Standings
               </div>
               <PlayerTable bettorInfos={bettorInfos} />

@@ -25,7 +25,7 @@ const Bets = () => {
   const [parlayBets, setParlayBets] = useState<
     (Parlay & {
       Bet: (Bet & {
-        Event: Event
+        Event: Event;
       })[];
     })[]
   >([]);
@@ -84,7 +84,7 @@ const Bets = () => {
         setParlayBets(
           parlay as (Parlay & {
             Bet: (Bet & {
-              Event: Event
+              Event: Event;
             })[];
           })[],
         );
@@ -93,7 +93,9 @@ const Bets = () => {
         bets?.forEach((bet) => {
           const curLeague = bet.League as League;
           if (curLeague) {
-            if (!curLeagues.find((league) => league && league.id === curLeague.id)) {
+            if (
+              !curLeagues.find((league) => league && league.id === curLeague.id)
+            ) {
               curLeagues.push(curLeague);
             }
           } else {
@@ -153,33 +155,32 @@ const Bets = () => {
               },
             )}
         </div>
-        {
-          parlayBets.length !== 0 &&
+        {parlayBets.length !== 0 && (
           <div className="w-full">
-            <div className="relative flex py-5 items-center">
+            <div className="relative flex items-center py-5">
               <div className="flex-grow border-t border-gray-400"></div>
-              <span className="flex-shrink mx-4 uppercase font-black tracking-none text-xl">Parlays</span>
+              <span className="tracking-none mx-4 flex-shrink text-xl font-black uppercase">
+                Parlays
+              </span>
               <div className="flex-grow border-t border-gray-400"></div>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-8">
-              {
-                parlayBets.map(
-                  (
-                    parlay: (Parlay & {
-                      Bet: (Bet & {
-                        Event: Event
-                      })[];
-                    }),
-                    index: number,
-                  ) => <ParlayCard index={index} parlay={parlay} />,
-                )}
+              {parlayBets.map(
+                (
+                  parlay: Parlay & {
+                    Bet: (Bet & {
+                      Event: Event;
+                    })[];
+                  },
+                  index: number,
+                ) => (
+                  <ParlayCard index={index} parlay={parlay} />
+                ),
+              )}
             </div>
           </div>
-
-
-
-        }
+        )}
       </div>
     </main>
   );

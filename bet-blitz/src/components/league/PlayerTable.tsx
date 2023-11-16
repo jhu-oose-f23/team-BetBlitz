@@ -47,9 +47,7 @@ const PlayerTable = (props: PropType) => {
                   View Bets
                 </Button>
               </TableCell>
-              <TableCell>
-                {index + 1}
-              </TableCell>
+              <TableCell>{index + 1}</TableCell>
             </TableRow>
           ))}
       </TableBody>
