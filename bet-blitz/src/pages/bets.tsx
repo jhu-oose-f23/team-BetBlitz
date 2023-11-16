@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
-import { Bet, Event, EventResult } from "@prisma/client";
+import { Bet, BetResult, Event, EventResult } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import BetCard from "~/components/bets/betCard";
@@ -43,6 +43,16 @@ const Bets = () => {
 
     fetchData();
   }, [userId]);
+
+  // const getBorder = (betCard: Bet, index: number) => {
+  //   if (betCard.betResult == BetResult.IN_PROGRESS){
+  //     return <BetCard index={index} bet={betCard} />;
+  //   } else if (betCard.betResult == BetResult.WIN){
+  //     return <BetCard index={index} bet={betCard} className="border-green-500"/>;
+  //   } else if (betCard.betResult == BetResult.LOSS){
+  //     return <BetCard index={index} bet={betCard} className="border-red-600"/>;
+  //   }
+  // }
 
   return (
     <main>

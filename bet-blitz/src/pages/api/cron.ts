@@ -12,11 +12,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-  | {
-    name: string;
-    score: string;
-  }[]
-  | null;
+    | {
+        name: string;
+        score: string;
+      }[]
+    | null;
   last_update: string | null;
 };
 
@@ -134,7 +134,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) { }
+          } catch (e) {}
         }
       }
     }
