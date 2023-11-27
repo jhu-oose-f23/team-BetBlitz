@@ -1,35 +1,19 @@
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { ParlayLegType } from "~/pages/parlay";
+import { BetslipType } from "~/pages/bet";
 import { dateToTimeString } from "~/utils/helpers";
 import { EventResult } from "@prisma/client";
 
 interface ParlayLegProps {
-  parlayLeg: ParlayLegType;
+  parlayLeg: BetslipType;
   index: number;
-  setParlayBets?: React.Dispatch<React.SetStateAction<ParlayLegType[]>>;
+  setParlayBets?: React.Dispatch<React.SetStateAction<BetslipType[]>>;
   setCalculatedOdds?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const findChosenTeam = (parlayLeg: ParlayLegType) => {
-  if (parlayLeg.event.homeTeam === parlayLeg.event.teamOneName) {
-    if (parlayLeg.chosenResult === EventResult.HOME_TEAM) {
-      return 1;
-    } else {
-      return 2;
-    }
-  } else if (parlayLeg.event.homeTeam === parlayLeg.event.teamTwoName) {
-    if (parlayLeg.chosenResult === EventResult.HOME_TEAM) {
-      return 2;
-    } else {
-      return 1;
-    }
-  }
-};
-
 const handleRemoveLeg = (
-  parlayLeg: ParlayLegType,
-  setParlayBets: React.Dispatch<React.SetStateAction<ParlayLegType[]>>,
+  parlayLeg: BetslipType,
+  setParlayBets: React.Dispatch<React.SetStateAction<BetslipType[]>>,
 ) => {
   setParlayBets((prev) => {
     return prev.filter((leg) => leg.event.id !== parlayLeg.event.id);
@@ -43,7 +27,7 @@ const ParlayLeg: React.FC<ParlayLegProps> = ({
   setCalculatedOdds,
 }) => {
   const event = parlayLeg.event;
-  const chosenTeam = findChosenTeam(parlayLeg);
+
   return (
     <Card
       key={`event${index}`}
@@ -62,14 +46,14 @@ const ParlayLeg: React.FC<ParlayLegProps> = ({
           <CardTitle className="text-md flex-grow">
             {event.teamOneName}
           </CardTitle>
-          {chosenTeam === 1 ? (
+          {parlayLeg.chosenResult === EventResult.AWAY_TEAM ? (
             <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground ">
-              {event.teamOneOdds > 0 ? "+" : ""}
+              {event.teamOneOdds! > 0 ? "+" : ""}
               {event.teamOneOdds}
             </div>
           ) : (
             <div className="ml-4 h-10 rounded-md bg-slate-300 px-4 py-2 text-primary-foreground ">
-              {event.teamOneOdds > 0 ? "+" : ""}
+              {event.teamOneOdds! > 0 ? "+" : ""}
               {event.teamOneOdds}
             </div>
           )}
@@ -85,14 +69,14 @@ const ParlayLeg: React.FC<ParlayLegProps> = ({
           <CardTitle className="text-md flex-grow">
             {event.teamTwoName}
           </CardTitle>
-          {chosenTeam === 2 ? (
+          {parlayLeg.chosenResult === EventResult.HOME_TEAM ? (
             <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground ">
-              {event.teamTwoOdds > 0 ? "+" : ""}
+              {event.teamTwoOdds! > 0 ? "+" : ""}
               {event.teamTwoOdds}
             </div>
           ) : (
             <div className="ml-4 h-10 rounded-md bg-slate-300 px-4 py-2 text-primary-foreground   ">
-              {event.teamTwoOdds > 0 ? "+" : ""}
+              {event.teamTwoOdds! > 0 ? "+" : ""}
               {event.teamTwoOdds}
             </div>
           )}

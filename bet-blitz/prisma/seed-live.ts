@@ -18,11 +18,11 @@ type ScoreData = {
   home_team: string;
   away_team: string;
   scores:
-    | {
-        name: string;
-        score: string;
-      }[]
-    | null;
+  | {
+    name: string;
+    score: string;
+  }[]
+  | null;
   last_update: string | null;
 };
 
@@ -59,18 +59,35 @@ const updateOdds = async (sportKeys: string[]) => {
         const outcome1 = market.outcomes[0];
         const outcome2 = market.outcomes[1];
 
-        const event = {
-          id: curOdds.id,
-          sportKey: curOdds.sport_key,
-          commenceTime: new Date(curOdds.commence_time),
-          homeTeam: curOdds.home_team,
-          awayTeam: curOdds.away_team,
-          teamOneName: outcome1.name,
-          teamTwoName: outcome2.name,
-          teamOneOdds: outcome1.price,
-          teamTwoOdds: outcome2.price,
-          result: EventResult.IN_PROGESS,
-        } as Event;
+        let event: Event;
+
+        if (outcome1.name === curOdds.away_team) {
+          event = {
+            id: curOdds.id,
+            sportKey: curOdds.sport_key,
+            commenceTime: new Date(curOdds.commence_time),
+            homeTeam: curOdds.home_team,
+            awayTeam: curOdds.away_team,
+            teamOneName: outcome1.name,
+            teamTwoName: outcome2.name,
+            teamOneOdds: outcome1.price,
+            teamTwoOdds: outcome2.price,
+            result: EventResult.IN_PROGESS,
+          } as Event;
+        } else {
+          event = {
+            id: curOdds.id,
+            sportKey: curOdds.sport_key,
+            commenceTime: new Date(curOdds.commence_time),
+            homeTeam: curOdds.home_team,
+            awayTeam: curOdds.away_team,
+            teamOneName: outcome2.name,
+            teamTwoName: outcome1.name,
+            teamOneOdds: outcome2.price,
+            teamTwoOdds: outcome1.price,
+            result: EventResult.IN_PROGESS,
+          } as Event;
+        }
 
         events.push(event);
       }
@@ -110,8 +127,6 @@ const updateResults = async (sportKeys: string[]) => {
 
     if (scoresData) {
       for (const scoreData of scoresData) {
-        console.log(scoreData);
-        console.log(scoreData.scores);
         if (scoreData.completed === true && scoreData.scores) {
           let homeTeamScore: number = 0;
           let awayTeamScore: number = 0;
@@ -140,7 +155,7 @@ const updateResults = async (sportKeys: string[]) => {
                 result,
               },
             });
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     }

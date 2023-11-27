@@ -61,7 +61,7 @@ const LeagueHomePage = () => {
             <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
               {league.name}
             </h1>
-            <Link href={`/league/${leagueId}/odds`}>
+            <Link href={`/league/${leagueId}/bet`}>
               <Button>Place a bet!</Button>
             </Link>
 

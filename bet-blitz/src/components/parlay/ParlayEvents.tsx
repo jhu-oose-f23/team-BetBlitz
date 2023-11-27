@@ -10,30 +10,25 @@ import { supabaseClient } from "~/utils/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
 //import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import ParlayDialog from "~/components/parlay/ParlayDialog";
-import { toast } from "~/components/ui/use-toast";
-import { ToastAction } from "~/components/ui/toast";
 import { dateToTimeString } from "~/utils/helpers";
-import Link from "next/link";
 import FilterTeams from "~/components/odds/FilterTeams";
-import Parlay from "~/pages/parlay";
-import { ParlayLegType } from "~/pages/parlay";
-import { set } from "date-fns";
+import { BetslipType } from "~/pages/bet";
 
 interface MyComponentProps {
   // props
-  parlayBets: ParlayLegType[];
-  setParlayBets: (bets: ParlayLegType[]) => void;
+  parlayBets: BetslipType[];
+  setParlayBets: (bets: BetslipType[]) => void;
   setCalculatedOdds: (odds: number) => void;
+  currency?: number;
 }
 
 const ParlayEvents: React.FC<MyComponentProps> = ({
   parlayBets,
   setParlayBets,
   setCalculatedOdds,
+  currency
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [currency, setCurrency] = useState<number | undefined>();
-
   const [query, setQuery] = useState("");
 
   const { userId, getToken } = useAuth();
@@ -47,36 +42,24 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
       const token = await getToken({ template: "supabase" });
       const supabase = await supabaseClient(token);
       const { data: events } = await supabase.from("Event").select();
+
+      events?.forEach((event: Event) => {
+        if (event.awayTeam !== event.teamOneName) {
+          const tempName = event.teamOneName;
+          const tempOdds = event.teamOneOdds;
+
+          event.teamOneName = event.teamTwoName;
+          event.teamOneOdds = event.teamTwoOdds;
+
+          event.teamTwoName = tempName;
+          event.teamTwoOdds = tempOdds;
+        }
+      });
+
       setEvents(events as Event[]);
     };
     fetch();
   }, []);
-
-  useEffect(() => {
-    if (userId) {
-      const fetch = async () => {
-        const token = await getToken({ template: "supabase" });
-        const supabase = await supabaseClient(token);
-        const { data: bettor } = await supabase
-          .from("Bettor")
-          .select("privateCurrencyId")
-          .eq("id", userId)
-          .single();
-
-        const privateCurrencyId = bettor?.privateCurrencyId;
-
-        const { data: privateCurrency } = await supabase
-          .from("Currency")
-          .select("amount")
-          .eq("id", privateCurrencyId)
-          .single();
-
-        setCurrency(privateCurrency?.amount);
-      };
-
-      fetch();
-    }
-  }, [userId]);
 
   const handleAddLeg = async (
     event: Event,
@@ -84,7 +67,7 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
     amount: number,
     chosenResult: EventResult,
   ) => {
-    const newLeg: ParlayLegType = { event, odds, amount, chosenResult };
+    const newLeg: BetslipType = { event, odds, amount, chosenResult };
     const newParlayBets = [...parlayBets, newLeg];
     setParlayBets(newParlayBets);
   };
@@ -182,28 +165,12 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                               odds={event.teamOneOdds}
                               name={event.teamOneName}
                               handlePlaceBet={async (amount: number) => {
-                                if (event.teamOneName === event.awayTeam) {
-                                  handleAddLeg(
-                                    event,
-                                    event.teamOneOdds!,
-                                    amount,
-                                    EventResult.AWAY_TEAM,
-                                  );
-                                } else {
-                                  handleAddLeg(
-                                    event,
-                                    event.teamOneOdds!,
-                                    amount,
-                                    EventResult.HOME_TEAM,
-                                  );
-                                }
-                                // }
-                                // handleAddLeg(
-                                //     event,
-                                //     event.teamOneOdds!,
-                                //     amount,
-                                //     EventResult.AWAY_TEAM,
-                                // );
+                                handleAddLeg(
+                                  event,
+                                  event.teamOneOdds!,
+                                  amount,
+                                  EventResult.AWAY_TEAM,
+                                );
                               }}
                             />
                           )}
@@ -226,21 +193,12 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                               odds={event.teamTwoOdds}
                               name={event.teamTwoName}
                               handlePlaceBet={async (amount: number) => {
-                                if (event.teamTwoName === event.awayTeam) {
-                                  handleAddLeg(
-                                    event,
-                                    event.teamTwoOdds!,
-                                    amount,
-                                    EventResult.AWAY_TEAM,
-                                  );
-                                } else {
-                                  handleAddLeg(
-                                    event,
-                                    event.teamTwoOdds!,
-                                    amount,
-                                    EventResult.HOME_TEAM,
-                                  );
-                                }
+                                handleAddLeg(
+                                  event,
+                                  event.teamTwoOdds!,
+                                  amount,
+                                  EventResult.HOME_TEAM,
+                                );
                               }}
                             />
                           )}

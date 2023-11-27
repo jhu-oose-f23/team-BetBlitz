@@ -1,5 +1,5 @@
 import { Parlay } from "@prisma/client";
-import { ParlayLegType } from "~/pages/parlay";
+import { BetslipType } from "~/pages/bet";
 
 export const dateToTimeString = (date: Date) => {
   date = new Date(date);
