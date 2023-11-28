@@ -209,6 +209,7 @@ export default function Bet() {
           parlayBets={betslip}
           setParlayBets={setBetslip}
           setCalculatedOdds={setCalculatedOdds}
+          currency={currency}
         />
         {/* This column will take up two-thirds of the width and scroll independently */}
       </div>
