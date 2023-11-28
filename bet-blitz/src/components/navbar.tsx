@@ -36,7 +36,7 @@ export function Navbar() {
                     router.pathname === "/odds" ? "bg-gray-500" : "",
                   )}
                 >
-                  Bet
+                  Place a Bet
                 </Link>
                 <Link
                   href="/bets"
@@ -45,7 +45,7 @@ export function Navbar() {
                     router.pathname === "/bets" ? "bg-gray-500" : "",
                   )}
                 >
-                  Bets
+                  Your Bets
                 </Link>
                 <Link
                   href="/analytics"

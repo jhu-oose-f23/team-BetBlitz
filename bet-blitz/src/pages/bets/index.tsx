@@ -33,8 +33,6 @@ const Bets = () => {
 
   const { userId } = useAuth();
 
-  console.log(userId);
-
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -59,7 +57,7 @@ const Bets = () => {
           .eq("bettorId", userId)
           .is("parlayId", null);
 
-        const { data: parlay } = await supabase
+        const { data: parlays } = await supabase
           .from("Parlay")
           .select(
             `
@@ -85,7 +83,7 @@ const Bets = () => {
         );
 
         setParlayBets(
-          parlay as (Parlay & {
+          parlays as (Parlay & {
             League: League;
             Bet: (Bet & {
               Event: Event;
@@ -107,7 +105,7 @@ const Bets = () => {
           }
         });
 
-        parlayBets.forEach((parlay: any) => {
+        parlays?.forEach((parlay: any) => {
           const curLeague = parlay.League as League;
           if (curLeague) {
             if (
@@ -126,8 +124,6 @@ const Bets = () => {
 
     fetchData();
   }, [userId]);
-
-  console.log(parlayBets);
 
   return (
     <main>
