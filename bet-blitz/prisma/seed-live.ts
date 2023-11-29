@@ -5,6 +5,7 @@ import {
   BetResult,
   Bet,
 } from "@prisma/client";
+import { el } from "date-fns/locale";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -51,7 +52,7 @@ const updateOdds = async (sportKeys: string[]) => {
     const odds: OddsData[] = Array.from(await response.json());
 
     // Iterate over the data
-    odds.forEach((curOdds: OddsData) => {
+    for (let curOdds of odds) {
       if (curOdds.bookmakers.length > 0) {
         // check if FanDuel has the odds
         const bookmaker = curOdds.bookmakers[0];
@@ -91,12 +92,12 @@ const updateOdds = async (sportKeys: string[]) => {
 
         events.push(event);
       }
-    });
+    };
   }
 
   //TODO: add error handling for the fetch request if api call fails
 
-  events.forEach(async (event: Event) => {
+  for (let event of events) {
     await prisma.event.upsert({
       where: {
         id: event.id,
@@ -104,7 +105,7 @@ const updateOdds = async (sportKeys: string[]) => {
       create: event,
       update: event,
     });
-  });
+  };
 };
 
 const getAllSports = async () => {
@@ -172,8 +173,8 @@ const updateBets = async () => {
     },
   });
 
-  events.forEach((event) => {
-    event.bets.forEach(async (bet) => {
+  for (let event of events) {
+    for (let bet of event.bets) {
       if (bet.betResult === BetResult.IN_PROGRESS) {
         if (bet.chosenResult === event.result) {
           const wagerAmount = bet.amount;
@@ -258,8 +259,8 @@ const updateBets = async () => {
           });
         }
       }
-    });
-  });
+    };
+  };
 };
 
 const updateParlays = async () => {
@@ -286,12 +287,12 @@ const updateParlays = async () => {
   });
 
   //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progrress otherwise
-  parlays.forEach(async (parlay) => {
-    let parlayResult: BetResult = BetResult.IN_PROGRESS;
+  for (let parlay of parlays) {
+    let parlayResult: BetResult = parlay.betResult;
     if (parlayResult === BetResult.IN_PROGRESS) {
       let allBetsWon = true;
       let atLeastOneLoss = false;
-      parlay.bets.forEach((bet) => {
+      for (let bet of parlay.bets) {
         // at least one bet is a loss
         if (bet.betResult !== BetResult.WIN) {
           allBetsWon = false;
@@ -300,7 +301,7 @@ const updateParlays = async () => {
         if (bet.betResult === BetResult.LOSS) {
           atLeastOneLoss = true;
         }
-      });
+      };
 
       if (allBetsWon) {
         parlayResult = BetResult.WIN;
@@ -329,35 +330,63 @@ const updateParlays = async () => {
             ? wagerAmount * (odds / 100)
             : wagerAmount * (100 / Math.abs(odds));
 
-        const bettor = await prisma.bettor.findUnique({
-          where: {
-            id: bettorId,
-          },
-          include: {
-            privateCurrency: true,
-          },
-        });
+        if (parlay.leagueId) {
+          const leagueId = parlay.leagueId;
 
-        // Parlays are always made using private currency
-        // BET WAS MADE USING PRIVATE CURRENCY (NON-LEAGUE CURRENCY)
-        const privateCurrency = await prisma.currency.findUnique({
-          where: {
-            id: bettor?.privateCurrencyId,
-          },
-        });
+          const leagueBettorsCurrency =
+            await prisma.leagueBettorsCurrency.findFirst({
+              where: {
+                leagueId,
+                bettorId,
+              },
+            });
 
-        await prisma.currency.update({
-          where: {
-            id: bettor?.privateCurrencyId,
-          },
-          data: {
-            amount:
-              (bettor?.privateCurrency?.amount || 0) + wagerAmount + winAmount,
-          },
-        });
+          const currencyId = leagueBettorsCurrency?.currencyId;
+          const currency = await prisma.currency.findUnique({
+            where: {
+              id: currencyId,
+            },
+          });
+
+          await prisma.currency.update({
+            where: {
+              id: currencyId,
+            },
+            data: {
+              amount: (currency?.amount || 0) + wagerAmount + winAmount,
+            },
+          });
+        } else {
+          const bettor = await prisma.bettor.findUnique({
+            where: {
+              id: bettorId,
+            },
+            include: {
+              privateCurrency: true,
+            },
+          });
+
+          // Parlays are always made using private currency
+          // BET WAS MADE USING PRIVATE CURRENCY (NON-LEAGUE CURRENCY)
+          const privateCurrency = await prisma.currency.findUnique({
+            where: {
+              id: bettor?.privateCurrencyId,
+            },
+          });
+
+          await prisma.currency.update({
+            where: {
+              id: bettor?.privateCurrencyId,
+            },
+            data: {
+              amount:
+                (bettor?.privateCurrency?.amount || 0) + wagerAmount + winAmount,
+            },
+          });
+        }
       }
     }
-  });
+  };
 };
 
 export default async function seedDatabase() {
