@@ -1,11 +1,9 @@
-import { Button } from "~/components/ui/button";
 import { Bet, BetResult, Event, EventResult } from "@prisma/client";
 import { XCircle, CheckCircle, Timer } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -28,6 +26,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
   )!;
   const oddsToString = odds > 0 ? `+${odds}` : odds?.toString();
 
+  //determines if the bet is in progress
   const inProgress = (checkBet: Bet) => {
     if (checkBet.betResult == BetResult.IN_PROGRESS) {
       return true;
@@ -36,6 +35,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
     }
   };
 
+  //determines if the bet was a win or loss
   const winOrLoss = (bet: Bet) => {
     if (bet.betResult == BetResult.WIN) {
       return true;
@@ -90,9 +90,6 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
           </div>
         </CardContent>
       )}
-      {/* <CardFooter className="flex justify-end text-sm text-s-500">
-        Game on {dateToString(bet.Event.commenceTime!)}
-      </CardFooter> */}
     </Card>
   );
 };

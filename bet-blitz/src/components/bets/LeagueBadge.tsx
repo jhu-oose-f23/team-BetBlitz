@@ -1,12 +1,12 @@
 import { Badge } from "~/components/ui/badge";
 
-//import props
 type PropType = {
   name: string;
   checked: boolean;
   setCheck: (check: boolean) => void;
 };
 
+//Badge component which diplays a league name, used in FilterBetsByLeagues
 const LeagueBadge = ({ name, checked, setCheck }: PropType) => {
   return (
     <div className="flex items-center justify-center">
