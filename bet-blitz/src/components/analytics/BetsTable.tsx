@@ -1,10 +1,5 @@
-import { Bet, Event } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
-
 import {
   Table,
   TableBody,
@@ -22,13 +17,8 @@ type PropType = {
 
 const RecentBetsCard = (props: PropType) => {
   const { bets } = props;
-  const { userId, getToken } = useAuth();
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-
+  //formats bet amount to USD
   const formatAmount = (amount: number) => {
     const formattedAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -39,6 +29,7 @@ const RecentBetsCard = (props: PropType) => {
     return formattedAmount;
   };
 
+  //returns the name of the chosen team
   const mapChosenResultToTeam = (bet: BetWithEvent) => {
     if (bet.chosenResult === "HOME_TEAM") {
       return bet.Event.homeTeam; // Replace with the actual home team name property
@@ -49,6 +40,7 @@ const RecentBetsCard = (props: PropType) => {
     }
   };
 
+  //returns the result of the bet based on win or loss
   const formatBetResult = (bet: BetWithEvent) => {
     if (bet.betResult === "IN_PROGRESS") {
       return "Game in Progress";
@@ -71,6 +63,7 @@ const RecentBetsCard = (props: PropType) => {
     }
   };
 
+  //formats the date of the bet to as a string for display
   const formatDate = (bet: BetWithEvent) => {
     const date = new Date(bet.createdAt);
 

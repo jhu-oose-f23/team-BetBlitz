@@ -1,20 +1,5 @@
-import { useEffect, useState } from "react";
-import { Event } from "@prisma/client";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "~/components/ui/dialog";
 
 //accept a react componet as a prop
 interface MyComponentProps {
@@ -22,10 +7,8 @@ interface MyComponentProps {
   component: React.ReactNode;
 }
 
-const total = -100;
-
-const width = "500";
-
+//Card component that accepts a react component as a prop
+//and renders it in the center of the card
 const AnalyticsCard: React.FC<MyComponentProps> = ({ title, component }) => {
   return (
     <div>

@@ -1,6 +1,7 @@
 import { twMerge } from "tailwind-merge";
 import AnalyticsCard from "./AnalyticsCard";
 
+//displays a users total winnings
 const TotalWinningsCard = ({ total }: { total: number }) => {
   const component = (
     <div>

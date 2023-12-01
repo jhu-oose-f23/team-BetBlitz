@@ -1,4 +1,3 @@
-import { Bet } from "@prisma/client";
 import AnalyticsCard from "./AnalyticsCard";
 import BetsTable from "./BetsTable";
 
@@ -8,10 +7,9 @@ type PropType = {
   bets: BetWithEvent[];
 };
 
-//take bets in as a prop
-
-
-const BettingPercentageCard = (props: PropType) => {
+//displays a users total successful betting percentage on all single bets
+//currently filters parlay bets out
+const BetsCard = (props: PropType) => {
   const { bets } = props;
 
   return (
@@ -24,4 +22,4 @@ const BettingPercentageCard = (props: PropType) => {
   );
 };
 
-export default BettingPercentageCard;
+export default BetsCard;
