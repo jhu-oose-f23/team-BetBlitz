@@ -69,7 +69,7 @@ const LeagueHomePage = () => {
             <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
               {league.name}
             </h1>
-            
+
             <h2>  
               <span className="text-[#222831] text-2xl font-black uppercase tracking-tight sm:text-[2rem]">
                 Winner: {winner.Bettor.name}
@@ -80,7 +80,7 @@ const LeagueHomePage = () => {
               <div className="tracking-none mb-8 text-center text-xl font-black uppercase">
                 Standings
               </div>
-              <PlayerTable bettorInfos={bettorInfos} />
+              <PlayerTable bettorInfos={bettorInfos} winner={winner} />
             </div>
           </div>
         )}
@@ -105,7 +105,7 @@ const LeagueHomePage = () => {
               <div className="tracking-none mb-8 text-center text-xl font-black uppercase">
                 Standings
               </div>
-              <PlayerTable bettorInfos={bettorInfos} />
+              <PlayerTable bettorInfos={bettorInfos} winner={null} />
             </div>
           </div>
         )}

@@ -9,13 +9,15 @@ import {
 } from "~/components/ui/table";
 
 import { useRouter } from "next/router";
+import { twMerge } from "tailwind-merge";
 
 type PropType = {
   bettorInfos: any[];
+  winner: any;
 };
 
 const PlayerTable = (props: PropType) => {
-  const { bettorInfos } = props;
+  const { bettorInfos, winner } = props;
 
   const router = useRouter();
 
@@ -32,7 +34,12 @@ const PlayerTable = (props: PropType) => {
       <TableBody>
         {bettorInfos &&
           bettorInfos.map((info, index) => (
-            <TableRow className="font-bold" key={`info${index}`}>
+            <TableRow 
+            className={twMerge(
+              "font-bold bg-red-50",
+              winner && (winner.Bettor.id == info.bettorId) ? "bg-green-600" : "",
+            )}
+            key={`info${index}`}>
               <TableCell>{info.Bettor.name}</TableCell>
               <TableCell>${info.Currency.amount.toFixed(2)}</TableCell>
               <TableCell>
