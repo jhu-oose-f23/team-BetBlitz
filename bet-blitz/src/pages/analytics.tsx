@@ -1,11 +1,10 @@
 import TotalWinningsCard from "~/components/analytics/TotalWinningsCard";
 import BettingPercentageCard from "~/components/analytics/BettingPercentageCard";
-import RecentBets from "~/components/analytics/BetsTable";
 import BetsCard from "~/components/analytics/BetsCard";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
-import { Bet, BetResult, Event, EventResult } from "@prisma/client";
+import { Bet, BetResult, Event } from "@prisma/client";
 import { getWinPercentage, getWinnings } from "~/utils/analytics";
 
 export type BetWithEvent = Bet & {

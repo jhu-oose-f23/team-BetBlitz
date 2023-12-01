@@ -1,4 +1,3 @@
-import { Bet } from "@prisma/client";
 import AnalyticsCard from "./AnalyticsCard";
 import BetsTable from "./BetsTable";
 

@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import { useEffect, useState } from "react";
-import { Bet, BetResult, Event, EventResult } from "@prisma/client";
+import { Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";

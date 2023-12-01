@@ -3,9 +3,7 @@ import {
   EventResult,
   Event,
   BetResult,
-  Bet,
 } from "@prisma/client";
-import { el } from "date-fns/locale";
 
 // create prisma client
 const prisma = new PrismaClient();
@@ -94,8 +92,6 @@ const updateOdds = async (sportKeys: string[]) => {
       }
     };
   }
-
-  //TODO: add error handling for the fetch request if api call fails
 
   for (let event of events) {
     await prisma.event.upsert({
@@ -264,29 +260,13 @@ const updateBets = async () => {
 };
 
 const updateParlays = async () => {
-  //get the parlays
-  // const parlayBets = await prisma.bet.findMany({
-  //   where: {
-  //     //where parlay is not null
-  //     parlayId: { not: null },
-  //   },
-  // });
-
-  //console.log(parlayBets);
-
-  //create a map of betId to event
-  // const betIdToBet = new Map<string, Bet>();
-  // parlayBets.forEach((bet) => {
-  //   betIdToBet.set(bet.id, bet);
-  // });
-
   const parlays = await prisma.parlay.findMany({
     include: {
       bets: true,
     },
   });
 
-  //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progrress otherwise
+  //go through each parlay and set it to a win if all bets are wins, loss if just one is a loss, and in progress otherwise
   for (let parlay of parlays) {
     let parlayResult: BetResult = parlay.betResult;
     if (parlayResult === BetResult.IN_PROGRESS) {
@@ -366,8 +346,6 @@ const updateParlays = async () => {
             },
           });
 
-          // Parlays are always made using private currency
-          // BET WAS MADE USING PRIVATE CURRENCY (NON-LEAGUE CURRENCY)
           const privateCurrency = await prisma.currency.findUnique({
             where: {
               id: bettor?.privateCurrencyId,
@@ -388,7 +366,6 @@ const updateParlays = async () => {
     }
   };
 };
-
 
 export default async function handler(req: any, res: any) {
   if (req.query.key !== "sharedKey") {

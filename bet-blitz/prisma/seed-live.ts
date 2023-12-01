@@ -264,22 +264,6 @@ const updateBets = async () => {
 };
 
 const updateParlays = async () => {
-  //get the parlays
-  // const parlayBets = await prisma.bet.findMany({
-  //   where: {
-  //     //where parlay is not null
-  //     parlayId: { not: null },
-  //   },
-  // });
-
-  //console.log(parlayBets);
-
-  //create a map of betId to event
-  // const betIdToBet = new Map<string, Bet>();
-  // parlayBets.forEach((bet) => {
-  //   betIdToBet.set(bet.id, bet);
-  // });
-
   const parlays = await prisma.parlay.findMany({
     include: {
       bets: true,

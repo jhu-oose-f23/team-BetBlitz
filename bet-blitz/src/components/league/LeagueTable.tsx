@@ -1,5 +1,4 @@
 import { League } from "@prisma/client";
-import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
@@ -17,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { DialogFooter, DialogHeader } from "~/components/ui/dialog";
+import { DialogHeader } from "~/components/ui/dialog";
 import { useRouter } from "next/router";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
@@ -112,7 +111,6 @@ const LeagueTable = (props: PropType) => {
                         <div
                           className="ml-4 h-10 w-18 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
                           onClick={() => {
-                            console.log(password);
                             if (handleJoinLeague)
                               handleJoinLeague(league, password);
                           }}

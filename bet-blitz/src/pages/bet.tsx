@@ -1,8 +1,6 @@
-import { Split } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ParlayEvents from "~/components/parlay/ParlayEvents";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
+import { Card, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Bet, EventResult, Event, BetResult, Parlay } from "@prisma/client";
 import ParlayLeg from "~/components/parlay/ParlayLeg";
@@ -27,8 +25,6 @@ export default function Bet() {
   const { userId, getToken } = useAuth();
   const [currency, setCurrency] = useState<number | undefined>();
   const [amount, setAmount] = useState<number>(0);
-
-  console.log(userId);
 
   useEffect(() => {
     if (userId) {

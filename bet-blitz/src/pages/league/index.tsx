@@ -1,21 +1,6 @@
-import Head from "next/head";
-
 import { useEffect, useState } from "react";
-import { League, LeagueBettorsCurrency } from "@prisma/client";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
+import { League } from "@prisma/client";
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
@@ -24,7 +9,6 @@ import Link from "next/link";
 
 export default function myLeagues() {
   const [userLeagues, setUserLeagues] = useState<League[]>([]);
-  //const [userId, setUserID] = useState();
 
   const { userId, getToken, isLoaded } = useAuth();
 
@@ -34,10 +18,9 @@ export default function myLeagues() {
         process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
-      const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
+
       if (userId) {
-        let { data, error } = await supabase
+        let { data } = await supabase
           .from("LeagueBettorsCurrency")
           .select("League (*)")
           .eq("bettorId", userId);

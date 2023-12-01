@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ChirpForm from "../components/chirp/ChirpForm";
 import ChirpMessage from "../components/chirp/ChirpMessage";
 

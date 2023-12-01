@@ -1,11 +1,9 @@
-import { Button } from "~/components/ui/button";
 import { Bet, BetResult, Event, EventResult } from "@prisma/client";
 import { XCircle, CheckCircle, Timer } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -90,9 +88,6 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
           </div>
         </CardContent>
       )}
-      {/* <CardFooter className="flex justify-end text-sm text-s-500">
-        Game on {dateToString(bet.Event.commenceTime!)}
-      </CardFooter> */}
     </Card>
   );
 };
