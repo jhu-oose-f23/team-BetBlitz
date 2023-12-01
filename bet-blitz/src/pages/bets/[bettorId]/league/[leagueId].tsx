@@ -1,8 +1,7 @@
-import { Bet, Bettor, Event, League, Parlay } from "@prisma/client";
+import { Bet, Event, League, Parlay } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
 import ParlayCard from "~/components/parlay/ParlayCard";
 
@@ -23,6 +22,7 @@ const Bets = () => {
 
   const [bettorName, setBettorName] = useState("");
   const [leagueName, setLeagueName] = useState("");
+  
   const router = useRouter();
   const bettorId = router.query.bettorId;
   const leagueId = router.query.leagueId;

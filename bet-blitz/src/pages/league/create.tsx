@@ -28,7 +28,6 @@ export default function leagueLanding() {
   useEffect(() => {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
       let currDate = new Date();
       let { data: league, error } = await supabase
         .from("League")

@@ -38,7 +38,6 @@ const PlayerTable = (props: PropType) => {
               <TableCell>
                 <Button
                   onClick={() => {
-                    console.log(info);
                     router.push(
                       `/bets/${info.bettorId}/league/${info.leagueId}`,
                     );

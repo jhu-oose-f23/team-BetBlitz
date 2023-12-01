@@ -19,7 +19,7 @@ type BetWithEvent = Bet & {
 };
 
 const RecentBetsCard = () => {
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
@@ -31,7 +31,7 @@ const RecentBetsCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("Bet")
           .select(
             `

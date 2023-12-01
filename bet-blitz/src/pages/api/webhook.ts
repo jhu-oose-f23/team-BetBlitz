@@ -30,8 +30,6 @@ export default async function handler(
   const eventType = evt.type;
 
   if (eventType === "user.created" && id) {
-    console.log(`User ${id} was ${eventType}`);
-
     const privateCurrency = await prisma.currency.create({
       data: {
         amount: 1000,
@@ -51,7 +49,6 @@ export default async function handler(
   }
 
   if (eventType === "session.created") {
-    console.log(`Session created with: User ${id} was ${eventType}`);
     res.status(201).json({});
   }
 }

@@ -1,22 +1,6 @@
-import { useEffect, useState } from "react";
-import { Event } from "@prisma/client";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "~/components/ui/dialog";
 
-//accept a react componet as a prop
 interface MyComponentProps {
   title: string;
   component: React.ReactNode;
