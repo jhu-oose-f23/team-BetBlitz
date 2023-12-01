@@ -373,6 +373,97 @@ const updateParlays = async () => {
   };
 };
 
+const clearLeagueWinners = async () => {
+  const leagues = await prisma.league.findMany({
+    where: {
+      NOT: { winnerBettorId: null },
+    },
+  });
+
+  leagues.forEach(async (league) => {
+    await prisma.league.update({
+      where: {
+        id: league.id,
+      },
+      data: {
+        winnerBettorId: null,
+      },
+    });
+  });
+}
+
+const updateLeagues = async () => {
+  //find leegues and all the users currneccies in that league
+  const leagues = await prisma.league.findMany({
+    where: {
+      winnerBettorId: null,
+    },
+    include: {
+      bettors: true,
+    },
+  });
+
+  console.log(leagues)
+
+  //iterate through each leageu and get each bettor and their currency
+  for (let league of leagues) {
+    // if the league end date is greater than the current date, skip it
+    if (league.endDate > new Date()) {
+      console.log("SKIPPING LEAGUE")
+      continue;
+    }
+
+    //if the league already has a winner skip it
+    if (league.winnerBettorId) {
+      console.log("SKIPPING LEAGUE")
+      continue;
+    }
+
+    const leagueID = league.id
+    const leagueBettorsCurrency = await prisma.leagueBettorsCurrency.findMany({
+        where: {
+          leagueId: leagueID,
+          //where there is no winner
+        },
+        include: {
+          bettor: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          currency: {
+            select: {
+              amount: true,
+            },
+          },
+        },
+      });
+
+      //find the bettor with the most currency
+      let maxCurrency = 0
+      let winner = null
+      for (let leagueBettorCurrency of leagueBettorsCurrency) {
+        if (leagueBettorCurrency.currency.amount! > maxCurrency) {
+          maxCurrency = leagueBettorCurrency.currency.amount!
+          winner = leagueBettorCurrency.bettor
+        }
+      }
+
+      //set the winner of the league
+      if (winner) {
+        await prisma.league.update({
+          where: {
+            id: leagueID,
+          },
+          data: {
+            winnerBettorId: winner.id,
+          },
+        });
+      }
+  }
+}
+
 export default async function seedDatabase() {
   // const sportKeys = await getAllSports();
   const sportKeys = ["basketball_nba", "baseball_mlb", "americanfootball_nfl"]; // do this to reduce API calls, otherwise use getAllSports()
@@ -381,6 +472,7 @@ export default async function seedDatabase() {
     .then(() => updateResults(sportKeys))
     .then(() => updateBets())
     .then(() => updateParlays())
+    .then(() => updateLeagues())
     .then(() => console.log("Success"))
     .catch((e) => console.error("Error:", e));
 }

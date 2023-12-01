@@ -7,6 +7,10 @@ import { createClient } from "@supabase/supabase-js";
 import { Bet, BetResult, Event } from "@prisma/client";
 import { getWinPercentage, getWinnings } from "~/utils/analytics";
 
+export type BetWithEvent = Bet & {
+  Event: Event;
+};
+
 export default function Analytics() {
   const [bets, setBets] = useState<
     (Bet & {
@@ -36,8 +40,11 @@ export default function Analytics() {
           )
           .eq("bettorId", userId);
 
+        //only get bets with postive bet ammount since bets with 0 value are part of a parlay
+        const filterData = data?.filter((bet) => bet.amount > 1);
+
         setBets(
-          data as (Bet & {
+          filterData as (Bet & {
             Event: Event;
           })[],
         );
@@ -73,7 +80,7 @@ export default function Analytics() {
 
           <div className="container flex justify-center">
             <div className="mx-4 grow">
-              <BetsCard />
+              <BetsCard bets={bets}/>
             </div>
           </div>
         </>
