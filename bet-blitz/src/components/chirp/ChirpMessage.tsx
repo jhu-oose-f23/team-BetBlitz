@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
+//loader to dsiplay during network request
 const loaderSkeleton = (
   <div className="flex h-fit animate-pulse flex-col rounded shadow-md sm:w-80">
     <div className="flex-1 space-y-4 bg-gray-400 px-4 py-8 sm:p-8">
@@ -31,6 +32,7 @@ interface MyComponentProps {
 const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
+    //notify the user that the message has been copied to their clipboard
     toast({
       title: "Sucessfully copied to clipboard!",
       description: (
@@ -49,6 +51,7 @@ const ChirpMessage: React.FC<MyComponentProps> = ({ message, loading }) => {
     );
   }
 
+  //if the message is empty, display a message to the user
   if (message === "") {
     return (
       <div className="flex h-full items-center justify-center text-3xl font-extrabold">

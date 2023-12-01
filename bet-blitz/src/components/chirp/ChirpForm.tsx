@@ -27,6 +27,7 @@ interface MyComponentProps {
   setResponse: (response: string) => void;
 }
 
+//form for users to enter their name, their friends name, and any extra info
 const FormSchema = z.object({
   name1: z.string().min(1, {
     message: "Your name is surely 1 character long, right?",
@@ -46,6 +47,7 @@ const ChirpForm: React.FC<MyComponentProps> = ({
     resolver: zodResolver(FormSchema),
   });
 
+  //when the form is submitted, send the data to the getMessage function which hits the OpenAI API
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true);
     setResponse("");
