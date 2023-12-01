@@ -1,14 +1,13 @@
 import Head from "next/head";
 
 import { useEffect, useState } from "react";
-import { BetResult, Currency, Event, EventResult } from "@prisma/client";
+import { BetResult, Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 import { supabaseClient } from "~/utils/supabaseClient";
 
 import { useAuth } from "@clerk/nextjs";
-//import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import BetDialog from "~/components/betDialog";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
