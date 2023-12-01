@@ -5,14 +5,13 @@ import { Event, EventResult } from "@prisma/client";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
-import { supabaseClient } from "~/utils/supabaseClient";
 
 import { useAuth } from "@clerk/nextjs";
-//import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import ParlayDialog from "~/components/parlay/ParlayDialog";
 import { dateToTimeString } from "~/utils/helpers";
 import FilterTeams from "~/components/odds/FilterTeams";
 import { BetslipType } from "~/pages/bet";
+import { supabase } from "~/utils/supabaseClient";
 
 interface MyComponentProps {
   // props
@@ -39,8 +38,6 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
 
   useEffect(() => {
     const fetch = async () => {
-      const token = await getToken({ template: "supabase" });
-      const supabase = await supabaseClient(token);
       const { data: events } = await supabase.from("Event").select();
 
       events?.forEach((event: Event) => {

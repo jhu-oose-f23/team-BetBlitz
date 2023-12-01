@@ -4,7 +4,6 @@ import { Card, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Bet, EventResult, Event, BetResult, Parlay } from "@prisma/client";
 import ParlayLeg from "~/components/parlay/ParlayLeg";
-import { supabaseClient } from "~/utils/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
@@ -12,6 +11,7 @@ import { ToastAction } from "~/components/ui/toast";
 import Link from "next/link";
 import { calculateOdds } from "~/utils/helpers";
 import { useRouter } from "next/router";
+import { supabase } from "~/utils/supabaseClient";
 
 export type BetslipType = {
   event: Event;
@@ -36,8 +36,6 @@ export default function Bet() {
   useEffect(() => {
     if (userId && leagueId) {
       const fetch = async () => {
-        const token = await getToken({ template: "supabase" });
-        const supabase = await supabaseClient(token);
         const { data: bettorInfo } = await supabase
           .from("LeagueBettorsCurrency")
           .select()
@@ -73,21 +71,16 @@ export default function Bet() {
     chosenResult: EventResult,
     betslipId?: number,
   ) => {
-    const token = await getToken({ template: "supabase" });
-    const supabase = await supabaseClient(token);
-
-    if (supabase) {
-      await supabase.from("Bet").insert({
-        bettorId: userId,
-        gameId: event.id,
-        amount,
-        odds,
-        chosenResult,
-        betResult: BetResult.IN_PROGRESS,
-        parlayId: betslipId,
-        leagueId
-      });
-    }
+    await supabase.from("Bet").insert({
+      bettorId: userId,
+      gameId: event.id,
+      amount,
+      odds,
+      chosenResult,
+      betResult: BetResult.IN_PROGRESS,
+      parlayId: betslipId,
+      leagueId
+    });
   };
 
   const placeBet = async (betslip: BetslipType[]) => {
@@ -107,91 +100,81 @@ export default function Bet() {
       return;
     }
 
-    const token = await getToken({ template: "supabase" });
-    const supabase = await supabaseClient(token);
+    let curAmount;
 
-    if (supabase) {
-      let curAmount;
+    const amountResponse = await supabase
+      .from("Currency")
+      .select("amount")
+      .eq("id", currencyId);
+    if (amountResponse.data && amountResponse.data.length > 0) {
+      curAmount = amountResponse.data[0]?.amount;
+    }
 
-      const amountResponse = await supabase
-        .from("Currency")
-        .select("amount")
-        .eq("id", currencyId);
-      if (amountResponse.data && amountResponse.data.length > 0) {
-        curAmount = amountResponse.data[0]?.amount;
-      }
+    if (currencyId && curAmount) {
+      if (curAmount - amount < 0) {
+        toast({
+          title: "You're broke",
+          description: "Go make some money",
+        });
+      } else {
+        if (betslip.length === 1) {
+          await handlePlaceBet(
+            betslip[0]!.event,
+            betslip[0]!.odds,
+            amount,
+            betslip[0]!.chosenResult
+          );
 
-      if (currencyId && curAmount) {
-        if (curAmount - amount < 0) {
-          toast({
-            title: "You're broke",
-            description: "Go make some money",
-          });
         } else {
-          if (betslip.length === 1) {
-            await handlePlaceBet(
-              betslip[0]!.event,
-              betslip[0]!.odds,
-              amount,
-              betslip[0]!.chosenResult
-            );
+          const { data: parlay } = await supabase
+            .from("Parlay")
+            .insert({
+              bettorId: userId,
+              amount: amount,
+              odds: Math.floor(calculatedOdds),
+              betResult: BetResult.IN_PROGRESS,
+              leagueId
+            })
+            .select();
 
-          } else {
-            const { data: parlay } = await supabase
-              .from("Parlay")
-              .insert({
-                bettorId: userId,
-                amount: amount,
-                odds: Math.floor(calculatedOdds),
-                betResult: BetResult.IN_PROGRESS,
-                leagueId
-              })
-              .select();
-
-            if (parlay) {
-              const parlayId = parlay[0].id;
-              let parlayLegs = [];
-              //place each of the bets in the parlay
-              for (let i = 0; i < betslip.length; i++) {
-                const parlayLeg = betslip[i];
-                const newBet = await handlePlaceBet(
-                  parlayLeg!.event,
-                  parlayLeg!.odds,
-                  parlayLeg!.amount,
-                  parlayLeg!.chosenResult,
-                  parlayId,
-                );
-                parlayLegs.push(newBet);
-              }
+          if (parlay) {
+            const parlayId = parlay[0].id;
+            let parlayLegs = [];
+            //place each of the bets in the parlay
+            for (let i = 0; i < betslip.length; i++) {
+              const parlayLeg = betslip[i];
+              const newBet = await handlePlaceBet(
+                parlayLeg!.event,
+                parlayLeg!.odds,
+                parlayLeg!.amount,
+                parlayLeg!.chosenResult,
+                parlayId,
+              );
+              parlayLegs.push(newBet);
             }
           }
-
-          await supabase
-            .from("Currency")
-            .update({
-              amount: curAmount - amount,
-            })
-            .eq("id", currencyId);
-
-          setCurrency(curAmount - amount);
-          setBetslip([]);
-
-          toast({
-            title: "Successfully created bet",
-            description: `You have ${curAmount - amount} Blitzbux left`,
-            action: (
-              <ToastAction altText={"View bets"}>
-                <Link href={"/bets"}>View bets</Link>
-              </ToastAction>
-            ),
-          });
         }
+
+        await supabase
+          .from("Currency")
+          .update({
+            amount: curAmount - amount,
+          })
+          .eq("id", currencyId);
+
+        setCurrency(curAmount - amount);
+        setBetslip([]);
+
+        toast({
+          title: "Successfully created bet",
+          description: `You have ${curAmount - amount} Blitzbux left`,
+          action: (
+            <ToastAction altText={"View bets"}>
+              <Link href={"/bets"}>View bets</Link>
+            </ToastAction>
+          ),
+        });
       }
-    } else {
-      toast({
-        title: "Error creating bet",
-        description: "Please try again later",
-      });
     }
   };
 

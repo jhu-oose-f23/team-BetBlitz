@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { Bet, BetResult, Event } from "@prisma/client";
 import { getWinPercentage, getWinnings } from "~/utils/analytics";
+import { supabase } from "~/utils/supabaseClient";
 
 export default function Analytics() {
   const [bets, setBets] = useState<
@@ -15,11 +16,6 @@ export default function Analytics() {
   >([]);
 
   const { userId, getToken } = useAuth();
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
 
   useEffect(() => {
     const fetchData = async () => {

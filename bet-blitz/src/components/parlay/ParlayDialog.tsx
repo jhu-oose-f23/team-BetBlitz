@@ -34,7 +34,7 @@ const ParlayDialog = (props: PropType) => {
           <DialogHeader>
             <DialogTitle>Bet on {name}</DialogTitle>
             <DialogDescription>
-              Add this event to your parlay?
+              Add this event to your betslip?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

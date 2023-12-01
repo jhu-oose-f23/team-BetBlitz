@@ -4,13 +4,13 @@ import { Card, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Bet, EventResult, Event, BetResult, Parlay } from "@prisma/client";
 import ParlayLeg from "~/components/parlay/ParlayLeg";
-import { supabaseClient } from "~/utils/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
 import Link from "next/link";
 import { calculateOdds } from "~/utils/helpers";
+import { supabase } from "~/utils/supabaseClient";
 
 export type BetslipType = {
   event: Event;
@@ -29,8 +29,6 @@ export default function Bet() {
   useEffect(() => {
     if (userId) {
       const fetch = async () => {
-        const token = await getToken({ template: "supabase" });
-        const supabase = await supabaseClient(token);
         const { data: bettor } = await supabase
           .from("Bettor")
           .select("privateCurrencyId")
@@ -64,20 +62,15 @@ export default function Bet() {
     chosenResult: EventResult,
     betslipId?: number,
   ) => {
-    const token = await getToken({ template: "supabase" });
-    const supabase = await supabaseClient(token);
-
-    if (supabase) {
-      await supabase.from("Bet").insert({
-        bettorId: userId,
-        gameId: event.id,
-        amount,
-        odds,
-        chosenResult,
-        betResult: BetResult.IN_PROGRESS,
-        parlayId: betslipId,
-      });
-    }
+    await supabase.from("Bet").insert({
+      bettorId: userId,
+      gameId: event.id,
+      amount,
+      odds,
+      chosenResult,
+      betResult: BetResult.IN_PROGRESS,
+      parlayId: betslipId,
+    });
   };
 
   const placeBet = async (betslip: BetslipType[]) => {
@@ -97,102 +90,92 @@ export default function Bet() {
       return;
     }
 
-    const token = await getToken({ template: "supabase" });
-    const supabase = await supabaseClient(token);
+    let privateCurrencyId, curAmount;
 
-    if (supabase) {
-      let privateCurrencyId, curAmount;
+    const privateCurrencyIdResponse = await supabase
+      .from("Bettor")
+      .select("privateCurrencyId")
+      .eq("id", userId);
+    if (
+      privateCurrencyIdResponse.data &&
+      privateCurrencyIdResponse.data.length > 0
+    ) {
+      privateCurrencyId =
+        privateCurrencyIdResponse.data[0]?.privateCurrencyId;
+    }
 
-      const privateCurrencyIdResponse = await supabase
-        .from("Bettor")
-        .select("privateCurrencyId")
-        .eq("id", userId);
-      if (
-        privateCurrencyIdResponse.data &&
-        privateCurrencyIdResponse.data.length > 0
-      ) {
-        privateCurrencyId =
-          privateCurrencyIdResponse.data[0]?.privateCurrencyId;
-      }
+    const amountResponse = await supabase
+      .from("Currency")
+      .select("amount")
+      .eq("id", privateCurrencyId);
+    if (amountResponse.data && amountResponse.data.length > 0) {
+      curAmount = amountResponse.data[0]?.amount;
+    }
 
-      const amountResponse = await supabase
-        .from("Currency")
-        .select("amount")
-        .eq("id", privateCurrencyId);
-      if (amountResponse.data && amountResponse.data.length > 0) {
-        curAmount = amountResponse.data[0]?.amount;
-      }
+    if (privateCurrencyId && curAmount) {
+      if (curAmount - amount < 0) {
+        toast({
+          title: "You're broke",
+          description: "Go make some money",
+        });
+      } else {
+        if (betslip.length === 1) {
+          await handlePlaceBet(
+            betslip[0]!.event,
+            betslip[0]!.odds,
+            amount,
+            betslip[0]!.chosenResult
+          );
 
-      if (privateCurrencyId && curAmount) {
-        if (curAmount - amount < 0) {
-          toast({
-            title: "You're broke",
-            description: "Go make some money",
-          });
         } else {
-          if (betslip.length === 1) {
-            await handlePlaceBet(
-              betslip[0]!.event,
-              betslip[0]!.odds,
-              amount,
-              betslip[0]!.chosenResult
-            );
+          const { data: parlay, error } = await supabase
+            .from("Parlay")
+            .insert({
+              bettorId: userId,
+              amount: amount,
+              odds: Math.floor(calculatedOdds),
+              betResult: BetResult.IN_PROGRESS,
+            })
+            .select();
 
-          } else {
-            const { data: parlay, error } = await supabase
-              .from("Parlay")
-              .insert({
-                bettorId: userId,
-                amount: amount,
-                odds: Math.floor(calculatedOdds),
-                betResult: BetResult.IN_PROGRESS,
-              })
-              .select();
-
-            if (parlay) {
-              const parlayId = parlay[0].id;
-              let parlayLegs = [];
-              //place each of the bets in the parlay
-              for (let i = 0; i < betslip.length; i++) {
-                const parlayLeg = betslip[i];
-                const newBet = await handlePlaceBet(
-                  parlayLeg!.event,
-                  parlayLeg!.odds,
-                  parlayLeg!.amount,
-                  parlayLeg!.chosenResult,
-                  parlayId,
-                );
-                parlayLegs.push(newBet);
-              }
+          if (parlay) {
+            const parlayId = parlay[0].id;
+            let parlayLegs = [];
+            //place each of the bets in the parlay
+            for (let i = 0; i < betslip.length; i++) {
+              const parlayLeg = betslip[i];
+              const newBet = await handlePlaceBet(
+                parlayLeg!.event,
+                parlayLeg!.odds,
+                parlayLeg!.amount,
+                parlayLeg!.chosenResult,
+                parlayId,
+              );
+              parlayLegs.push(newBet);
             }
           }
-
-          await supabase
-            .from("Currency")
-            .update({
-              amount: curAmount - amount,
-            })
-            .eq("id", privateCurrencyId);
-
-          setCurrency(curAmount - amount);
-          setBetslip([]);
-
-          toast({
-            title: "Successfully created bet",
-            description: `You have ${curAmount - amount} Blitzbux left`,
-            action: (
-              <ToastAction altText={"View bets"}>
-                <Link href={"/bets"}>View bets</Link>
-              </ToastAction>
-            ),
-          });
         }
+
+        await supabase
+          .from("Currency")
+          .update({
+            amount: curAmount - amount,
+          })
+          .eq("id", privateCurrencyId);
+
+        setCurrency(curAmount - amount);
+        setBetslip([]);
+
+        toast({
+          title: "Successfully created bet",
+          description: `You have ${curAmount - amount} Blitzbux left`,
+          action: (
+            <ToastAction altText={"View bets"}>
+              <Link href={"/bets"}>View bets</Link>
+            </ToastAction>
+          ),
+        });
       }
-    } else {
-      toast({
-        title: "Error creating bet",
-        description: "Please try again later",
-      });
     }
   };
 

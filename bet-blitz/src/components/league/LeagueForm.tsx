@@ -26,11 +26,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-// import { createClient } from "@supabase/supabase-js";
 import moment from "moment";
 import { useAuth } from "@clerk/nextjs";
-import { supabaseClient } from "~/utils/supabaseClient";
 import { useRouter } from "next/router";
+import { supabase } from "~/utils/supabaseClient";
 
 interface MyComponentProps {}
 
@@ -101,9 +100,6 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const token = await getToken({ template: "supabase" });
-    const supabase = await supabaseClient(token);
-
     const { data: formData, error } = await supabase
       .from("League")
       .insert([
