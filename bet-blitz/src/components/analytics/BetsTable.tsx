@@ -29,32 +29,6 @@ const RecentBetsCard = (props: PropType) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
-  const [bets, setBets] = useState<BetWithEvent[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        const { data } = await supabase
-          .from("Bet")
-          .select(
-            `
-              *,
-              Event ( 
-                homeTeam, awayTeam
-              )
-            `,
-          )
-          .eq("bettorId", userId);
-
-        setBets(
-          data as (Bet & {
-            Event: Event;
-          })[],
-        );
-      }
-    };
-    fetchData();
-  }, [userId]);
 
   const formatAmount = (amount: number) => {
     const formattedAmount = new Intl.NumberFormat("en-US", {
