@@ -26,6 +26,7 @@ const BetDialog = (props: PropType) => {
   return (
     <>
       <Dialog>
+        {/*The trigger for the bet dialog to appear is the button containing the odds for a team to win*/}
         <DialogTrigger>
           <div className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
             {odds > 0 ? "+" : ""}
@@ -55,7 +56,7 @@ const BetDialog = (props: PropType) => {
             />
           </div>
           <DialogFooter>
-            <DialogClose>
+            <DialogClose> {/*Dialog window will close when user clicks Place Bet button*/}
               <div
                 className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
                 onClick={() => handlePlaceBet(bet)}
