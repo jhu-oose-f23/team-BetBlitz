@@ -16,6 +16,7 @@ type PropType = {
   winner: any;
 };
 
+//displays the table of players in the league
 const PlayerTable = (props: PropType) => {
   const { bettorInfos, winner } = props;
 

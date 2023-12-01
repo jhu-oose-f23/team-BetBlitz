@@ -26,7 +26,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-// import { createClient } from "@supabase/supabase-js";
 import moment from "moment";
 import { useAuth } from "@clerk/nextjs";
 import { supabaseClient } from "~/utils/supabaseClient";
@@ -87,6 +86,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
 
   const router = useRouter();
 
+  //default values for the form
   const form = useForm<z.infer<typeof FormSchema>>({
     defaultValues: {
       leagueName: "",
@@ -104,6 +104,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
 
+    //post the league data to the database
     const { data: formData, error } = await supabase
       .from("League")
       .insert([

@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-
 import {
   Dialog,
   DialogContent,
@@ -35,6 +34,7 @@ const LeagueTable = (props: PropType) => {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  //returns the date of the league in string format
   const getDate = (league: League) => {
     const date = new Date(league.startDate);
 
