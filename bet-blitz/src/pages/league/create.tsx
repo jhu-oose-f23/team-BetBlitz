@@ -81,13 +81,15 @@ export default function leagueLanding() {
             },
           ])
           .select();
-        const { error: err4 } = await supabase
-          .from("League")
-          .update({ numMembers: members![0]!.numMembers + 1 })
-          .eq("id", league.id);
-        toast({
-          title: "League Joined!",
-        });
+        if (data) {
+          const {error: err4} = await supabase
+              .from("League")
+              .update({numMembers: members![0]!.numMembers + 1})
+              .eq("id", league.id);
+          toast({
+            title: "League Joined!",
+          });
+        }
       }
     }
   };

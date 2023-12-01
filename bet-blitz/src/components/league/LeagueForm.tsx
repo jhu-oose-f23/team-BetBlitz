@@ -51,7 +51,7 @@ const FormSchema = z
       }),
     password: z.string().min(8, {
       message: "Password must be at least 8 characters long",
-    }),
+    }).optional().or(z.literal('')),
     passwordConfirm: z.string(),
     startingMoney: z.coerce
       .number({

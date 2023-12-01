@@ -22,7 +22,6 @@ export default function myLeagues() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
       const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
       if (userId) {
         let { data, error } = await supabase
           .from("LeagueBettorsCurrency")
