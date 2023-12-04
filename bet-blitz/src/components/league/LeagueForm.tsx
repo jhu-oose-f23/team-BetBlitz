@@ -120,6 +120,20 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
         },
       ])
       .select();
+    const { data: currencyData, error: currencyError } = await supabase
+        .from("Currency")
+        .insert([{ amount: data.startingMoney }])
+        .select();
+    const { data: leagueData, error: err3 } = await supabase
+        .from("LeagueBettorsCurrency")
+        .insert([
+            {
+                bettorId: userId,
+                leagueId: formData[0].id,
+                currencyId: currencyData[0].id,
+            },
+        ])
+        .select();
 
     if (formData) router.reload();
   }

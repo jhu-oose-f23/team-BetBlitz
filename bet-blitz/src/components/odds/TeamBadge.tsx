@@ -1,4 +1,3 @@
-import { check } from "prettier";
 import { Badge } from "~/components/ui/badge";
 
 //import props

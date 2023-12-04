@@ -1,7 +1,5 @@
-import Head from "next/head";
-
 import { useEffect, useState } from "react";
-import { League, LeagueBettorsCurrency } from "@prisma/client";
+import { League } from "@prisma/client";
 import { Button } from "~/components/ui/button";
 
 import { useAuth } from "@clerk/nextjs";
@@ -20,9 +18,8 @@ export default function myLeagues() {
         process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
-      const token = await getToken({ template: "supabase" });
       if (userId) {
-        let { data, error } = await supabase
+        let { data } = await supabase
           .from("LeagueBettorsCurrency")
           .select("League (*)")
           .eq("bettorId", userId);

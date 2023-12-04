@@ -44,6 +44,7 @@ model Bettor {
   record            LeagueRecord[]
   matchUp1          MatchUp[]               @relation("Bettor1")
   matchUp2          MatchUp[]               @relation("Bettor2")
+  LeagueWins        League[]
 }
 
 model Currency {
@@ -97,6 +98,8 @@ model League {
   startingCurrency Int
   numMembers       Int
   parlays          Parlay[]
+  winner           Bettor?                 @relation(fields: [winnerBettorId], references: [id])
+  winnerBettorId   String?
 }
 
 model Schedule {

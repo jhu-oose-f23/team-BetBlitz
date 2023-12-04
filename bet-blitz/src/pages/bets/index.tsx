@@ -1,9 +1,7 @@
 import { useAuth } from "@clerk/nextjs";
 import {
   Bet,
-  BetResult,
   Event,
-  EventResult,
   League,
   Parlay,
 } from "@prisma/client";
