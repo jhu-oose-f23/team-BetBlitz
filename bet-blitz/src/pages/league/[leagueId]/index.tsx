@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 const LeagueHomePage = () => {
   const [league, setLeague] = useState<League>();
   const [bettorInfos, setBettorInfos] = useState<any[]>([]);
+  const [winner, setWinner] = useState<any>(null); // [bettorId, amount
 
   const router = useRouter();
   const leagueId = router.query.leagueId;
@@ -48,10 +49,45 @@ const LeagueHomePage = () => {
           (a, b) => b.Currency.amount - a.Currency.amount,
         );
         setBettorInfos(leagueBettorsCurrency || []);
+        if (leagueBettorsCurrency) {
+          const winner = leagueBettorsCurrency[0];
+          if (winner && (new Date() < league.endDate)) {
+            setWinner(winner);
+          }
+        }
       };
       fetch();
     }
   }, [leagueId]);
+
+  if (winner) {
+    return (
+      <>
+      <main className="flex min-h-screen flex-col items-center justify-start overflow-x-scroll bg-[#EEEEEE]">
+        {league && leagueId && (
+          <div className=" flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+            <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+              {league.name}
+            </h1>
+
+            <h2>  
+              <span className="text-[#222831] text-2xl font-black uppercase tracking-tight sm:text-[2rem]">
+                Winner: {winner.Bettor.name}
+              </span>
+            </h2>
+
+            <div>
+              <div className="tracking-none mb-8 text-center text-xl font-black uppercase">
+                Standings
+              </div>
+              <PlayerTable bettorInfos={bettorInfos} winner={winner} />
+            </div>
+          </div>
+        )}
+      </main>
+    </>
+    );
+  }
 
   return (
     <>
@@ -61,7 +97,7 @@ const LeagueHomePage = () => {
             <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
               {league.name}
             </h1>
-            <Link href={`/league/${leagueId}/odds`}>
+            <Link href={`/league/${leagueId}/bet`}>
               <Button>Place a bet!</Button>
             </Link>
 
@@ -69,7 +105,7 @@ const LeagueHomePage = () => {
               <div className="tracking-none mb-8 text-center text-xl font-black uppercase">
                 Standings
               </div>
-              <PlayerTable bettorInfos={bettorInfos} />
+              <PlayerTable bettorInfos={bettorInfos} winner={null} />
             </div>
           </div>
         )}

@@ -1,9 +1,9 @@
-import { Bet, Bettor, Event, League } from "@prisma/client";
+import { Bet, Event, League, Parlay } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
+import ParlayCard from "~/components/parlay/ParlayCard";
 
 const Bets = () => {
   const [bets, setBets] = useState<
@@ -12,8 +12,17 @@ const Bets = () => {
       League: League;
     })[]
   >([]);
+  const [parlayBets, setParlayBets] = useState<
+    (Parlay & {
+      Bet: (Bet & {
+        Event: Event;
+      })[];
+    })[]
+  >([]);
+
   const [bettorName, setBettorName] = useState("");
   const [leagueName, setLeagueName] = useState("");
+  
   const router = useRouter();
   const bettorId = router.query.bettorId;
   const leagueId = router.query.leagueId;
@@ -43,6 +52,29 @@ const Bets = () => {
             `,
           )
           .eq("bettorId", bettorId)
+          .eq("leagueId", leagueId)
+          .is("parlayId", null);
+
+        const { data: parlays } = await supabase
+          .from("Parlay")
+          .select(
+            `
+              *,
+              Bet (
+                *,
+                Event (
+                  *
+                ),
+                Bettor (
+                  id, name
+                )
+              ),
+              League (
+                id, name
+              )
+            `,
+          )
+          .eq("bettorId", bettorId)
           .eq("leagueId", leagueId);
 
         setBets(
@@ -52,22 +84,23 @@ const Bets = () => {
           })[],
         );
 
+        setParlayBets(
+          parlays as (Parlay & {
+            League: League;
+            Bet: (Bet & {
+              Event: Event;
+            })[];
+          })[],
+        );
+
         if (bets && bets.length > 0) {
           setBettorName(bets[0].Bettor.name);
           setLeagueName(bets[0].League.name);
         }
-
-        const curLeagues: League[] = [];
-        bets?.forEach((bet) => {
-          const curLeague = bet.League as League;
-          if (curLeague) {
-            if (!curLeagues.find((league) => league.id === curLeague.id)) {
-              curLeagues.push(curLeague);
-            }
-          } else {
-            curLeagues.push(curLeague); // Private currency
-          }
-        });
+        if (parlays && parlays.length > 0) {
+          setBettorName(parlays[0].Bet[0].Bettor.name);
+          setLeagueName(parlays[0].League.name);
+        }
       }
     };
 
@@ -115,6 +148,36 @@ const Bets = () => {
               },
             )}
         </div>
+        {parlayBets.length !== 0 && (
+          <div className="w-full">
+            <div className="relative flex items-center py-5">
+              <div className="flex-grow border-t border-gray-400"></div>
+              <span className="tracking-none mx-4 flex-shrink text-xl font-black uppercase">
+                Parlays
+              </span>
+              <div className="flex-grow border-t border-gray-400"></div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-8">
+              {parlayBets &&
+                parlayBets.map(
+                  (
+                    parlay: Parlay & {
+                      Bet: (Bet & {
+                        Event: Event;
+                      })[];
+                    },
+                    index: number,
+                  ) => (
+                    <div key={`parlayCard${index}`}>
+                      <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`} />
+                    </div>
+
+                  ),
+                )}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

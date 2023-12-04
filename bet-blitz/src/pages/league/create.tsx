@@ -28,7 +28,6 @@ export default function leagueLanding() {
   useEffect(() => {
     const fetch = async () => {
       const token = await getToken({ template: "supabase" });
-      // const supabase = await supabaseClient(token);
       let currDate = new Date();
       let { data: league, error } = await supabase
         .from("League")
@@ -82,19 +81,19 @@ export default function leagueLanding() {
             },
           ])
           .select();
-        const { error: err4 } = await supabase
-          .from("League")
-          .update({ numMembers: members![0]!.numMembers + 1 })
-          .eq("id", league.id);
-        toast({
-          title: "League Joined!",
-        });
+        if (data) {
+          const {error: err4} = await supabase
+              .from("League")
+              .update({numMembers: members![0]!.numMembers + 1})
+              .eq("id", league.id);
+          toast({
+            title: "League Joined!",
+          });
+        }
       }
     }
   };
-
-  const handleCreateLeague = async () => {};
-
+  
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-start overflow-x-scroll bg-[#EEEEEE]">

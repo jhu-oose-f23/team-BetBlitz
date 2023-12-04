@@ -119,7 +119,6 @@ const updateResults = async () => {
               result,
             },
           });
-          console.log(scoreData.id);
         } catch (e) {
           console.log(scoreData.id, "not found!"); // Shouldn't reach here in actual CRON job because every score
         } // received should be associated with a game already stored

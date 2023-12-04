@@ -1,7 +1,5 @@
-import { check } from "prettier";
 import { Badge } from "~/components/ui/badge";
 
-//import props
 interface MyComponentProps {
   name: string;
   checked: boolean;

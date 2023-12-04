@@ -1,5 +1,3 @@
-import { Bet, Event } from "@prisma/client";
-import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
 import { AiOutlineCheckCircle } from "react-icons/ai";
@@ -14,11 +12,14 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-type BetWithEvent = Bet & {
-  Event: Event;
+import { BetWithEvent } from "~/pages/analytics";
+
+type PropType = {
+  bets: BetWithEvent[];
 };
 
-const RecentBetsCard = () => {
+const RecentBetsCard = (props: PropType) => {
+  const { bets } = props;
   const { userId, getToken } = useAuth();
 
   const supabase = createClient(
@@ -26,32 +27,6 @@ const RecentBetsCard = () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
-  const [bets, setBets] = useState<BetWithEvent[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        const { data, error } = await supabase
-          .from("Bet")
-          .select(
-            `
-              *,
-              Event ( 
-                homeTeam, awayTeam
-              )
-            `,
-          )
-          .eq("bettorId", userId);
-
-        setBets(
-          data as (Bet & {
-            Event: Event;
-          })[],
-        );
-      }
-    };
-    fetchData();
-  }, [userId]);
 
   const formatAmount = (amount: number) => {
     const formattedAmount = new Intl.NumberFormat("en-US", {

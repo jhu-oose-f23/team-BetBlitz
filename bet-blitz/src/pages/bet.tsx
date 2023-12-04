@@ -1,8 +1,6 @@
-import { Split } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ParlayEvents from "~/components/parlay/ParlayEvents";
-import { Card, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
+import { Card, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Bet, EventResult, Event, BetResult, Parlay } from "@prisma/client";
 import ParlayLeg from "~/components/parlay/ParlayLeg";
@@ -14,15 +12,15 @@ import { ToastAction } from "~/components/ui/toast";
 import Link from "next/link";
 import { calculateOdds } from "~/utils/helpers";
 
-export type ParlayLegType = {
+export type BetslipType = {
   event: Event;
   odds: number;
   amount: number;
   chosenResult: EventResult;
 };
 
-export default function Parlay() {
-  const [parlayBets, setParlayBets] = useState<ParlayLegType[]>([]);
+export default function Bet() {
+  const [betslip, setBetslip] = useState<BetslipType[]>([]);
   const [calculatedOdds, setCalculatedOdds] = useState<number>(0);
   const { userId, getToken } = useAuth();
   const [currency, setCurrency] = useState<number | undefined>();
@@ -41,8 +39,6 @@ export default function Parlay() {
 
         const privateCurrencyId = bettor?.privateCurrencyId;
 
-        console.log(bettor, userId);
-
         const { data: privateCurrency } = await supabase
           .from("Currency")
           .select("amount")
@@ -57,36 +53,34 @@ export default function Parlay() {
   }, [userId]);
 
   useEffect(() => {
-    const newOdds = calculateOdds(parlayBets as unknown as Parlay[]);
+    const newOdds = calculateOdds(betslip as unknown as Parlay[]);
     setCalculatedOdds(newOdds);
-  }, [parlayBets]);
+  }, [betslip]);
 
   const handlePlaceBet = async (
     event: Event,
     odds: number,
     amount: number,
     chosenResult: EventResult,
-    parlayId: number,
+    betslipId?: number,
   ) => {
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
 
     if (supabase) {
-      const { data, error } = await supabase.from("Bet").insert({
+      await supabase.from("Bet").insert({
         bettorId: userId,
         gameId: event.id,
         amount,
         odds,
         chosenResult,
         betResult: BetResult.IN_PROGRESS,
-        parlayId: parlayId,
+        parlayId: betslipId,
       });
-      console.log(data);
-      console.log(error);
     }
   };
 
-  const placeParlay = async (parlayBets: ParlayLegType[]) => {
+  const placeBet = async (betslip: BetslipType[]) => {
     if (amount <= 0) {
       toast({
         title: "Invalid amount",
@@ -95,14 +89,14 @@ export default function Parlay() {
       return;
     }
 
-    if (parlayBets.length <= 0) {
+    if (betslip.length <= 0) {
       toast({
-        title: "Invalid parlay",
-        description: "Please add at least one bet to your parlay",
+        title: "Invalid betslip",
+        description: "Please add at least one bet to your betslip",
       });
       return;
     }
-    //create the Parlay first
+
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
 
@@ -136,36 +130,42 @@ export default function Parlay() {
             description: "Go make some money",
           });
         } else {
-          const { data: parlay, error } = await supabase
-            .from("Parlay")
-            .insert({
-              bettorId: userId,
-              amount: amount,
-              odds: Math.floor(calculatedOdds),
-              betResult: BetResult.IN_PROGRESS,
-            })
-            .select();
+          if (betslip.length === 1) {
+            await handlePlaceBet(
+              betslip[0]!.event,
+              betslip[0]!.odds,
+              amount,
+              betslip[0]!.chosenResult
+            );
 
-          if (parlay) {
-            const parlayId = parlay[0].id;
-            let parlayLegs = [];
-            //place each of the bets in the parlay
-            for (let i = 0; i < parlayBets.length; i++) {
-              const parlayLeg = parlayBets[i];
-              const newBet = await handlePlaceBet(
-                parlayLeg!.event,
-                parlayLeg!.odds,
-                parlayLeg!.amount,
-                parlayLeg!.chosenResult,
-                parlayId,
-              );
-              parlayLegs.push(newBet);
+          } else {
+            const { data: parlay, error } = await supabase
+              .from("Parlay")
+              .insert({
+                bettorId: userId,
+                amount: amount,
+                odds: Math.floor(calculatedOdds),
+                betResult: BetResult.IN_PROGRESS,
+              })
+              .select();
+
+            if (parlay) {
+              const parlayId = parlay[0].id;
+              let parlayLegs = [];
+              //place each of the bets in the parlay
+              for (let i = 0; i < betslip.length; i++) {
+                const parlayLeg = betslip[i];
+                const newBet = await handlePlaceBet(
+                  parlayLeg!.event,
+                  parlayLeg!.odds,
+                  parlayLeg!.amount,
+                  parlayLeg!.chosenResult,
+                  parlayId,
+                );
+                parlayLegs.push(newBet);
+              }
             }
           }
-
-          console.log("new parlay");
-          console.log(parlay);
-          console.log(error);
 
           await supabase
             .from("Currency")
@@ -175,12 +175,11 @@ export default function Parlay() {
             .eq("id", privateCurrencyId);
 
           setCurrency(curAmount - amount);
-
-          setParlayBets([]);
+          setBetslip([]);
 
           toast({
             title: "Successfully created bet",
-            description: `You have ${curAmount - amount} blitzbux left`,
+            description: `You have ${curAmount - amount} Blitzbux left`,
             action: (
               <ToastAction altText={"View bets"}>
                 <Link href={"/bets"}>View bets</Link>
@@ -203,34 +202,35 @@ export default function Parlay() {
       <div className="w-2/3 overflow-y-auto">
         {/* Add your content for the left column here */}
         <ParlayEvents
-          parlayBets={parlayBets}
-          setParlayBets={setParlayBets}
+          parlayBets={betslip}
+          setParlayBets={setBetslip}
           setCalculatedOdds={setCalculatedOdds}
+          currency={currency}
         />
         {/* This column will take up two-thirds of the width and scroll independently */}
       </div>
 
       {/* Right Column (one-third width) */}
-      <div className="w-1/3 overflow-y-auto bg-slate-200">
+      <div className="w-1/3 overflow-y-auto border-4 border-dashed border-black">
         {/* Add your content for the right column here */}
-        {parlayBets.length > 0 ? (
-          parlayBets.map((parlayLeg, index) => (
+        {betslip.length > 0 ? (
+          betslip.map((parlayLeg, index) => (
             <ParlayLeg
               key={index}
               parlayLeg={parlayLeg}
               index={index}
-              setParlayBets={setParlayBets}
+              setParlayBets={setBetslip}
             />
           ))
         ) : (
           <div className="flex h-full items-center justify-center p-20 text-center text-3xl font-extrabold">
-            Place a bet on the left to start building a parlay
+            Add Bets to Your Betslip!
           </div>
         )}
 
         {/* This column will take up one-third of the width and scroll independently */}
       </div>
-      <Card className="fixed bottom-0 right-0 flex w-1/3 flex-row items-center p-4">
+      <Card className="fixed bottom-0 right-0 flex w-1/3 flex-row items-center p-4 rounded-none">
         <div className="flex flex-row items-center w-full">
           <Input
             id="amount"
@@ -248,9 +248,9 @@ export default function Parlay() {
           <div className="flex grow justify-end">
             <Button
               className="ml-4 h-10 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
-              onClick={() => placeParlay(parlayBets)}
+              onClick={() => placeBet(betslip)}
             >
-              Place Parlay
+              Place Bet
             </Button>
           </div>
         </div>

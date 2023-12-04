@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { UserButton } from "@clerk/nextjs";
 
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 
 export default function Home() {
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
 
   const [name, setName] = useState();
 
@@ -26,19 +25,6 @@ export default function Home() {
     }
     if (userId) fetch();
   }, [userId]);
-
-
-
-  useEffect(() => {
-    const fetch = async () => {
-      // const supabase = createClient(
-      //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-      //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      // );
-      const token = await getToken({ template: "supabase" });
-    };
-    fetch();
-  }, []);
 
   return (
     <>
