@@ -9,7 +9,7 @@ import { supabaseClient } from "~/utils/supabaseClient";
 
 import { useAuth } from "@clerk/nextjs";
 import ParlayDialog from "~/components/parlay/ParlayDialog";
-import { dateToTimeString } from "~/utils/helpers";
+import { dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
 import FilterTeams from "~/components/odds/FilterTeams";
 import { BetslipType } from "~/pages/bet";
 
@@ -149,7 +149,8 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                       className="relative m-8 w-80 bg-white shadow-xl"
                     >
                       <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
-                        {dateToTimeString(
+                        
+                        {utcToEstTimeStringWithDate(
                           event.commenceTime ? event.commenceTime : new Date(),
                         )}
                       </Badge>

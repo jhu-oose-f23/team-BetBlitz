@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { dateToTimeString } from "~/utils/helpers";
+import { dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
 import { twMerge } from "tailwind-merge";
 
 type PropType = {
@@ -67,7 +67,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
         <CardDescription>
           Odds: {oddsToString}
           <br />
-          Placed at {dateToTimeString(bet.createdAt)}
+          Placed at {utcToEstTimeStringWithDate(bet.createdAt)}
         </CardDescription>
         <CardDescription>
           {bet.Event.teamOneName} vs {bet.Event.teamTwoName}

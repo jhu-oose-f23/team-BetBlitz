@@ -19,6 +19,28 @@ export const dateToTimeString = (date: Date) => {
   return str;
 };
 
+export const utcToEstTimeStringWithDate = (utcDate: Date) => {
+  const options = {
+    timeZone: 'America/New_York',
+    hour12: true,
+    hour: 'numeric',
+    minute: '2-digit',
+    month: 'numeric',
+    day: 'numeric',
+  };
+
+  // Subtract 5 hours to convert UTC to EST
+  const estDate = new Date(utcDate);
+  estDate.setUTCHours(estDate.getUTCHours() - 5);
+
+  const estTimeString = estDate.toLocaleString('en-US', options);
+
+  return `${estTimeString} EST`;
+};
+
+
+
+
 const months = [
   "January",
   "February",
