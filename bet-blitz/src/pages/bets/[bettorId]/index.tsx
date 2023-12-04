@@ -1,4 +1,4 @@
-import { Bet, Bettor, Event, League } from "@prisma/client";
+import { Bet, Event, League } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

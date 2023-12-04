@@ -18,7 +18,7 @@ export default function Analytics() {
     })[]
   >([]);
 
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
