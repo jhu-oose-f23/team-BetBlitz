@@ -26,7 +26,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-// import { createClient } from "@supabase/supabase-js";
 import moment from "moment";
 import { useAuth } from "@clerk/nextjs";
 import { supabaseClient } from "~/utils/supabaseClient";
@@ -52,7 +51,7 @@ const FormSchema = z
       }),
     password: z.string().min(8, {
       message: "Password must be at least 8 characters long",
-    }),
+    }).optional().or(z.literal('')),
     passwordConfirm: z.string(),
     startingMoney: z.coerce
       .number({
@@ -115,7 +114,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
             .toISOString(),
           maxMembers: data.maxPlayers,
           startingCurrency: data.startingMoney,
-          numMembers: "0",
+          numMembers: "1",
           password: data.password
         },
       ])
@@ -124,16 +123,18 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
         .from("Currency")
         .insert([{ amount: data.startingMoney }])
         .select();
-    const { data: leagueData, error: err3 } = await supabase
-        .from("LeagueBettorsCurrency")
-        .insert([
-            {
-                bettorId: userId,
-                leagueId: formData[0].id,
-                currencyId: currencyData[0].id,
-            },
-        ])
-        .select();
+    if (formData && currencyData) {
+        const {data: leagueData, error: err3} = await supabase
+            .from("LeagueBettorsCurrency")
+            .insert([
+                {
+                    bettorId: userId,
+                    leagueId: formData[0].id,
+                    currencyId: currencyData[0].id,
+                },
+            ])
+            .select();
+    }
 
     if (formData) router.reload();
   }
