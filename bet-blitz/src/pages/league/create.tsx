@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { League } from "@prisma/client";
+import { League, LeagueBettorsCurrency } from "@prisma/client";
 import { Button } from "~/components/ui/button";
 import {
   Sheet,
@@ -16,7 +16,9 @@ import LeagueTable from "~/components/league/LeagueTable";
 import { toast } from "~/components/ui/use-toast";
 
 export default function leagueLanding() {
-  const [leagues, setLeagues] = useState<League[]>([]);
+  const [leagues, setLeagues] = useState<(League & {
+    bettors: LeagueBettorsCurrency[]
+  })[]>([]);
 
   const { userId, getToken } = useAuth();
 
@@ -27,14 +29,18 @@ export default function leagueLanding() {
 
   useEffect(() => {
     const fetch = async () => {
-      const token = await getToken({ template: "supabase" });
       let currDate = new Date();
       let { data: league, error } = await supabase
         .from("League")
-        .select("*")
+        .select(`
+        *,
+        bettors: LeagueBettorsCurrency (*)
+      `)
         .gt("startDate", currDate.toISOString());
 
-      setLeagues(league as League[]);
+      setLeagues(league as (League & {
+        bettors: LeagueBettorsCurrency[]
+      })[]);
     };
     fetch();
   }, []);
@@ -82,10 +88,10 @@ export default function leagueLanding() {
           ])
           .select();
         if (data) {
-          const {error: err4} = await supabase
-              .from("League")
-              .update({numMembers: members![0]!.numMembers + 1})
-              .eq("id", league.id);
+          const { error: err4 } = await supabase
+            .from("League")
+            .update({ numMembers: members![0]!.numMembers + 1 })
+            .eq("id", league.id);
           toast({
             title: "League Joined!",
           });
@@ -93,7 +99,7 @@ export default function leagueLanding() {
       }
     }
   };
-  
+
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-start overflow-x-scroll bg-[#EEEEEE]">

@@ -12,15 +12,14 @@ type PropType = {
 
 const ParlayCard = ({ index, parlay }: PropType) => {
   return (
-    <section className="relative flex flex-col items-center justify-center">
-      <div className="translate-y-1/2 rounded-xl bg-black px-4 py-2 font-semibold text-white shadow-xl">
+    <section className="relative flex flex-col items-center rounded-xl border border-4 border-black border-dashed p-4">
+      <div className="rounded-xl bg-black px-4 py-2 font-semibold text-white shadow-xl">
         Wager:<span className="font-black"> {parlay.amount}₴</span>
       </div>
       <div
-        className="flex scale-75 flex-row justify-center overflow-x-scroll"
+        className="flex flex-wrap justify-center"
         key={`parlayCard${index}`}
       >
-        <div className="absolute top-1/2 z-0 h-1 w-4/5 translate-y-1/2 bg-black" />
         {parlay.Bet.map((bet, index) => {
           return (
             <BetCard

@@ -1,4 +1,4 @@
-import { League } from "@prisma/client";
+import { League, LeagueBettorsCurrency } from "@prisma/client";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
@@ -23,7 +23,9 @@ import { useState } from "react";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 type PropType = {
-  leagues: League[];
+  leagues: (League & {
+    bettors: LeagueBettorsCurrency[]
+  })[];
   displayJoinLeague: boolean;
   handleJoinLeague?: (league: League, password: string) => void;
 };
@@ -47,7 +49,7 @@ const LeagueTable = (props: PropType) => {
   return (
     <Table className="max-w-4xl rounded-xl bg-white shadow-xl">
       {/* Print the column names at the top of the table */}
-      <TableHeader> 
+      <TableHeader>
         <TableRow>
           <TableHead className="w-[250px]">League Name</TableHead>
           <TableHead className="w-[250px]">Status</TableHead>
@@ -59,7 +61,9 @@ const LeagueTable = (props: PropType) => {
       </TableHeader>
       {/*Go through all leagues in the database and print out various info about them for users to see*/}
       <TableBody>
-        {leagues.map((league: League) => {
+        {leagues.map((league: League & {
+          bettors: LeagueBettorsCurrency[]
+        }) => {
           return (
             <TableRow
               key={league.id}
@@ -78,7 +82,7 @@ const LeagueTable = (props: PropType) => {
               <TableCell>{league.name}</TableCell>
               <TableCell>{league.password ? "Private" : "Public"}</TableCell>
               <TableCell>
-                {league.numMembers}/{league.maxMembers}
+                {league.bettors.length}/{league.maxMembers}
               </TableCell>
               <TableCell>{league.startingCurrency}</TableCell>
               <TableCell>{getDate(league)}</TableCell>

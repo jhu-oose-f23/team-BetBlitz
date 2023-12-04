@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { League } from "@prisma/client";
+import { League, LeagueBettorsCurrency } from "@prisma/client";
 import { Button } from "~/components/ui/button";
 
 import { useAuth } from "@clerk/nextjs";
@@ -8,9 +8,11 @@ import LeagueTable from "~/components/league/LeagueTable";
 import Link from "next/link";
 
 export default function myLeagues() {
-  const [userLeagues, setUserLeagues] = useState<League[]>([]);
+  const [userLeagues, setUserLeagues] = useState<(League & {
+    bettors: LeagueBettorsCurrency[]
+  })[]>([]);
 
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId } = useAuth();
 
   useEffect(() => {
     const fetch = async () => {
@@ -18,17 +20,25 @@ export default function myLeagues() {
         process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
-      const token = await getToken({ template: "supabase" });
       if (userId) {
         let { data } = await supabase
           .from("LeagueBettorsCurrency")
-          .select("League (*)")
+          .select(`League (
+            *,
+            bettors: LeagueBettorsCurrency (*)
+          )`)
           .eq("bettorId", userId);
 
-        const leagues: League[] = [];
+        const leagues: (League & {
+          bettors: LeagueBettorsCurrency[]
+        })[] = [];
+
         data?.forEach((league) => {
-          leagues.push(league.League as unknown as League);
+          leagues.push(league.League as unknown as (League & {
+            bettors: LeagueBettorsCurrency[]
+          }));
         });
+
         setUserLeagues(leagues);
       }
     };

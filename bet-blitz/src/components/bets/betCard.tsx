@@ -48,7 +48,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
   return (
     <Card 
       className={twMerge(
-        "w-[350px] border-4 z-40",
+        "w-[350px] border-4 z-10",
         inProgress(bet)
           ? "border-yellow-400"
           : winOrLoss(bet)
