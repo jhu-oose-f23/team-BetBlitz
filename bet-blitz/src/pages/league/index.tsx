@@ -18,7 +18,6 @@ export default function myLeagues() {
         process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
-
       if (userId) {
         let { data } = await supabase
           .from("LeagueBettorsCurrency")
