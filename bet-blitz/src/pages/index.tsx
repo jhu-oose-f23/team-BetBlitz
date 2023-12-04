@@ -8,10 +8,6 @@ export default function Home() {
 
   useEffect(() => {
     const fetch = async () => {
-      // const supabase = createClient(
-      //   process.env.NEXT_PUBLIC_SUPABASE_API_URL!,
-      //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      // );
       const token = await getToken({ template: "supabase" });
     };
     fetch();
