@@ -1,5 +1,3 @@
-import { Bet, Event } from "@prisma/client";
-import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
 import { AiOutlineCheckCircle } from "react-icons/ai";
