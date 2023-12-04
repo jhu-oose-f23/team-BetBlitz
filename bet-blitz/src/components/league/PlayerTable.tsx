@@ -34,12 +34,13 @@ const PlayerTable = (props: PropType) => {
       <TableBody>
         {bettorInfos &&
           bettorInfos.map((info, index) => (
-            <TableRow 
-            className={twMerge(
-              "font-bold bg-red-50",
-              winner && (winner.Bettor.id == info.bettorId) ? "bg-green-600" : "bg-white",
-            )}
-            key={`info${index}`}>
+            <TableRow
+              className={twMerge(
+                "font-bold",
+                winner && (winner.Bettor.id == info.bettorId) ? "bg-green-600" : "bg-white",
+              )}
+              key={`info${index}`}
+            >
               <TableCell>{info.Bettor.name}</TableCell>
               <TableCell>${info.Currency.amount.toFixed(2)}</TableCell>
               <TableCell>
