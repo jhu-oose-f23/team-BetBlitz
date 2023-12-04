@@ -114,7 +114,7 @@ const LeagueForm: React.FC<MyComponentProps> = () => {
             .toISOString(),
           maxMembers: data.maxPlayers,
           startingCurrency: data.startingMoney,
-          numMembers: "0",
+          numMembers: "1",
           password: data.password
         },
       ])
