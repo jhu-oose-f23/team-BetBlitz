@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import LeagueBadge from "./LeagueBadge";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { League } from "@prisma/client";
 
 type PropType = {
@@ -35,22 +35,21 @@ const FilterBetsByLeagues = (props: PropType) => {
         <TooltipTrigger>
           <div className="flex space-x-5">
             {leagues.map((league: League, index: number) => {
-              return league ? (
+              return league && (
                 <LeagueBadge
                   name={league.name}
                   checked={!filter.find((id) => id === league.id)}
                   setCheck={() => handleSetFilter(league.id)}
-                  key={`leagueBadge${index}`}
-                />
-              ) : (
-                <LeagueBadge
-                  name={"Private currency"}
-                  checked={!filter.find((name) => name === "privateCurrency")}
-                  setCheck={() => handleSetFilter("privateCurrency")}
-                  key={`leagueBadge${index}`}
+                  key={`leagueBadge${index + 1}`}
                 />
               );
             })}
+            <LeagueBadge
+              name={"Private currency"}
+              checked={!filter.find((name) => name === "privateCurrency")}
+              setCheck={() => handleSetFilter("privateCurrency")}
+              key={`leagueBadge0`}
+            />
           </div>
         </TooltipTrigger>
         <TooltipContent>

@@ -1,9 +1,7 @@
 import { useAuth } from "@clerk/nextjs";
 import {
   Bet,
-  BetResult,
   Event,
-  EventResult,
   League,
   Parlay,
 } from "@prisma/client";
@@ -57,7 +55,7 @@ const Bets = () => {
           .eq("bettorId", userId)
           .is("parlayId", null);
 
-        const { data: parlay } = await supabase
+        const { data: parlays } = await supabase
           .from("Parlay")
           .select(
             `
@@ -67,6 +65,9 @@ const Bets = () => {
                 Event (
                   *
                 )
+              ),
+              League (
+                id, name
               )
             `,
           )
@@ -80,7 +81,8 @@ const Bets = () => {
         );
 
         setParlayBets(
-          parlay as (Parlay & {
+          parlays as (Parlay & {
+            League: League;
             Bet: (Bet & {
               Event: Event;
             })[];
@@ -88,7 +90,7 @@ const Bets = () => {
         );
 
         const curLeagues: League[] = [];
-        bets?.forEach((bet) => {
+        bets?.forEach((bet: any) => {
           const curLeague = bet.League as League;
           if (curLeague) {
             if (
@@ -100,14 +102,26 @@ const Bets = () => {
             curLeagues.push(curLeague); // Private currency
           }
         });
+
+        parlays?.forEach((parlay: any) => {
+          const curLeague = parlay.League as League;
+          if (curLeague) {
+            if (
+              !curLeagues.find((league) => league && league.id === curLeague.id)
+            ) {
+              curLeagues.push(curLeague);
+            }
+          } else {
+            curLeagues.push(curLeague); // Private currency
+          }
+        })
+
         setLeagues(curLeagues);
       }
     };
 
     fetchData();
   }, [userId]);
-
-  console.log(parlayBets);
 
   return (
     <main>
@@ -134,17 +148,17 @@ const Bets = () => {
                 <div key={`bet${index}`}>
                   {bet.leagueId
                     ? !filter.includes(bet.leagueId!) && (
-                        <BetCard
-                          index={index}
-                          bet={bet}
-                        />
-                      )
+                      <BetCard
+                        index={index}
+                        bet={bet}
+                      />
+                    )
                     : !filter.includes("privateCurrency") && (
-                        <BetCard
-                          index={index}
-                          bet={bet}
-                        />
-                      )}
+                      <BetCard
+                        index={index}
+                        bet={bet}
+                      />
+                    )}
                 </div>
               ),
             )}
@@ -160,18 +174,28 @@ const Bets = () => {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-8">
-              {parlayBets.map(
-                (
-                  parlay: Parlay & {
-                    Bet: (Bet & {
-                      Event: Event;
-                    })[];
-                  },
-                  index: number,
-                ) => (
-                  <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`}/>
-                ),
-              )}
+              {parlayBets &&
+                parlayBets.map(
+                  (
+                    parlay: Parlay & {
+                      Bet: (Bet & {
+                        Event: Event;
+                      })[];
+                    },
+                    index: number,
+                  ) => (
+                    <div key={`parlayCard${index}`}>
+                      {parlay.leagueId
+                        ? !filter.includes(parlay.leagueId) && (
+                          <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`} />
+                        )
+                        : !filter.includes("privateCurrency") && (
+                          <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`} />
+                        )}
+                    </div>
+
+                  ),
+                )}
             </div>
           </div>
         )}

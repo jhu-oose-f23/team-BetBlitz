@@ -46,7 +46,8 @@ const LeagueTable = (props: PropType) => {
 
   return (
     <Table className="max-w-4xl rounded-xl bg-white shadow-xl">
-      <TableHeader>
+      {/* Print the column names at the top of the table */}
+      <TableHeader> 
         <TableRow>
           <TableHead className="w-[250px]">League Name</TableHead>
           <TableHead className="w-[250px]">Status</TableHead>
@@ -56,6 +57,7 @@ const LeagueTable = (props: PropType) => {
           {displayJoinLeague && <TableHead className="w-[200px]"></TableHead>}
         </TableRow>
       </TableHeader>
+      {/*Go through all leagues in the database and print out various info about them for users to see*/}
       <TableBody>
         {leagues.map((league: League) => {
           return (
@@ -111,7 +113,6 @@ const LeagueTable = (props: PropType) => {
                         <div
                           className="ml-4 h-10 w-18 rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
                           onClick={() => {
-                            console.log(password);
                             if (handleJoinLeague)
                               handleJoinLeague(league, password);
                           }}

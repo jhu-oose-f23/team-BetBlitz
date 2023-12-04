@@ -30,13 +30,13 @@ export function Navbar() {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 <Link
-                  href="/odds"
+                  href="/bet"
                   className={twMerge(
                     "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
                     router.pathname === "/odds" ? "bg-gray-500" : "",
                   )}
                 >
-                  Odds
+                  Place a Bet
                 </Link>
                 <Link
                   href="/bets"
@@ -45,7 +45,7 @@ export function Navbar() {
                     router.pathname === "/bets" ? "bg-gray-500" : "",
                   )}
                 >
-                  Bets
+                  Your Bets
                 </Link>
                 <Link
                   href="/analytics"
@@ -73,15 +73,6 @@ export function Navbar() {
                   )}
                 >
                   League
-                </Link>
-                <Link
-                  href="/parlay"
-                  className={twMerge(
-                    "rounded-md px-3 py-2 text-sm font-medium text-gray-100 hover:bg-gray-700 hover:text-white",
-                    router.pathname === "/parlay" ? "bg-gray-500" : "",
-                  )}
-                >
-                  Parlay
                 </Link>
               </div>
             </div>

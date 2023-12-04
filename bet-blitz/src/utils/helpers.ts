@@ -1,5 +1,4 @@
 import { Parlay } from "@prisma/client";
-import { ParlayLegType } from "~/pages/parlay";
 
 export const dateToTimeString = (date: Date) => {
   date = new Date(date);
@@ -45,15 +44,13 @@ export const calculateOdds = (parlayBets: Parlay[]) => {
   for (let i = 0; i < parlayBets.length; i++) {
     let legProbability = 1;
     const legOdds = parlayBets[i]!.odds;
-    console.log(parlayBets[i]);
     if (legOdds > 0) {
       legProbability = 100 / (legOdds + 100);
     } else {
       legProbability = -legOdds / (-legOdds + 100);
     }
-    console.log(legProbability);
     probability *= legProbability;
   }
-  console.log(probability);
+
   return 100 / probability - 100;
 };

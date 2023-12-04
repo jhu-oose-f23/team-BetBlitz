@@ -1,5 +1,4 @@
-import { Button } from "~/components/ui/button";
-import { Bet, Event, EventResult, Parlay } from "@prisma/client";
+import { Bet, Event, Parlay } from "@prisma/client";
 import BetCard from "../bets/betCard";
 
 type PropType = {

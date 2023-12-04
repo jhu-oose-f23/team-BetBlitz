@@ -1,5 +1,3 @@
-import Head from "next/head";
-
 import { useEffect, useState } from "react";
 import { League } from "@prisma/client";
 import { Button } from "~/components/ui/button";
@@ -11,7 +9,6 @@ import Link from "next/link";
 
 export default function myLeagues() {
   const [userLeagues, setUserLeagues] = useState<League[]>([]);
-  //const [userId, setUserID] = useState();
 
   const { userId, getToken, isLoaded } = useAuth();
 
@@ -23,7 +20,7 @@ export default function myLeagues() {
       );
       const token = await getToken({ template: "supabase" });
       if (userId) {
-        let { data, error } = await supabase
+        let { data } = await supabase
           .from("LeagueBettorsCurrency")
           .select("League (*)")
           .eq("bettorId", userId);
