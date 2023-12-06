@@ -6,10 +6,10 @@ import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 import { supabaseClient } from "~/utils/supabaseClient";
-
+import { toast } from "~/components/ui/use-toast";
 import { useAuth } from "@clerk/nextjs";
 import ParlayDialog from "~/components/parlay/ParlayDialog";
-import { dateToTimeString } from "~/utils/helpers";
+import { dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
 import FilterTeams from "~/components/odds/FilterTeams";
 import { BetslipType } from "~/pages/bet";
 
@@ -66,6 +66,15 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
     chosenResult: EventResult,
   ) => {
     const newLeg: BetslipType = { event, odds, amount, chosenResult };
+    //check if event already exists in betslip and send a toast if it does
+    const exists = parlayBets.find((bet) => bet.event.id === event.id);
+    if (exists) {
+      toast({
+        title: "You already added this event to your betslip",
+        description: "Please select a different bet",
+      });
+      return;
+    }
     const newParlayBets = [...parlayBets, newLeg];
     setParlayBets(newParlayBets);
   };
@@ -149,7 +158,8 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                       className="relative m-8 w-80 bg-white shadow-xl"
                     >
                       <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
-                        {dateToTimeString(
+                        
+                        {utcToEstTimeStringWithDate(
                           event.commenceTime ? event.commenceTime : new Date(),
                         )}
                       </Badge>
