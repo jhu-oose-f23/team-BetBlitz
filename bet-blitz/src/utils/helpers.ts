@@ -74,6 +74,11 @@ export const calculateOdds = (parlayBets: Parlay[]) => {
     probability *= legProbability;
   }
 
+  //if probability is close to 0, return 0
+  if (Math.abs(probability) < 0.01) {
+    return 0;
+  }
+
   //if are greater than 50% chance of winning, return the negative odds
   if (probability > 0.5) {
     console.log((100 * probability) / (1 - probability));
