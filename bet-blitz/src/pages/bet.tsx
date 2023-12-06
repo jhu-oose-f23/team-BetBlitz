@@ -97,6 +97,16 @@ export default function Bet() {
       return;
     }
 
+    for (let item of betslip) {
+      if (new Date() > new Date(item.event.commenceTime!)) {
+        toast({
+          title: "Game in progress!",
+          description: "A game already started 🤨",
+        });
+        return;
+      }
+    }
+
     const token = await getToken({ template: "supabase" });
     const supabase = await supabaseClient(token);
 
