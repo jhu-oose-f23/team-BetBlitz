@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 import { supabaseClient } from "~/utils/supabaseClient";
-
+import { toast } from "~/components/ui/use-toast";
 import { useAuth } from "@clerk/nextjs";
 import ParlayDialog from "~/components/parlay/ParlayDialog";
 import { dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
@@ -66,6 +66,15 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
     chosenResult: EventResult,
   ) => {
     const newLeg: BetslipType = { event, odds, amount, chosenResult };
+    //check if event already exists in betslip and send a toast if it does
+    const exists = parlayBets.find((bet) => bet.event.id === event.id);
+    if (exists) {
+      toast({
+        title: "You already added this event to your betslip",
+        description: "Please select a different bet",
+      });
+      return;
+    }
     const newParlayBets = [...parlayBets, newLeg];
     setParlayBets(newParlayBets);
   };
