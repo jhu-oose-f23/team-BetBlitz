@@ -19,6 +19,28 @@ export const dateToTimeString = (date: Date) => {
   return str;
 };
 
+export const utcToEstTimeStringWithDate = (utcDate: Date) => {
+  const options = {
+    timeZone: 'America/New_York',
+    hour12: true,
+    hour: 'numeric',
+    minute: '2-digit',
+    month: 'numeric',
+    day: 'numeric',
+  };
+
+  // Subtract 5 hours to convert UTC to EST
+  const estDate = new Date(utcDate);
+  estDate.setUTCHours(estDate.getUTCHours() - 5);
+
+  const estTimeString = estDate.toLocaleString('en-US', options);
+
+  return `${estTimeString} EST`;
+};
+
+
+
+
 const months = [
   "January",
   "February",
@@ -50,6 +72,12 @@ export const calculateOdds = (parlayBets: Parlay[]) => {
       legProbability = -legOdds / (-legOdds + 100);
     }
     probability *= legProbability;
+  }
+
+  //if are greater than 50% chance of winning, return the negative odds
+  if (probability > 0.5) {
+    console.log((100 * probability) / (1 - probability));
+    return - ((100 * probability) / (1 - probability))
   }
 
   return 100 / probability - 100;

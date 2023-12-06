@@ -173,7 +173,7 @@ const Bets = () => {
               <div className="flex-grow border-t border-gray-400"></div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-8">
+            <div className="flex flex-col gap-4">
               {parlayBets &&
                 parlayBets.map(
                   (
@@ -184,7 +184,7 @@ const Bets = () => {
                     },
                     index: number,
                   ) => (
-                    <div key={`parlayCard${index}`}>
+                    <div  key={`parlayCard${index}`}>
                       {parlay.leagueId
                         ? !filter.includes(parlay.leagueId) && (
                           <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`} />
@@ -193,7 +193,6 @@ const Bets = () => {
                           <ParlayCard index={index} parlay={parlay} key={`parlayCard${index}`} />
                         )}
                     </div>
-
                   ),
                 )}
             </div>

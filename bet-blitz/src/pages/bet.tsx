@@ -11,6 +11,7 @@ import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
 import Link from "next/link";
 import { calculateOdds } from "~/utils/helpers";
+import { ca } from "date-fns/locale";
 
 export type BetslipType = {
   event: Event;
@@ -53,6 +54,11 @@ export default function Bet() {
   }, [userId]);
 
   useEffect(() => {
+    //if the betslep is empty don't calculate odds
+    if (betslip.length === 0) {
+      setCalculatedOdds(0);
+      return;
+    }
     const newOdds = calculateOdds(betslip as unknown as Parlay[]);
     setCalculatedOdds(newOdds);
   }, [betslip]);
@@ -95,6 +101,16 @@ export default function Bet() {
         description: "Please add at least one bet to your betslip",
       });
       return;
+    }
+
+    for (let item of betslip) {
+      if (new Date() > new Date(item.event.commenceTime!)) {
+        toast({
+          title: "Game in progress!",
+          description: "A game already started 🤨",
+        });
+        return;
+      }
     }
 
     const token = await getToken({ template: "supabase" });
@@ -243,7 +259,7 @@ export default function Bet() {
             className="mr-4 w-24"
           />
           <CardTitle className="text-md flex-grow">
-            Calculated Odds: + {calculatedOdds.toFixed(0)}
+            Calculated Odds: {calculatedOdds < 0? "" : "+"} {Math.abs(calculatedOdds) < 0.1 ? "0" : calculatedOdds.toFixed(0)}
           </CardTitle>
           <div className="flex grow justify-end">
             <Button
