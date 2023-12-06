@@ -62,6 +62,11 @@ export default function Bet() {
   }, [userId, leagueId]);
 
   useEffect(() => {
+    //if the betslep is empty don't calculate odds
+    if (betslip.length === 0) {
+      setCalculatedOdds(0);
+      return;
+    }
     const newOdds = calculateOdds(betslip as unknown as Parlay[]);
     setCalculatedOdds(newOdds);
   }, [betslip]);
@@ -252,7 +257,7 @@ export default function Bet() {
             className="mr-4 w-24"
           />
           <CardTitle className="text-md flex-grow">
-            Calculated Odds: + {calculatedOdds.toFixed(0)}
+            Calculated Odds: {calculatedOdds < 0? "" : "+"} {Math.abs(calculatedOdds) < 0.1 ? "0" : calculatedOdds.toFixed(0)}
           </CardTitle>
           <div className="flex grow justify-end">
             <Button
