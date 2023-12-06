@@ -51,7 +51,7 @@ const LeagueHomePage = () => {
         setBettorInfos(leagueBettorsCurrency || []);
         if (leagueBettorsCurrency) {
           const winner = leagueBettorsCurrency[0];
-          if (winner && (new Date() < league.endDate)) {
+          if (winner && (new Date() > new Date(league.endDate))) {
             setWinner(winner);
           }
         }
