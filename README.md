@@ -52,32 +52,6 @@
 
 
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
 ## Link to Deployment
 https://team-bet-blitz.vercel.app/
 
@@ -85,7 +59,25 @@ https://team-bet-blitz.vercel.app/
 ## About The Project
 
 
-Rather than wagering real money, BetBlitz users can use our virtual currency, "BlitzBux", to simulate sports betting. Join a league with your friends, and compete head to head to see who can win the most BlitzBux! This maintains the fun and competition while alleviating the risk associated with gambling. Moreover, because BetBlitz uses a virtual currency, it would be legal in all states. Allowing you to play with your friends who live where gambling isn't yet legal!
+Rather than wagering real money, BetBlitz users can use our virtual currency, "BlitzBux", to simulate sports betting. Join a league with your friends, and compete against each other to see who can win the most BlitzBux! This maintains the fun and competition while alleviating the risk associated with gambling. Moreover, because BetBlitz uses a virtual currency, it would be legal in all states. Allowing you to play with your friends who live where gambling isn't yet legal!
+
+When you first log into our app, you will be arrive on a landing page. You will have the choice of where you want to go on the navigation bar at the top of the page. 
+
+On the place a bet page, you will be presented with all of the available games and their respective odds. You can search for a specific game by searching the teams name and you can also filter what sports appear. You can then add whatever team you would like to bet on to your betslip on the right. You can also make the bet a parlay by continually adding bets and the updated odds will be displayed. You then enter your amount you would like to bet and the bet can be placed. 
+
+![Alt text](./images/Screen%20Shot%202023-12-06%20at%209.13.14%20PM.png)
+
+On the your bets page, the bets that you have placed will be displayed. If the bet hit, it will be displayed green. If the bet was lost, it will be displayed red. If the bet is still pending it will be displayed yellow. The displayed bets can be filtered by league and private currency bets. Parlays will be displayed seperately in the parlays section.
+
+On the analytics page, analytics about the bets that you have placed will be displayed such as win percentage, net winnings, a graph, and your recent bets placed along with their results.
+
+
+On the chirp page, you can use AI to generate a message where you talk trash to one of your friends. You enter your name, your friend's name and any additional info you would like and the generated message will be displayed. 
+
+
+![Alt text](./images/Screen%20Shot%202023-12-06%20at%208.56.36%20PM.png)
+
+On the league page, the user has the option to join a league or create their own league. Once a league has been joined, the user can go to the view your leagues page and click on their league to go to the league page. The user can then place a bet and view the bets that were placed within the league. The user can also see the league standings on this page. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
