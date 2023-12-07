@@ -27,7 +27,9 @@ const CurrencyGraph = () => {
                         );
 
                     //console.log(data[0].Currency);
-                    setCurrency(data[0].Currency.amount);
+                    if(data!=null) {
+                        setCurrency(data[0].Currency.amount);
+                    }
 
                     const { data: bets } = await supabase
                         .from("Bettor")
@@ -35,8 +37,9 @@ const CurrencyGraph = () => {
                             `*, Bet(*)`
                         );
                     
-                    //console.log(bets[0].Bet);
-                    setBets(bets[0].Bet);
+                    if(bets!=null) {
+                        setBets(bets[0].Bet);
+                    }
                 };
                 fetch();
             }
