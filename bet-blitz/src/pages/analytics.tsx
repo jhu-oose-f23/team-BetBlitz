@@ -1,6 +1,7 @@
 import TotalWinningsCard from "~/components/analytics/TotalWinningsCard";
 import BettingPercentageCard from "~/components/analytics/BettingPercentageCard";
 import BetsCard from "~/components/analytics/BetsCard";
+import CurrencyGraph from "~/components/analytics/AnalyticsGraph";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
@@ -82,6 +83,9 @@ export default function Analytics() {
             <div className="mx-4 grow">
               <BetsCard bets={bets}/>
             </div>
+          </div>
+          <div>
+            <CurrencyGraph/>
           </div>
         </>
       )}
