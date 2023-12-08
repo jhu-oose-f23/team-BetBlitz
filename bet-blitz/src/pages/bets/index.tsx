@@ -6,6 +6,7 @@ import {
   Parlay,
 } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
+import React from "react";
 import { useEffect, useState } from "react";
 import FilterBetsByLeagues from "~/components/bets/FilterBets";
 import BetCard from "~/components/bets/betCard";
@@ -145,7 +146,7 @@ const Bets = () => {
                 },
                 index: number,
               ) => (
-                <div key={`bet${index}`}>
+                <React.Fragment key={`betCard${index}`}>
                   {bet.leagueId
                     ? !filter.includes(bet.leagueId!) && (
                       <BetCard
@@ -159,7 +160,7 @@ const Bets = () => {
                         bet={bet}
                       />
                     )}
-                </div>
+                </React.Fragment>
               ),
             )}
         </div>

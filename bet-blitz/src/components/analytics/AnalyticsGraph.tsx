@@ -26,7 +26,6 @@ const CurrencyGraph = () => {
                             `*, Currency(*)`
                         );
 
-                    //console.log(data[0].Currency);
                     if(data!=null) {
                         setCurrency(data[0].Currency.amount);
                     }
@@ -67,7 +66,6 @@ const CurrencyGraph = () => {
             dataPoints.unshift([betNumber, currAmount]);
             betNumber--;
         }
-        console.log(dataPoints);
         dataPoints.unshift(["betNum", "Currency"]);
         return dataPoints;
     }
@@ -87,7 +85,6 @@ const CurrencyGraph = () => {
         width: 800
     }
 
-    console.log(currencyData);
     return (
         <div>
             <Chart

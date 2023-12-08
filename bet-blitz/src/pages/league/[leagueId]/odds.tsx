@@ -54,8 +54,6 @@ export default function allOdds() {
           .eq("leagueId", leagueId)
           .single();
 
-        console.log(bettorInfo);
-
         const currnecyId = bettorInfo?.currencyId;
 
         const { data: currency } = await supabase

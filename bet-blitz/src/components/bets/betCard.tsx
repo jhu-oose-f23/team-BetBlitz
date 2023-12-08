@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
+import { dateToString, dateToTimeString, utcToEstTimeStringWithDate } from "~/utils/helpers";
 import { twMerge } from "tailwind-merge";
 
 type PropType = {
@@ -54,7 +54,7 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
           : winOrLoss(bet)
           ? "border-green-500"
           : "border-red-600",
-        forParlay && "h-[200px] m-4",
+        forParlay && "h-[220px] m-4",
       )}
       key={`bet${index}`}
     >
@@ -69,8 +69,9 @@ const BetCard = ({ index, bet, forParlay }: PropType) => {
           <br />
           Placed at {utcToEstTimeStringWithDate(bet.createdAt)}
         </CardDescription>
-        <CardDescription>
-          {bet.Event.teamOneName} vs {bet.Event.teamTwoName}
+        <CardDescription className="text-black border-l border-stale-500 pl-2">
+          {bet.Event.teamOneName} vs {bet.Event.teamTwoName}<br />
+          {utcToEstTimeStringWithDate(bet.Event.commenceTime!)}
         </CardDescription>
       </CardHeader>
       <div className="relative h-2"> 

@@ -403,19 +403,15 @@ const updateLeagues = async () => {
     },
   });
 
-  console.log(leagues)
-
   //iterate through each leageu and get each bettor and their currency
   for (let league of leagues) {
     // if the league end date is greater than the current date, skip it
     if (league.endDate > new Date()) {
-      console.log("SKIPPING LEAGUE")
       continue;
     }
 
     //if the league already has a winner skip it
     if (league.winnerBettorId) {
-      console.log("SKIPPING LEAGUE")
       continue;
     }
 

@@ -22,7 +22,8 @@ const Bets = () => {
 
   const [bettorName, setBettorName] = useState("");
   const [leagueName, setLeagueName] = useState("");
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
   const bettorId = router.query.bettorId;
   const leagueId = router.query.leagueId;
@@ -101,11 +102,15 @@ const Bets = () => {
           setBettorName(parlays[0].Bet[0].Bettor.name);
           setLeagueName(parlays[0].League.name);
         }
+
+        if (bets && parlays) setIsLoading(false);
       }
     };
 
     fetchData();
   }, [bettorId]);
+
+  useEffect(() => console.log(isLoading), [isLoading]);
 
   return (
     <main>
@@ -120,9 +125,16 @@ const Bets = () => {
             </h4>
           </div>
         ) : (
-          <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
-            They haven't placed any bets!
-          </h1>
+          <>
+            {
+              !isLoading ?
+                <h1 className="text-center text-5xl font-black uppercase tracking-tight text-[#222831] sm:text-[5rem]">
+                  They haven't placed any bets!
+                </h1> : <></>
+            }
+          </>
+
+
         )}
 
         <div className="flex flex-wrap items-center justify-center gap-8">
