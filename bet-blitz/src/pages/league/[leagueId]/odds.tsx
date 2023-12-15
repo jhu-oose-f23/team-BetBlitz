@@ -200,6 +200,9 @@ export default function allOdds() {
                   return false;
                 })
                 .filter((event: Event) => {
+                  if (new Date() > new Date(event.commenceTime!)) {
+                    return false;
+                  }
                   if (
                     event.awayTeam
                       ?.toLowerCase()
