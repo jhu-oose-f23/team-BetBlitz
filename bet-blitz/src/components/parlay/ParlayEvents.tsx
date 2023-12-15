@@ -141,6 +141,9 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                   return false;
                 })
                 .filter((event: Event) => {
+                  if (new Date() > new Date(event.commenceTime!)) {
+                    return false;
+                  }
                   if (
                     event.awayTeam
                       ?.toLowerCase()
@@ -158,7 +161,7 @@ const ParlayEvents: React.FC<MyComponentProps> = ({
                       className="relative m-8 w-80 bg-white shadow-xl"
                     >
                       <Badge className="absolute left-0 top-0 -translate-y-4 translate-x-4 p-2 shadow-md">
-                        
+
                         {utcToEstTimeStringWithDate(
                           event.commenceTime ? event.commenceTime : new Date(),
                         )}
