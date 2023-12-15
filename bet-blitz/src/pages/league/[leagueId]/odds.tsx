@@ -194,6 +194,9 @@ export default function allOdds() {
                   if (checkMLB && event.sportKey === "baseball_mlb") {
                     return true;
                   }
+                  if (new Date() < event.commenceTime!) {
+                    return true;
+                  }
                   return false;
                 })
                 .filter((event: Event) => {
