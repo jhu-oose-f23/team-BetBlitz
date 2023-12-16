@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import { supabaseClient } from "~/utils/supabaseClient";
 import { Bet, EventResult, Event, BetResult, Parlay, Currency } from "@prisma/client";
+import { utcToEstTimeStringWithDate } from "~/utils/helpers";
 
 
 //Take current currency and use most recent bets to work backwards and obtain previous currency values
@@ -25,18 +26,27 @@ const CurrencyGraph = () => {
                         .select(
                             `*, Currency(*)`
                         )
-                        .eq("bettorId", userId);
+                        .eq("id", userId);
                         
                     if(data!=null) {
                         setCurrency(data[0].Currency.amount);
                     }
 
+                    //console.log(data);
+
                     const { data: bets } = await supabase
                         .from("Bettor")
                         .select(
-                            `*, Bet(*)`
+                            `*, Bet(
+                                *,
+                                Event ( 
+                                    *
+                                  )
+                            )`
                         )
-                        .eq("bettorId", userId);
+                        .eq("id", userId);
+
+                    //console.log(bets);
                                           
                     if(bets!=null) {
                         setBets(bets[0].Bet);
@@ -45,22 +55,19 @@ const CurrencyGraph = () => {
                 fetch();
             }
         }, [userId]);
-    console.log(userId);
-    console.log(currency);
-    console.log(bets);
 
     const getLastCurrencies = (startAmount: number, bets: Bet[] ) => {
         //console.log(startAmount);
         //console.log(bets);
         let dataPoints = [];
         // console.log(dataPoints);
-        dataPoints.unshift([5, startAmount]);
+        dataPoints.unshift(["Now", startAmount]);
 
         let betNumber = 4;
         let currAmount = startAmount;
         for (let i = 1; i < 6; i++) {
             let currentBet = bets[bets.length - i];
-            console.log(currentBet);
+            //console.log(currentBet);
             if(currentBet == null || currentBet == undefined) {
                 break;
             } else if (currentBet.betResult == "LOSS") {
@@ -72,9 +79,9 @@ const CurrencyGraph = () => {
                     currAmount-=(currentBet.amount * (100/Math.abs(currentBet.odds)))
                 }
             } else continue;
-            dataPoints.unshift([betNumber, currAmount]);
+            const d = utcToEstTimeStringWithDate(currentBet.Event.commenceTime);
+            dataPoints.unshift([  d, currAmount]);
             betNumber--;
-            console.log(dataPoints);
         }
         dataPoints.unshift(["betNum", "Currency"]);
         return dataPoints;
@@ -89,7 +96,7 @@ const CurrencyGraph = () => {
             title: "BlitzBux"
         },
         hAxis: {
-            title: "Bets"
+            title: "Time"
         },
         height: 600,
         width: 800
