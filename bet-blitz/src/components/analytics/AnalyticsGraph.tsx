@@ -25,7 +25,7 @@ const CurrencyGraph = () => {
                         .select(
                             `*, Currency(*)`
                         );
-
+                        
                     if(data!=null) {
                         setCurrency(data[0].Currency.amount);
                     }
@@ -35,7 +35,7 @@ const CurrencyGraph = () => {
                         .select(
                             `*, Bet(*)`
                         );
-                    
+                                          
                     if(bets!=null) {
                         setBets(bets[0].Bet);
                     }
@@ -43,15 +43,22 @@ const CurrencyGraph = () => {
                 fetch();
             }
         }, [userId]);
+    console.log(userId);
+    console.log(currency);
+    console.log(bets);
 
     const getLastCurrencies = (startAmount: number, bets: Bet[] ) => {
+        //console.log(startAmount);
+        //console.log(bets);
         let dataPoints = [];
-        dataPoints.push([5, startAmount]);
+        // console.log(dataPoints);
+        dataPoints.unshift([5, startAmount]);
 
         let betNumber = 4;
         let currAmount = startAmount;
         for (let i = 1; i < 6; i++) {
             let currentBet = bets[bets.length - i];
+            console.log(currentBet);
             if(currentBet == null || currentBet == undefined) {
                 break;
             } else if (currentBet.betResult == "LOSS") {
@@ -65,6 +72,7 @@ const CurrencyGraph = () => {
             } else continue;
             dataPoints.unshift([betNumber, currAmount]);
             betNumber--;
+            console.log(dataPoints);
         }
         dataPoints.unshift(["betNum", "Currency"]);
         return dataPoints;
