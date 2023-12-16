@@ -32,7 +32,7 @@ const CurrencyGraph = () => {
                         setCurrency(data[0].Currency.amount);
                     }
 
-                    console.log(data);
+                    //console.log(data);
 
                     const { data: bets } = await supabase
                         .from("Bettor")
@@ -46,7 +46,7 @@ const CurrencyGraph = () => {
                         )
                         .eq("id", userId);
 
-                    console.log(bets);
+                    //console.log(bets);
                                           
                     if(bets!=null) {
                         setBets(bets[0].Bet);
@@ -55,9 +55,6 @@ const CurrencyGraph = () => {
                 fetch();
             }
         }, [userId]);
-    console.log(userId);
-    console.log(currency);
-    console.log(bets);
 
     const getLastCurrencies = (startAmount: number, bets: Bet[] ) => {
         //console.log(startAmount);
@@ -85,7 +82,6 @@ const CurrencyGraph = () => {
             const d = utcToEstTimeStringWithDate(currentBet.Event.commenceTime);
             dataPoints.unshift([  d, currAmount]);
             betNumber--;
-            console.log(dataPoints);
         }
         dataPoints.unshift(["betNum", "Currency"]);
         return dataPoints;
