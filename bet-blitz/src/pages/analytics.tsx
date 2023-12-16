@@ -84,9 +84,9 @@ export default function Analytics() {
               <BetsCard bets={bets}/>
             </div>
           </div>
-          <div>
+          {/* <div>
             <CurrencyGraph/>
-          </div>
+          </div> */}
         </>
       )}
     </div>
