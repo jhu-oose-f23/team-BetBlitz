@@ -24,7 +24,8 @@ const CurrencyGraph = () => {
                         .from('Bettor')
                         .select(
                             `*, Currency(*)`
-                        );
+                        )
+                        .eq("bettorId", userId);
                         
                     if(data!=null) {
                         setCurrency(data[0].Currency.amount);
@@ -34,7 +35,8 @@ const CurrencyGraph = () => {
                         .from("Bettor")
                         .select(
                             `*, Bet(*)`
-                        );
+                        )
+                        .eq("bettorId", userId);
                                           
                     if(bets!=null) {
                         setBets(bets[0].Bet);
