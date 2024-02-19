@@ -1,5 +1,6 @@
 import { Badge } from "~/components/ui/badge";
 
+//import props
 type PropType = {
   name: string;
   checked: boolean;
