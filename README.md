@@ -51,10 +51,6 @@
 </div>
 
 
-
-## Link to Deployment
-https://team-bet-blitz.vercel.app/
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
